@@ -44,6 +44,26 @@ final class CachedDownloader extends DownloaderImpl {
     }
 
     /**
+     * Uses all the {@link ChecksumAlgorithm}s to verify if
+     * the corresponding resource file is valid or not.
+     * <br>
+     * <b>WARNING</b>: will <b>NOT</b> check for the file existence.
+     *
+     * @param resourcePath the resource path
+     * @return true if it is
+     */
+    public boolean verifyCachedResource(final @NotNull String resourcePath) {
+        for (ChecksumAlgorithm algorithm : ChecksumAlgorithm.values())
+            try {
+                String expected = resolveChecksum(resourcePath, algorithm);
+                String actual = computeChecksum(resourcePath, algorithm);
+                if (expected.equals(actual)) return true;
+            } catch (DownloadException | IOException ignored) {
+            }
+        return false;
+    }
+
+    /**
      * Tries to obtain the given resource associated checksum.
      * The checksum resource location is computed as
      * "&lt;resource_path&gt;.&lt;algorithm_extension&gt;".
@@ -53,8 +73,8 @@ final class CachedDownloader extends DownloaderImpl {
      * @return the checksum
      * @throws DownloadException in case of any errors
      */
-    public @NotNull String resolveChecksum(final @NotNull String resourcePath,
-                                           final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
+    @NotNull String resolveChecksum(final @NotNull String resourcePath,
+                                    final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
         String finalPath = resourcePath + "." + algorithm.getExtension();
         try (InputStream stream = resolve(finalPath)) {
             String checksum = new String(stream.readAllBytes());
@@ -73,8 +93,8 @@ final class CachedDownloader extends DownloaderImpl {
      * @return the checksum
      * @throws IOException in case of any errors
      */
-    public @NotNull String computeChecksum(final @NotNull String resourcePath,
-                                           final @NotNull ChecksumAlgorithm algorithm) throws IOException {
+    @NotNull String computeChecksum(final @NotNull String resourcePath,
+                                    final @NotNull ChecksumAlgorithm algorithm) throws IOException {
         final File resourceFile = getResourceFile(resourcePath);
 
         final MessageDigest messageDigest;
