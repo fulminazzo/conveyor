@@ -12,13 +12,16 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Responsible for creating a {@link Pom} object.
  */
 final class PomBuilder {
     private final @NotNull Map<String, String> properties = new HashMap<>();
+    private final @NotNull Set<Repository> repositories = new HashSet<>();
 
     private final @NotNull XMLStreamReader reader;
 
@@ -40,6 +43,18 @@ final class PomBuilder {
      */
     void parseProperties() throws XMLStreamException {
         parseGeneric(t -> this.properties.put(t, getElementText()));
+    }
+
+    /**
+     * Handles the <b>&lt;repositories&gt;</b> tag in the document.
+     *
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    void parseRepositories() throws XMLStreamException {
+        parseGeneric(t -> {
+            if (t.equals("repository"))
+                this.repositories.add(parseRepository());
+        });
     }
 
     /**
