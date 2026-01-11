@@ -15,6 +15,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Responsible for creating a {@link Pom} object.
@@ -66,7 +67,7 @@ final class PomBuilder {
                 case "dependencies" -> parseDependencies();
             }
         });
-        return builder.build();
+        return buildObject("project", builder::build);
     }
 
     /**
@@ -85,7 +86,7 @@ final class PomBuilder {
                 case "classifier" -> builder.classifier(getElementText());
             }
         });
-        return builder.build();
+        return buildObject("parent", builder::build);
     }
 
     /**
@@ -126,7 +127,7 @@ final class PomBuilder {
                 case "snapshots" -> builder.snapshots(parseRepositoryPolicy());
             }
         });
-        return builder.build();
+        return buildObject("repository", builder::build);
     }
 
     /**
@@ -145,7 +146,7 @@ final class PomBuilder {
                 case "checksumPolicy" -> builder.checksumPolicy(ChecksumPolicy.valueOf(value.toUpperCase()));
             }
         });
-        return builder.build();
+        return buildObject("repository policy", builder::build);
     }
 
     /**
@@ -204,9 +205,28 @@ final class PomBuilder {
                 });
             }
         });
-        Dependency dependency = builder.build();
+        Dependency dependency = buildObject("dependency", builder::build);
         exclusions.forEach(a -> dependency.getExclusions().add(a[0], a[1]));
         return dependency;
+    }
+
+    /**
+     * Replaces many <code>Builder#build()</code> calls in this class.
+     * Replaces any building errors with a {@link ParserException}.
+     *
+     * @param <T>           the type of the built object
+     * @param name          the name of the building object
+     * @param buildFunction the build function
+     * @return the built object
+     * @throws ParserException in case of any errors
+     */
+    <T> @NotNull T buildObject(final @NotNull String name,
+                               final @NotNull Supplier<T> buildFunction) throws ParserException {
+        try {
+            return buildFunction.get();
+        } catch (RuntimeException e) {
+            throw ParserException.of(String.format("Could not build %s", name), e);
+        }
     }
 
     private void parseGeneric(final @NotNull ConsumerException<String, ParserException> onElement) throws ParserException {
