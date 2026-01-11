@@ -34,7 +34,9 @@ class CachedDownloaderTest extends Specification {
         def downloader = Spy(CachedDownloader, constructorArgs: [this.downloader.workingDir])
         downloader.resolve(_) >> { a ->
             def extension = a[0].split('\\.')[-1]
-            return ChecksumAlgorithm.fromExtension(extension)
+            def alg = ChecksumAlgorithm.fromExtension(extension)
+            def checksum = CHECKSUMS[alg]
+            return new ByteArrayInputStream(checksum.bytes)
         }
 
         when:
