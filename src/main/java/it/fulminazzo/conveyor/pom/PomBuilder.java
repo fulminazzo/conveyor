@@ -53,6 +53,7 @@ final class PomBuilder {
                 case "groupId" -> builder.groupId(getElementText());
                 case "artifactId" -> builder.artifactId(getElementText());
                 case "version" -> builder.version(getElementText());
+                case "classifier" -> builder.classifier(getElementText());
                 case "packaging" -> this.packaging = getElementText();
                 case "parent" -> this.parent = parseParent();
                 case "properties" -> parseProperties();
@@ -77,6 +78,7 @@ final class PomBuilder {
                 case "groupId" -> builder.groupId(getElementText());
                 case "artifactId" -> builder.artifactId(getElementText());
                 case "version" -> builder.version(getElementText());
+                case "classifier" -> builder.classifier(getElementText());
             }
         });
         return builder.build();
