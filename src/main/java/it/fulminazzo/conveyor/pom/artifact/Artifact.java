@@ -1,0 +1,19 @@
+package it.fulminazzo.conveyor.pom.artifact;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Represents a general Maven artifact.
+ */
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@SuperBuilder
+public final class Artifact extends ArtifactLike {
+    private final @NotNull String version;
+
+}
