@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.pom
 
+import it.fulminazzo.conveyor.pom.artifact.Artifact
 import it.fulminazzo.conveyor.pom.dependency.Dependency
 import it.fulminazzo.conveyor.pom.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.pom.repository.Repository
@@ -7,6 +8,33 @@ import it.fulminazzo.conveyor.pom.repository.update.UpdatePolicy
 import spock.lang.Specification
 
 class PomBuilderTest extends Specification {
+
+    def 'test that parseParent returns correct parent]'() {
+        given:
+        def builder = newBuilder("""
+            <parent>
+                <groupId>it.fulminazzo</groupId>
+                <artifactId>parent</artifactId>
+                <version>1.0</version>
+            </parent>
+        """)
+        builder.reader.next()
+
+        when:
+        builder.parseParent()
+
+        and:
+        def field = PomBuilder.getDeclaredField('parent')
+        field.accessible = true
+        def parent = field.get(builder)
+
+        then:
+        parent == Artifact.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('parent')
+                .version('1.0')
+                .build()
+    }
 
     def 'test that parseProperties returns correct properties'() {
         given:
