@@ -127,7 +127,7 @@ final class PomBuilder {
      * @throws XMLStreamException in case of reading or parsing errors
      */
     @NotNull Dependency parseDependency() throws XMLStreamException {
-        final Dependency.DependencyBuilder builder = Dependency.builder();
+        final Dependency.DependencyBuilder<?, ?> builder = Dependency.builder();
         List<String[]> exclusions = new ArrayList<>();
         parseGeneric(t -> {
             switch (t) {

@@ -1,34 +1,35 @@
 package it.fulminazzo.conveyor.pom.dependency;
 
-import lombok.Builder;
-import lombok.Value;
+import it.fulminazzo.conveyor.pom.artifact.ArtifactLike;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a Maven dependency.
  */
-@Value
-@Builder
-public class Dependency {
-    @NotNull String groupId;
-    @NotNull String artifactId;
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@SuperBuilder
+public final class Dependency extends ArtifactLike {
     @Builder.Default
-    @Nullable String version = null;
+    private final @Nullable String version = null;
 
     @Builder.Default
-    @NotNull String type = "jar";
+    private final @NotNull String type = "jar";
 
     @Builder.Default
-    @Nullable String classifier = null;
+    private final @Nullable String classifier = null;
 
     @Builder.Default
-    @NotNull Scope scope = Scope.COMPILE;
+    private final @NotNull Scope scope = Scope.COMPILE;
 
     @Builder.Default
-    boolean optional = false;
+    private final boolean optional = false;
 
-    @NotNull Exclusions exclusions = new Exclusions();
+    private final @NotNull Exclusions exclusions = new Exclusions();
 
     /**
      * Defines the scope of this dependency.
