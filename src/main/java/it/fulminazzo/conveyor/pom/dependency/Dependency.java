@@ -21,9 +21,6 @@ public final class Dependency extends ArtifactLike {
     private final @NotNull String type = "jar";
 
     @Builder.Default
-    private final @Nullable String classifier = null;
-
-    @Builder.Default
     private final @NotNull Scope scope = Scope.COMPILE;
 
     @Builder.Default
