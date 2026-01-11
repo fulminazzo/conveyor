@@ -48,7 +48,7 @@ class DownloaderImpl implements Downloader {
         List<String> parsedUrls = new ArrayList<>();
         for (String url : urls) {
             String https = "https://";
-            if (!url.startsWith(https) && !url.startsWith("/")) url = https + url;
+            if (!url.startsWith(https) && !url.startsWith("http://")) url = https + url;
             if (!url.endsWith("/")) url += "/";
             new URL(url);
             parsedUrls.add(url);
