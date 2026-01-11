@@ -27,7 +27,7 @@ public interface Downloader {
      */
     default @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
         try (InputStream stream = resolve(resourcePath)) {
-            File destination = new File(getWorkingDir(), resourcePath);
+            File destination = getResourceFile(resourcePath);
             Files.createDirectories(destination.getParentFile().toPath());
             Files.copy(stream, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             return destination;
@@ -78,6 +78,16 @@ public interface Downloader {
      * @throws MalformedURLException if any of the URLs is malformed
      */
     @NotNull Downloader addBaseUrls(final @NotNull Collection<String> urls) throws MalformedURLException;
+
+    /**
+     * Gets the associated resource file.
+     *
+     * @param resourcePath the resource path
+     * @return the resource file
+     */
+    default @NotNull File getResourceFile(final @NotNull String resourcePath) {
+        return new File(getWorkingDir(), resourcePath);
+    }
 
     /**
      * Gets the working directory (where the downloads will be stored).
