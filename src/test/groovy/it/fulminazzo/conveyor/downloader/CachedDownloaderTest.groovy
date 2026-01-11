@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.downloader
 
+import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
 class CachedDownloaderTest extends Specification {
@@ -15,6 +16,35 @@ class CachedDownloaderTest extends Specification {
     void setup() {
         def file = new File('build/resources/test/downloader/cached_downloader')
         this.downloader = new CachedDownloader(file)
+    }
+
+    def 'test actual resolveChecksum'() {
+        given:
+        this.downloader.addBaseUrls(TestUtils.MAVEN_CENTRAL_URL)
+
+        when:
+        def checksum = this.downloader.resolveChecksum(TestUtils.LOMBOK_PATH, ChecksumAlgorithm.MD5)
+
+        then:
+        checksum == '425b8d7d91723436c9451140c6e3c4e8'
+    }
+
+    def 'test that resolveChecksum of #algorithm returns expected'() {
+        given:
+        def downloader = Spy(CachedDownloader, constructorArgs: [this.downloader.workingDir])
+        downloader.resolve(_) >> { a ->
+            def extension = a[0].split('\\.')[-1]
+            return ChecksumAlgorithm.fromExtension(extension)
+        }
+
+        when:
+        def actual = downloader.resolveChecksum('online.txt', algorithm)
+
+        then:
+        actual == CHECKSUMS[algorithm]
+
+        where:
+        algorithm << ChecksumAlgorithm.values()
     }
 
     def 'test that computeChecksum of file with #algorithm returns expected'() {
