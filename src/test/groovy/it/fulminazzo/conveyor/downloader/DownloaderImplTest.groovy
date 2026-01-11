@@ -1,10 +1,9 @@
 package it.fulminazzo.conveyor.downloader
 
+import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
 class DownloaderImplTest extends Specification {
-    static final String MAVEN_CENTRAL_URL = 'repo.maven.apache.org/maven2'
-    static final String LOMBOK_PATH = 'org/projectlombok/lombok/1.18.42/lombok-1.18.42.pom'
     
     private Downloader downloader
 
@@ -21,7 +20,7 @@ class DownloaderImplTest extends Specification {
         and:
         this.downloader.addBaseUrls(
                 'invalidoffline.com',
-                MAVEN_CENTRAL_URL
+                TestUtils.MAVEN_CENTRAL_URL
         )
 
         and:
@@ -38,8 +37,8 @@ class DownloaderImplTest extends Specification {
 
         where:
         path << [
-                LOMBOK_PATH,
-                "/$LOMBOK_PATH"
+                TestUtils.LOMBOK_PATH,
+                "/$TestUtils.LOMBOK_PATH"
         ]
     }
 
@@ -69,11 +68,11 @@ class DownloaderImplTest extends Specification {
         and:
         downloader.addBaseUrls(
                 'invalidoffline.com',
-                MAVEN_CENTRAL_URL
+                TestUtils.MAVEN_CENTRAL_URL
         )
 
         when:
-        downloader.resolveToFile(LOMBOK_PATH)
+        downloader.resolveToFile(TestUtils.LOMBOK_PATH)
 
         then:
         def e = thrown(DownloadException)
