@@ -7,10 +7,12 @@ class PomBuilderTest extends Specification {
     def 'test that parseProperties returns correct properties'() {
         given:
         def builder = newBuilder("""
-            <hello>world</hello>
-            <dependency.version>1.0</dependency.version>
-            <dependency.name>conveyor</dependency.name>
-            <name>\${dependency.name}</name>
+            <properties>
+                <hello>world</hello>
+                <dependency.version>1.0</dependency.version>
+                <dependency.name>conveyor</dependency.name>
+                <name>\${dependency.name}</name>
+            </properties>
         """)
         builder.reader.next()
 
@@ -32,7 +34,7 @@ class PomBuilderTest extends Specification {
     }
 
     private static PomBuilder newBuilder(final String data) {
-        return new PomBuilder(new ByteArrayInputStream("""<project>$data</project>""".bytes))
+        return new PomBuilder(new ByteArrayInputStream(data.bytes))
     }
 
 }
