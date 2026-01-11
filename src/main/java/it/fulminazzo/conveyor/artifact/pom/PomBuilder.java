@@ -42,7 +42,7 @@ final class PomBuilder {
             switch (this.reader.next()) {
                 case XMLStreamConstants.START_ELEMENT -> {
                     String key = this.reader.getLocalName();
-                    String value = this.reader.getElementText();
+                    String value = getElementText();
                     this.properties.put(key, value);
                 }
                 case XMLStreamConstants.END_ELEMENT -> {
@@ -63,12 +63,12 @@ final class PomBuilder {
             switch (this.reader.next()) {
                 case XMLStreamConstants.START_ELEMENT -> {
                     String tagName = this.reader.getLocalName();
-                    String value = this.reader.getElementText();
                     switch (tagName) {
-                        case "id" -> builder.id(value);
-                        case "name" -> builder.name(value);
-                        case "url" -> builder.url(value);
-                        case "releases", "snapshots" -> builder.releases(parseRepositoryPolicy());
+                        case "id" -> builder.id(getElementText());
+                        case "name" -> builder.name(getElementText());
+                        case "url" -> builder.url(getElementText());
+                        case "releases" -> builder.releases(parseRepositoryPolicy());
+                        case "snapshots" -> builder.snapshots(parseRepositoryPolicy());
                     }
                 }
                 case XMLStreamConstants.END_ELEMENT -> {
@@ -92,7 +92,7 @@ final class PomBuilder {
             switch (this.reader.next()) {
                 case XMLStreamConstants.START_ELEMENT -> {
                     String tagName = this.reader.getLocalName();
-                    String value = this.reader.getElementText();
+                    String value = getElementText();
                     switch (tagName) {
                         case "enabled" -> builder.enabled(Boolean.parseBoolean(value));
                         case "updatePolicy" -> builder.updatePolicy(UpdatePolicy.of(value));
@@ -105,6 +105,10 @@ final class PomBuilder {
                 }
             }
         return builder.build();
+    }
+
+    private @NotNull String getElementText() throws XMLStreamException {
+        return this.reader.getElementText();
     }
 
 }
