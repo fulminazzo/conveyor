@@ -1,4 +1,4 @@
-package it.fulminiazzo.conveyor.artifact.pom.dependency;
+package it.fulminazzo.conveyor.artifact.pom.dependency;
 
 import org.jetbrains.annotations.NotNull;
 

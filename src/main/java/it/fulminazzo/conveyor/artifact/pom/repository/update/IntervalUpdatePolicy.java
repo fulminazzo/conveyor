@@ -1,4 +1,4 @@
-package it.fulminiazzo.conveyor.artifact.pom.repository.update;
+package it.fulminazzo.conveyor.artifact.pom.repository.update;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
