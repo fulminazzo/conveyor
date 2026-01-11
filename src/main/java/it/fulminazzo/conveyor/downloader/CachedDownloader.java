@@ -26,13 +26,20 @@ final class CachedDownloader extends DownloaderImpl {
         super(workingDir);
     }
 
+    /**
+     * Looks in the current {@link #getWorkingDir()} for a file
+     * matching the resource path.
+     * <br>
+     * If found, it is verified using {@link ChecksumAlgorithm}s.
+     * <br>
+     * If not found, or the verification fails, it is downloaded.
+     *
+     * @param resourcePath the resource path
+     * @return the file (whether already present or newly downloaded)
+     * @throws DownloadException in case of any errors
+     */
     @Override
     public @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
-        throw new UnsupportedOperationException("Should check cache");
-    }
-
-    @Override
-    public @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException {
         throw new UnsupportedOperationException("Should check cache");
     }
 
