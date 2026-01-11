@@ -18,6 +18,35 @@ class CachedDownloaderTest extends Specification {
         this.downloader = new CachedDownloader(file)
     }
 
+    def 'test resolveToFile only downloads once'() {
+        given:
+        def workingDir = new File(this.downloader.workingDir, 'resolve_to_file')
+        if (workingDir.exists()) workingDir.deleteDir()
+
+        and:
+        def path = TestUtils.LOMBOK_PATH
+
+        and:
+        def downloader = (CachedDownloader) Spy(CachedDownloader, constructorArgs: [workingDir])
+                .addBaseUrls(TestUtils.MAVEN_CENTRAL_URL)
+
+        when:
+        downloader.resolveToFile(path)
+
+        then:
+        0 * downloader.verifyCachedResource(path)
+        0 * downloader.resolve("$path.${ChecksumAlgorithm.MD5.extension}")
+        1 * downloader.resolve(path)
+
+        when:
+        downloader.resolveToFile(path)
+
+        then:
+        1 * downloader.verifyCachedResource(path)
+        1 * downloader.resolve("$path.${ChecksumAlgorithm.MD5.extension}")
+        0 * downloader.resolve(path)
+    }
+
     def 'test actual resolveChecksum'() {
         given:
         this.downloader.addBaseUrls(TestUtils.MAVEN_CENTRAL_URL)
