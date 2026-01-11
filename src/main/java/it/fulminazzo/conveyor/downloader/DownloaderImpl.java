@@ -7,9 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.*;
 
 /**
@@ -47,11 +45,16 @@ class DownloaderImpl implements Downloader {
     public @NotNull Downloader addBaseUrls(final @NotNull Collection<String> urls) throws MalformedURLException {
         List<String> parsedUrls = new ArrayList<>();
         for (String url : urls) {
+            String modifiedUrl = url;
             String https = "https://";
-            if (!url.startsWith(https) && !url.startsWith("http://")) url = https + url;
-            if (!url.endsWith("/")) url += "/";
-            new URL(url);
-            parsedUrls.add(url);
+            if (!modifiedUrl.startsWith(https) && !modifiedUrl.startsWith("http://")) modifiedUrl = https + modifiedUrl;
+            if (!modifiedUrl.endsWith("/")) modifiedUrl += "/";
+            try {
+                new URI(modifiedUrl);
+            } catch (URISyntaxException e) {
+                throw new MalformedURLException(String.format("Invalid URL '%s'", url));
+            }
+            parsedUrls.add(modifiedUrl);
         }
         this.baseUrls.addAll(parsedUrls);
         return this;
