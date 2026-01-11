@@ -26,7 +26,7 @@ class CachedDownloaderTest extends Specification {
         def checksum = this.downloader.resolveChecksum(TestUtils.LOMBOK_PATH, ChecksumAlgorithm.MD5)
 
         then:
-        checksum == '425b8d7d91723436c9451140c6e3c4e8'
+        checksum == '959fc371f0582cfcea043ba8b90ef9bf'
     }
 
     def 'test that resolveChecksum of #algorithm returns expected'() {
