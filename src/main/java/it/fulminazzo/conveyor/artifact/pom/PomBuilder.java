@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.artifact.pom;
 
+import it.fulminazzo.conveyor.artifact.pom.dependency.Dependency;
 import it.fulminazzo.conveyor.artifact.pom.repository.ChecksumPolicy;
 import it.fulminazzo.conveyor.artifact.pom.repository.Repository;
 import it.fulminazzo.conveyor.artifact.pom.repository.update.UpdatePolicy;
@@ -11,10 +12,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Responsible for creating a {@link Pom} object.
@@ -94,6 +92,43 @@ final class PomBuilder {
             }
         });
         return builder.build();
+    }
+
+    /**
+     * Handles a <b>&lt;dependency&gt;</b> tag in the document.
+     *
+     * @return the dependency
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    @NotNull Dependency parseDependency() throws XMLStreamException {
+        final Dependency.DependencyBuilder builder = Dependency.builder();
+        List<String[]> exclusions = new ArrayList<>();
+        parseGeneric(t -> {
+            switch (t) {
+                case "groupId" -> builder.groupId(getElementText());
+                case "artifactId" -> builder.artifactId(getElementText());
+                case "version" -> builder.version(getElementText());
+                case "type" -> builder.type(getElementText());
+                case "classifier" -> builder.classifier(getElementText());
+                case "scope" -> builder.scope(Dependency.Scope.valueOf(getElementText().toUpperCase()));
+                case "optional" -> builder.optional(Boolean.parseBoolean(getElementText()));
+                case "exclusions" -> parseGeneric(l -> {
+                    if (l.equals("exclusion")) {
+                        String[] exclusionData = new String[2];
+                        parseGeneric(e -> {
+                            switch (e) {
+                                case "groupId" -> exclusionData[0] = getElementText();
+                                case "artifactId" -> exclusionData[1] = getElementText();
+                            }
+                        });
+                        exclusions.add(exclusionData);
+                    }
+                });
+            }
+        });
+        Dependency dependency = builder.build();
+        exclusions.forEach(a -> dependency.getExclusions().add(a[0], a[1]));
+        return dependency;
     }
 
     private void parseGeneric(final @NotNull ConsumerException<String, XMLStreamException> onElement) throws XMLStreamException {
