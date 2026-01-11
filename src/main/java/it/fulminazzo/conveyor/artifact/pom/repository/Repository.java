@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 @Builder
 public class Repository {
     @NotNull String id;
-    @NotNull String name;
+    @Builder.Default
+    @NotNull String name = "";
     @NotNull String url;
     @Builder.Default
     @NotNull Policy releases = Policy.builder().enabled(true).build();
