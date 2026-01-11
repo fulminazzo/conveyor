@@ -9,7 +9,26 @@ import spock.lang.Specification
 
 class PomBuilderTest extends Specification {
 
-    def 'test that parseParent returns correct parent]'() {
+    def 'test that RuntimeException on build is replaced by ParserException'() {
+        given:
+        def builder = newBuilder("""
+            <parent>
+                <groupId>it.fulminazzo</groupId>
+                <artifactId>parent</artifactId>
+            </parent>
+        """)
+        builder.reader.next()
+
+        when:
+        builder.parseParent()
+
+        then:
+        def e = thrown(ParserException)
+        e.cause != null
+        e.cause.class == NullPointerException
+    }
+
+    def 'test that parseParent returns correct parent'() {
         given:
         def builder = newBuilder("""
             <parent>
