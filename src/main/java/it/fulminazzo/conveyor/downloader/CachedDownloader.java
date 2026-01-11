@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 
 /**
  * A special {@link Downloader} that will check if the requested
@@ -118,11 +119,7 @@ final class CachedDownloader extends DownloaderImpl {
                 messageDigest.update(buffer, 0, read);
         }
 
-        StringBuilder result = new StringBuilder();
-        for (byte b : messageDigest.digest())
-            result.append(String.format("%02x", b));
-
-        return result.toString();
+        return HexFormat.of().formatHex(messageDigest.digest());
     }
 
 }
