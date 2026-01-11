@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -81,8 +82,10 @@ final class CachedDownloader extends DownloaderImpl {
                                     final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
         String finalPath = resourcePath + "." + algorithm.getExtension();
         try (InputStream stream = resolve(finalPath)) {
-            String checksum = new String(stream.readAllBytes());
+            String checksum = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
             if (checksum.endsWith("\n")) checksum = checksum.substring(0, checksum.length() - 1);
+            // remove the name of the file
+            checksum = checksum.split(" ")[0];
             return checksum;
         } catch (IOException e) {
             throw new DownloadException(String.format("Error while downloading resource '%s'", finalPath), e);
