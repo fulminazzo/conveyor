@@ -1,0 +1,34 @@
+plugins {
+    id 'java-library'
+    id 'groovy'
+    id 'jacoco-report-aggregation'
+}
+
+group = 'it.fulminazzo'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly libs.bundles.annotations
+    annotationProcessor libs.lombok
+
+    testCompileOnly libs.bundles.annotations
+    testAnnotationProcessor libs.lombok
+
+    testImplementation libs.bundles.test.framework
+}
+
+test {
+    useJUnitPlatform()
+}
+
+testCodeCoverageReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = true
+    }
+}
