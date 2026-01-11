@@ -24,6 +24,7 @@ final class PomBuilder {
     private final @NotNull Set<Repository> repositories = new HashSet<>();
     private final @NotNull Set<Dependency> dependencyManagement = new HashSet<>();
     private final @NotNull List<Dependency> dependencies = new ArrayList<>();
+    private @Nullable String packaging;
     private @Nullable Artifact parent;
 
     private final @NotNull XMLStreamReader reader;
@@ -37,6 +38,30 @@ final class PomBuilder {
     public PomBuilder(final @NotNull InputStream inputStream) throws XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         this.reader = factory.createXMLStreamReader(inputStream);
+    }
+
+    /**
+     * Parses the given document trying to populate all the above fields.
+     *
+     * @return the project artifact
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    @NotNull Artifact parseDocument() throws XMLStreamException {
+        Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
+        parseGeneric(t -> {
+            switch (t) {
+                case "groupId" -> builder.groupId(getElementText());
+                case "artifactId" -> builder.artifactId(getElementText());
+                case "version" -> builder.version(getElementText());
+                case "packaging" -> this.packaging = getElementText();
+                case "parent" -> this.parent = parseParent();
+                case "properties" -> parseProperties();
+                case "repositories" -> parseRepositories();
+                case "dependencyManagement" -> parseDependencyManagement();
+                case "dependencies" -> parseDependencies();
+            }
+        });
+        return builder.build();
     }
 
     /**
