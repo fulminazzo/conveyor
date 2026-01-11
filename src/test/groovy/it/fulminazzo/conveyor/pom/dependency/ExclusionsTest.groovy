@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.artifact.pom.dependency
+package it.fulminazzo.conveyor.pom.dependency
 
 import spock.lang.Specification
 

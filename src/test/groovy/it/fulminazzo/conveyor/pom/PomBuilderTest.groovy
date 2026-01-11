@@ -1,9 +1,9 @@
-package it.fulminazzo.conveyor.artifact.pom
+package it.fulminazzo.conveyor.pom
 
-import it.fulminazzo.conveyor.artifact.pom.dependency.Dependency
-import it.fulminazzo.conveyor.artifact.pom.repository.ChecksumPolicy
-import it.fulminazzo.conveyor.artifact.pom.repository.Repository
-import it.fulminazzo.conveyor.artifact.pom.repository.update.UpdatePolicy
+import it.fulminazzo.conveyor.pom.dependency.Dependency
+import it.fulminazzo.conveyor.pom.repository.ChecksumPolicy
+import it.fulminazzo.conveyor.pom.repository.Repository
+import it.fulminazzo.conveyor.pom.repository.update.UpdatePolicy
 import spock.lang.Specification
 
 class PomBuilderTest extends Specification {

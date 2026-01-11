@@ -1,6 +1,6 @@
-package it.fulminazzo.conveyor.artifact.pom.repository;
+package it.fulminazzo.conveyor.pom.repository;
 
-import it.fulminazzo.conveyor.artifact.pom.repository.update.UpdatePolicy;
+import it.fulminazzo.conveyor.pom.repository.update.UpdatePolicy;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 

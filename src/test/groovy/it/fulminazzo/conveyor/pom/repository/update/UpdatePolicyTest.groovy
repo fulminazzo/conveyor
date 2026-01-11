@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.artifact.pom.repository.update
+package it.fulminazzo.conveyor.pom.repository.update
 
 import spock.lang.Specification
 

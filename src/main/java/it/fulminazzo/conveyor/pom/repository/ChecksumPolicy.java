@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.artifact.pom.repository;
+package it.fulminazzo.conveyor.pom.repository;
 
 /**
  * Represents how an invalid checksum should be handled.
