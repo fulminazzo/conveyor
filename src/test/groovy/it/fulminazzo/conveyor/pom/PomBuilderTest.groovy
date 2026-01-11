@@ -45,7 +45,7 @@ class PomBuilderTest extends Specification {
     }
 
     private static PomBuilder newBuilder(final String data) {
-        return new PomBuilder(new ByteArrayInputStream(data.bytes))
+        return PomBuilder.of(new ByteArrayInputStream(data.bytes))
     }
 
 }
