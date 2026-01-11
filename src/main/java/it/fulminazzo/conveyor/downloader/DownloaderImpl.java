@@ -15,9 +15,6 @@ import java.util.*;
  */
 @RequiredArgsConstructor
 class DownloaderImpl implements Downloader {
-    /**
-     * The connect and read timeout of the downloader.
-     */
     static final int CONNECT_READ_TIMEOUT = 10000;
 
     @Getter
@@ -25,39 +22,23 @@ class DownloaderImpl implements Downloader {
     private final @NotNull Set<String> baseUrls = new LinkedHashSet<>();
 
     @Override
-    public @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException {
+    public @NotNull InputStream resolve(@NotNull String resourcePath) throws DownloadException {
         if (this.baseUrls.isEmpty())
             throw new DownloadException("No base URL provided! Please, use addBaseUrls before calling this method");
+        if (resourcePath.startsWith("/")) resourcePath = resourcePath.substring(1);
         Throwable latest = null;
         for (String url : this.baseUrls)
             try {
-                return resolve(resourcePath, url);
+                URLConnection connection = new URL(url + resourcePath).openConnection();
+                connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
+                connection.setReadTimeout(CONNECT_READ_TIMEOUT);
+                return connection.getInputStream();
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException("Unreachable code");
             } catch (IOException e) {
                 latest = e;
             }
         throw new DownloadException(String.format("Could not download resource '%s'", resourcePath), latest);
-    }
-
-    /**
-     * Attempts to download the resource
-     * at "&lt;base_url&gt;/&lt;resource_path&gt;".
-     *
-     * @param resourcePath the resource path
-     * @param baseUrl      the url
-     * @return the download stream
-     * @throws IOException in case of errors
-     */
-    @NotNull InputStream resolve(@NotNull String resourcePath,
-                                 final @NotNull String baseUrl) throws IOException {
-        if (resourcePath.startsWith("/")) resourcePath = resourcePath.substring(1);
-        try {
-            URLConnection connection = new URL(baseUrl + resourcePath).openConnection();
-            connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
-            connection.setReadTimeout(CONNECT_READ_TIMEOUT);
-            return connection.getInputStream();
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException("Unreachable code");
-        }
     }
 
     @Override
