@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.artifact.pom
 
+import it.fulminazzo.conveyor.artifact.pom.dependency.Dependency
 import it.fulminazzo.conveyor.artifact.pom.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.artifact.pom.repository.Repository
 import it.fulminazzo.conveyor.artifact.pom.repository.update.UpdatePolicy
@@ -122,6 +123,53 @@ class PomBuilderTest extends Specification {
 
         then:
         repository == expected
+    }
+
+    def 'test that parseDependency returns correct dependency'() {
+        given:
+        def builder = newBuilder("""
+            <dependency>
+                <groupId>it.fulminazzo</groupId>
+                <artifactId>conveyor</artifactId>
+                <version>1.0</version>
+            
+                <type>war</type> 
+                
+                <classifier>sources</classifier>
+            
+                <scope>provided</scope>
+            
+                <optional>true</optional>
+            
+                <systemPath>\${project.basedir}/libs/custom-lib.jar</systemPath>
+            
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        """)
+        builder.reader.next()
+
+        and:
+        def expected = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('conveyor')
+                .version('1.0')
+                .type('war')
+                .classifier('sources')
+                .scope(Dependency.Scope.PROVIDED)
+                .optional(true)
+                .build()
+        expected.exclusions.add('org.projectlombok', 'lombok')
+
+        when:
+        def dependency = builder.parseDependency()
+
+        then:
+        dependency == expected
     }
 
     private static PomBuilder newBuilder(final String data) {
