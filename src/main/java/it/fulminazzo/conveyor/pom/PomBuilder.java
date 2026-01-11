@@ -33,20 +33,24 @@ final class PomBuilder {
      * Instantiates a new Pom builder.
      *
      * @param inputStream the input stream
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    public PomBuilder(final @NotNull InputStream inputStream) throws XMLStreamException {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        this.reader = factory.createXMLStreamReader(inputStream);
+    public PomBuilder(final @NotNull InputStream inputStream) throws ParserException {
+        try {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            this.reader = factory.createXMLStreamReader(inputStream);
+        } catch (XMLStreamException e) {
+            throw ParserException.of("Error while creating PomBuilder", e);
+        }
     }
 
     /**
      * Parses the given document trying to populate all the above fields.
      *
      * @return the project artifact
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    @NotNull Artifact parseDocument() throws XMLStreamException {
+    @NotNull Artifact parseDocument() throws ParserException {
         Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
         parseGeneric(t -> {
             switch (t) {
@@ -69,9 +73,9 @@ final class PomBuilder {
      * Handles the <b>&lt;parent&gt;</b> tag in the document.
      *
      * @return the parent artifact
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    @NotNull Artifact parseParent() throws XMLStreamException {
+    @NotNull Artifact parseParent() throws ParserException {
         Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
         parseGeneric(t -> {
             switch (t) {
@@ -87,18 +91,18 @@ final class PomBuilder {
     /**
      * Handles the <b>&lt;properties&gt;</b> tag in the document.
      *
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    void parseProperties() throws XMLStreamException {
+    void parseProperties() throws ParserException {
         parseGeneric(t -> this.properties.put(t, getElementText()));
     }
 
     /**
      * Handles the <b>&lt;repositories&gt;</b> tag in the document.
      *
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    void parseRepositories() throws XMLStreamException {
+    void parseRepositories() throws ParserException {
         parseGeneric(t -> {
             if (t.equals("repository"))
                 this.repositories.add(parseRepository());
@@ -109,9 +113,9 @@ final class PomBuilder {
      * Handles a <b>&lt;repository&gt;</b> tag in the document.
      *
      * @return the repository
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    @NotNull Repository parseRepository() throws XMLStreamException {
+    @NotNull Repository parseRepository() throws ParserException {
         final Repository.RepositoryBuilder builder = Repository.builder();
         parseGeneric(t -> {
             switch (t) {
@@ -129,9 +133,9 @@ final class PomBuilder {
      * Generates a {@link Repository.Policy} from the current reader.
      *
      * @return the repository policy
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    @NotNull Repository.Policy parseRepositoryPolicy() throws XMLStreamException {
+    @NotNull Repository.Policy parseRepositoryPolicy() throws ParserException {
         final Repository.Policy.PolicyBuilder builder = Repository.Policy.builder();
         parseGeneric(t -> {
             String value = getElementText();
@@ -147,9 +151,9 @@ final class PomBuilder {
     /**
      * Handles a <b>&lt;dependencyManagement&gt;</b> tag in the document.
      *
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    void parseDependencyManagement() throws XMLStreamException {
+    void parseDependencyManagement() throws ParserException {
         parseGeneric(t -> {
             if (t.equals("dependency"))
                 this.dependencyManagement.add(parseDependency());
@@ -159,9 +163,9 @@ final class PomBuilder {
     /**
      * Handles a <b>&lt;dependencies&gt;</b> tag in the document.
      *
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    void parseDependencies() throws XMLStreamException {
+    void parseDependencies() throws ParserException {
         parseGeneric(t -> {
             if (t.equals("dependency"))
                 this.dependencies.add(parseDependency());
@@ -172,9 +176,9 @@ final class PomBuilder {
      * Handles a <b>&lt;dependency&gt;</b> tag in the document.
      *
      * @return the dependency
-     * @throws XMLStreamException in case of reading or parsing errors
+     * @throws ParserException in case of reading or parsing errors
      */
-    @NotNull Dependency parseDependency() throws XMLStreamException {
+    @NotNull Dependency parseDependency() throws ParserException {
         final Dependency.DependencyBuilder<?, ?> builder = Dependency.builder();
         List<String[]> exclusions = new ArrayList<>();
         parseGeneric(t -> {
@@ -205,19 +209,29 @@ final class PomBuilder {
         return dependency;
     }
 
-    private void parseGeneric(final @NotNull ConsumerException<String, XMLStreamException> onElement) throws XMLStreamException {
+    private void parseGeneric(final @NotNull ConsumerException<String, ParserException> onElement) throws ParserException {
         String name = this.reader.getLocalName();
-        while (this.reader.hasNext())
-            switch (this.reader.next()) {
-                case XMLStreamConstants.START_ELEMENT -> onElement.accept(this.reader.getLocalName());
-                case XMLStreamConstants.END_ELEMENT -> {
-                    if (this.reader.getLocalName().equals(name)) return;
+        try {
+            while (this.reader.hasNext())
+                switch (this.reader.next()) {
+                    case XMLStreamConstants.START_ELEMENT -> onElement.accept(this.reader.getLocalName());
+                    case XMLStreamConstants.END_ELEMENT -> {
+                        if (this.reader.getLocalName().equals(name)) return;
+                    }
                 }
-            }
+        } catch (XMLStreamException e) {
+            throw ParserException.of("Could not get next XML element", e);
+        }
     }
 
-    private @NotNull String getElementText() throws XMLStreamException {
-        return this.reader.getElementText();
+    private @NotNull String getElementText() throws ParserException {
+        try {
+            return this.reader.getElementText();
+        } catch (XMLStreamException e) {
+            throw ParserException.of(String.format("Could not get textual element of '%s'",
+                    this.reader.getLocalName()), e
+            );
+        }
     }
 
 }
