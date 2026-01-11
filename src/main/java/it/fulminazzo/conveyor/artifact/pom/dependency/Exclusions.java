@@ -1,17 +1,22 @@
 package it.fulminazzo.conveyor.artifact.pom.dependency;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents the exclusions of a {@link Dependency}.
  */
+@ToString(includeFieldNames = false)
+@EqualsAndHashCode
 public final class Exclusions {
     private static final @NotNull String wildcard = "*";
+    private static final @NotNull String separator = ":";
 
-    private final @NotNull Map<String, String> map = new ConcurrentHashMap<>();
+    private final @NotNull Set<String> exclusions = new HashSet<>();
 
     /**
      * Checks if the given coordinates are excluded from the exclusions list.
@@ -22,13 +27,10 @@ public final class Exclusions {
      */
     public boolean isExcluded(final @NotNull String groupId,
                               final @NotNull String artifactId) {
-        String stored = this.map.get(groupId);
-        if (stored != null) {
-            if (stored.equals(artifactId) || stored.equals(wildcard))
-                return true;
-        }
-        stored = this.map.get(wildcard);
-        return stored.equals(wildcard) || stored.equals(artifactId);
+        if (this.exclusions.contains(getIdentifier(groupId, artifactId))) return true;
+        else if (this.exclusions.contains(getIdentifier(groupId, wildcard))) return true;
+        else if (this.exclusions.contains(getIdentifier(wildcard, artifactId))) return true;
+        else return this.exclusions.contains(getIdentifier(wildcard, wildcard));
     }
 
     /**
@@ -39,7 +41,11 @@ public final class Exclusions {
      */
     public void add(final @NotNull String groupId,
                     final @NotNull String artifactId) {
-        this.map.put(groupId, artifactId);
+        this.exclusions.add(getIdentifier(groupId, artifactId));
+    }
+
+    private @NotNull String getIdentifier(final @NotNull String groupId, final @NotNull String artifactId) {
+        return groupId + separator + artifactId;
     }
 
 }
