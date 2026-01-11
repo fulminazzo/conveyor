@@ -73,7 +73,7 @@ class PomBuilderTest extends Specification {
         def repositories = field.get(builder)
 
         then:
-        repositories.toList() == expected
+        repositories.sort() == expected.sort()
     }
 
     def 'test that parseRepository returns correct repository'() {
