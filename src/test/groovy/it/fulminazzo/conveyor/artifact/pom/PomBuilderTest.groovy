@@ -36,6 +36,45 @@ class PomBuilderTest extends Specification {
         ]
     }
 
+    def 'test that parseRepositories returns correct repositories'() {
+        given:
+        def builder = newBuilder("""
+            <repositories>
+                <repository>
+                    <id>first</id>
+                    <url>first.com</url>
+                </repository>
+                <repository>
+                    <id>second</id>
+                    <url>second.net</url>
+                </repository>
+                <repository>
+                    <id>third</id>
+                    <url>third.it</url>
+                </repository>
+            </repositories>
+        """)
+        builder.reader.next()
+
+        and:
+        def expected = [
+                Repository.builder().id('first').url('first.com').build(),
+                Repository.builder().id('second').url('second.net').build(),
+                Repository.builder().id('third').url('third.it').build()
+        ]
+
+        when:
+        builder.parseRepositories()
+
+        and:
+        def field = PomBuilder.getDeclaredField('repositories')
+        field.accessible = true
+        def repositories = field.get(builder)
+
+        then:
+        repositories.toList() == expected
+    }
+
     def 'test that parseRepository returns correct repository'() {
         given:
         def builder = newBuilder("""
