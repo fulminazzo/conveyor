@@ -40,7 +40,11 @@ final class CachedDownloader extends DownloaderImpl {
      */
     @Override
     public @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
-        throw new UnsupportedOperationException("Should check cache");
+        File resourceFile = getResourceFile(resourcePath);
+        if (resourceFile.exists()) {
+            if (verifyCachedResource(resourcePath)) return resourceFile;
+        }
+        return super.resolveToFile(resourcePath);
     }
 
     /**
