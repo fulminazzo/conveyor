@@ -21,12 +21,7 @@ class PomBuilderTest extends Specification {
         builder.reader.next()
 
         when:
-        builder.parseParent()
-
-        and:
-        def field = PomBuilder.getDeclaredField('parent')
-        field.accessible = true
-        def parent = field.get(builder)
+        def parent = builder.parseParent()
 
         then:
         parent == Artifact.builder()

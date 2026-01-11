@@ -42,13 +42,10 @@ final class PomBuilder {
     /**
      * Handles the <b>&lt;parent&gt;</b> tag in the document.
      *
+     * @return the parent artifact
      * @throws XMLStreamException in case of reading or parsing errors
      */
-    void parseParent() throws XMLStreamException {
-        this.parent = parseArtifact();
-    }
-
-    private @NotNull Artifact parseArtifact() throws XMLStreamException {
+    @NotNull Artifact parseParent() throws XMLStreamException {
         Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
         parseGeneric(t -> {
             switch (t) {
