@@ -35,6 +35,8 @@ class PomBuilderTest extends Specification {
                 <groupId>it.fulminazzo</groupId>
                 <artifactId>parent</artifactId>
                 <version>1.0</version>
+                <classifier>sources</classifier>
+                <relativePath>../parent/pom.xml</relativePath>
             </parent>
         """)
         builder.reader.next()
@@ -47,6 +49,7 @@ class PomBuilderTest extends Specification {
                 .groupId('it.fulminazzo')
                 .artifactId('parent')
                 .version('1.0')
+                .classifier('sources')
                 .build()
     }
 
@@ -95,6 +98,7 @@ class PomBuilderTest extends Specification {
                     <id>third</id>
                     <url>third.it</url>
                 </repository>
+                <something>wrong</something>
             </repositories>
         """)
         builder.reader.next()
@@ -138,7 +142,10 @@ class PomBuilderTest extends Specification {
                     <enabled>true</enabled>
                     <updatePolicy>always</updatePolicy>
                     <checksumPolicy>fail</checksumPolicy>
+                    <something>wrong</something>
                 </snapshots>
+               
+                <something>wrong</something>
             </repository>
         """)
         builder.reader.next()
@@ -186,6 +193,7 @@ class PomBuilderTest extends Specification {
                     <artifactId>dep3</artifactId>
                     <version>1.0</version>
                 </dependency>
+                <something>wrong</something>
             </dependencyManagement>
         """)
         builder.reader.next()
@@ -228,6 +236,7 @@ class PomBuilderTest extends Specification {
                     <artifactId>dep3</artifactId>
                     <version>1.0</version>
                 </dependency>
+                <something>wrong</something>
             </dependencies>
         """)
         builder.reader.next()
@@ -273,8 +282,12 @@ class PomBuilderTest extends Specification {
                     <exclusion>
                         <groupId>org.projectlombok</groupId>
                         <artifactId>lombok</artifactId>
+                        <something>wrong</something>
                     </exclusion>
+                    <something>wrong</something>
                 </exclusions>
+                
+                <something>wrong</something>
             </dependency>
         """)
         builder.reader.next()
