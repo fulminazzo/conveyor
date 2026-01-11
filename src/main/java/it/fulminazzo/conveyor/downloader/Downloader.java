@@ -96,4 +96,41 @@ public interface Downloader {
      */
     @NotNull File getWorkingDir();
 
+    /**
+     * Creates a new cached downloader.
+     * Before downloading, it will attempt to find the resource on disk.
+     * If found, it will be verified using common checksum algorithms.
+     *
+     * @param workingDirectory the working directory (where download and check for file presence)
+     * @return the downloader
+     */
+    static @NotNull Downloader newCachedDownloader(final @NotNull File workingDirectory) {
+        return new CachedDownloader(workingDirectory);
+    }
+
+    /**
+     * Creates a new cached downloader.
+     * Before downloading, it will attempt to find the resource on disk.
+     * If found, it will be verified using common checksum algorithms.
+     *
+     * @param workingDirectory       the working directory (where download and check for file presence)
+     * @param redownloadOnUnverified if <code>false</code>, when the cached file cannot be verified,
+     *                               will <b>not</b> attempt to re-download it again
+     * @return the downloader
+     */
+    static @NotNull Downloader newCachedDownloader(final @NotNull File workingDirectory,
+                                                   final boolean redownloadOnUnverified) {
+        return new CachedDownloader(workingDirectory).setRedownloadOnUnverified(redownloadOnUnverified);
+    }
+
+    /**
+     * Creates a new simple downloader.
+     *
+     * @param workingDirectory the working directory (where download the files)
+     * @return the downloader
+     */
+    static @NotNull Downloader newDownloader(final @NotNull File workingDirectory) {
+        return new DownloaderImpl(workingDirectory);
+    }
+
 }
