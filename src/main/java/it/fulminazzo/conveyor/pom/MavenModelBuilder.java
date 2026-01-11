@@ -173,7 +173,7 @@ abstract class MavenModelBuilder {
      * @throws ParserException in case of any errors
      */
     protected <T> @NotNull T buildObject(final @NotNull String name,
-                               final @NotNull Supplier<T> buildFunction) throws ParserException {
+                                         final @NotNull Supplier<T> buildFunction) throws ParserException {
         try {
             return buildFunction.get();
         } catch (RuntimeException e) {
