@@ -125,6 +125,90 @@ class PomBuilderTest extends Specification {
         repository == expected
     }
 
+    def 'test that parseDependencyManagement returns correct dependencies'() {
+        given:
+        def builder = newBuilder("""
+            <dependencyManagement>
+                <dependency>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>dep1</artifactId>
+                    <version>1.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>dep2</artifactId>
+                    <version>1.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>dep3</artifactId>
+                    <version>1.0</version>
+                </dependency>
+            </dependencyManagement>
+        """)
+        builder.reader.next()
+
+        and:
+        def expected = [
+                Dependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(),
+                Dependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(),
+                Dependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('1.0').build()
+        ]
+
+        when:
+        builder.parseDependencyManagement()
+
+        and:
+        def field = PomBuilder.getDeclaredField('dependencyManagement')
+        field.accessible = true
+        def dependencies = field.get(builder)
+
+        then:
+        dependencies.sort() == expected.sort()
+    }
+
+    def 'test that parseDependencies returns correct dependencies'() {
+        given:
+        def builder = newBuilder("""
+            <dependencies>
+                <dependency>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>dep1</artifactId>
+                    <version>1.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>dep2</artifactId>
+                    <version>1.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>dep3</artifactId>
+                    <version>1.0</version>
+                </dependency>
+            </dependencies>
+        """)
+        builder.reader.next()
+
+        and:
+        def expected = [
+                Dependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(),
+                Dependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(),
+                Dependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('1.0').build()
+        ]
+
+        when:
+        builder.parseDependencies()
+
+        and:
+        def field = PomBuilder.getDeclaredField('dependencies')
+        field.accessible = true
+        def dependencies = field.get(builder)
+
+        then:
+        dependencies.sort() == expected.sort()
+    }
+
     def 'test that parseDependency returns correct dependency'() {
         given:
         def builder = newBuilder("""
