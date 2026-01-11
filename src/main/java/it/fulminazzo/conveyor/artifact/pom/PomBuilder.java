@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.artifact.pom;
 import it.fulminazzo.conveyor.artifact.pom.repository.ChecksumPolicy;
 import it.fulminazzo.conveyor.artifact.pom.repository.Repository;
 import it.fulminazzo.conveyor.artifact.pom.repository.update.UpdatePolicy;
+import it.fulminazzo.conveyor.function.ConsumerException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.stream.XMLInputFactory;
@@ -38,17 +39,7 @@ final class PomBuilder {
      * @throws XMLStreamException in case of reading or parsing errors
      */
     void parseProperties() throws XMLStreamException {
-        while (this.reader.hasNext())
-            switch (this.reader.next()) {
-                case XMLStreamConstants.START_ELEMENT -> {
-                    String key = this.reader.getLocalName();
-                    String value = getElementText();
-                    this.properties.put(key, value);
-                }
-                case XMLStreamConstants.END_ELEMENT -> {
-                    return;
-                }
-            }
+        parseGeneric(t -> this.properties.put(t, getElementText()));
     }
 
     /**
@@ -58,24 +49,16 @@ final class PomBuilder {
      * @throws XMLStreamException in case of reading or parsing errors
      */
     @NotNull Repository parseRepository() throws XMLStreamException {
-        Repository.RepositoryBuilder builder = Repository.builder();
-        while (this.reader.hasNext())
-            switch (this.reader.next()) {
-                case XMLStreamConstants.START_ELEMENT -> {
-                    String tagName = this.reader.getLocalName();
-                    switch (tagName) {
-                        case "id" -> builder.id(getElementText());
-                        case "name" -> builder.name(getElementText());
-                        case "url" -> builder.url(getElementText());
-                        case "releases" -> builder.releases(parseRepositoryPolicy());
-                        case "snapshots" -> builder.snapshots(parseRepositoryPolicy());
-                    }
-                }
-                case XMLStreamConstants.END_ELEMENT -> {
-                    if (this.reader.getLocalName().equals("repository"))
-                        return builder.build();
-                }
+        final Repository.RepositoryBuilder builder = Repository.builder();
+        parseGeneric(t -> {
+            switch (t) {
+                case "id" -> builder.id(getElementText());
+                case "name" -> builder.name(getElementText());
+                case "url" -> builder.url(getElementText());
+                case "releases" -> builder.releases(parseRepositoryPolicy());
+                case "snapshots" -> builder.snapshots(parseRepositoryPolicy());
             }
+        });
         return builder.build();
     }
 
@@ -86,25 +69,27 @@ final class PomBuilder {
      * @throws XMLStreamException in case of reading or parsing errors
      */
     @NotNull Repository.Policy parseRepositoryPolicy() throws XMLStreamException {
-        Repository.Policy.PolicyBuilder builder = Repository.Policy.builder();
+        final Repository.Policy.PolicyBuilder builder = Repository.Policy.builder();
+        parseGeneric(t -> {
+            String value = getElementText();
+            switch (t) {
+                case "enabled" -> builder.enabled(Boolean.parseBoolean(value));
+                case "updatePolicy" -> builder.updatePolicy(UpdatePolicy.of(value));
+                case "checksumPolicy" -> builder.checksumPolicy(ChecksumPolicy.valueOf(value.toUpperCase()));
+            }
+        });
+        return builder.build();
+    }
+
+    private void parseGeneric(final @NotNull ConsumerException<String, XMLStreamException> onElement) throws XMLStreamException {
         String name = this.reader.getLocalName();
         while (this.reader.hasNext())
             switch (this.reader.next()) {
-                case XMLStreamConstants.START_ELEMENT -> {
-                    String tagName = this.reader.getLocalName();
-                    String value = getElementText();
-                    switch (tagName) {
-                        case "enabled" -> builder.enabled(Boolean.parseBoolean(value));
-                        case "updatePolicy" -> builder.updatePolicy(UpdatePolicy.of(value));
-                        case "checksumPolicy" -> builder.checksumPolicy(ChecksumPolicy.valueOf(value.toUpperCase()));
-                    }
-                }
+                case XMLStreamConstants.START_ELEMENT -> onElement.accept(this.reader.getLocalName());
                 case XMLStreamConstants.END_ELEMENT -> {
-                    if (this.reader.getLocalName().equals(name))
-                        return builder.build();
+                    if (this.reader.getLocalName().equals(name)) return;
                 }
             }
-        return builder.build();
     }
 
     private @NotNull String getElementText() throws XMLStreamException {
