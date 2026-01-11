@@ -37,13 +37,12 @@ final class PomBuilder {
     void parseProperties() throws XMLStreamException {
         while (this.reader.hasNext())
             switch (this.reader.next()) {
-                case XMLStreamConstants.START_ELEMENT: {
+                case XMLStreamConstants.START_ELEMENT -> {
                     String key = this.reader.getLocalName();
                     String value = this.reader.getElementText();
                     this.properties.put(key, value);
-                    break;
                 }
-                case XMLStreamConstants.END_ELEMENT: {
+                case XMLStreamConstants.END_ELEMENT -> {
                     return;
                 }
             }
