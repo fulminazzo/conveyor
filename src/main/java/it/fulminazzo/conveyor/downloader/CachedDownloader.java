@@ -37,6 +37,26 @@ final class CachedDownloader extends DownloaderImpl {
     }
 
     /**
+     * Tries to obtain the given resource associated checksum.
+     * The checksum resource location is computed as
+     * "&lt;resource_path&gt;.&lt;algorithm_extension&gt;".
+     *
+     * @param resourcePath the resource path
+     * @param algorithm    the algorithm
+     * @return the checksum
+     * @throws DownloadException in case of any errors
+     */
+    public @NotNull String resolveChecksum(final @NotNull String resourcePath,
+                                           final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
+        String finalPath = resourcePath + "." + algorithm.getExtension();
+        try (InputStream stream = resolve(finalPath)) {
+            return stream.toString();
+        } catch (IOException e) {
+            throw new DownloadException(String.format("Error while downloading resource '%s'", finalPath), e);
+        }
+    }
+
+    /**
      * Computes the checksum for the given file.
      *
      * @param resourcePath the resource path
