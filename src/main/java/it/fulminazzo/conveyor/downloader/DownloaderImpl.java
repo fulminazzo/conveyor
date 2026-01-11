@@ -21,7 +21,7 @@ class DownloaderImpl implements Downloader {
     private final @NotNull Set<String> baseUrls = new LinkedHashSet<>();
 
     @Override
-    public @NotNull InputStream download(@NotNull String resourcePath) throws DownloadException {
+    public @NotNull InputStream resolve(@NotNull String resourcePath) throws DownloadException {
         if (this.baseUrls.isEmpty())
             throw new DownloadException("No base URL provided! Please, use addBaseUrls before calling this method");
         if (resourcePath.startsWith("/")) resourcePath = resourcePath.substring(1);

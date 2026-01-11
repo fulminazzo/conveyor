@@ -25,8 +25,8 @@ public interface Downloader {
      * @return the newly downloaded file
      * @throws DownloadException in case of any errors
      */
-    default @NotNull File downloadToFile(final @NotNull String resourcePath) throws DownloadException {
-        try (InputStream stream = download(resourcePath)) {
+    default @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
+        try (InputStream stream = resolve(resourcePath)) {
             File destination = new File(getWorkingDir(), resourcePath);
             Files.createDirectories(destination.getParentFile().toPath());
             Files.copy(stream, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -45,7 +45,7 @@ public interface Downloader {
      * @return the download stream
      * @throws DownloadException if the download could not be completed (mostly for resource not found)
      */
-    @NotNull InputStream download(final @NotNull String resourcePath) throws DownloadException;
+    @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException;
 
     /**
      * Checks if the given URLs are valid.
