@@ -47,6 +47,33 @@ class CachedDownloaderTest extends Specification {
         0 * downloader.resolve(path)
     }
 
+    def 'test that resolveToFile with #verified and #redownload calls resolve #expected times'() {
+        given:
+        def workDir = this.downloader.workingDir
+        def file = new File(workDir, 'checksum.txt')
+
+        and:
+        def downloader = (CachedDownloader) Spy(CachedDownloader, constructorArgs: [workDir])
+                .setRedownloadOnUnverified(redownload)
+                .addBaseUrls(TestUtils.MAVEN_CENTRAL_URL)
+
+        and:
+        downloader.verifyCachedResource(_) >> verified
+
+        when:
+        downloader.resolveToFile(file.name)
+
+        then:
+        expected * downloader.resolve(_) >> file.newInputStream()
+
+        where:
+        verified | redownload || expected
+        false    | false      || 0
+        true     | false      || 0
+        false    | true       || 1
+        true     | true       || 0
+    }
+
     def 'test actual resolveChecksum'() {
         given:
         this.downloader.addBaseUrls(TestUtils.MAVEN_CENTRAL_URL)
