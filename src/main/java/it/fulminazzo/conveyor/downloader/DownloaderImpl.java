@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 
 /**
@@ -16,6 +17,8 @@ import java.util.*;
  */
 @RequiredArgsConstructor
 class DownloaderImpl implements Downloader {
+    static final int CONNECT_READ_TIMEOUT = 10000;
+
     @Getter
     private final @NotNull File workingDir;
     private final @NotNull Set<String> baseUrls = new LinkedHashSet<>();
@@ -28,7 +31,10 @@ class DownloaderImpl implements Downloader {
         Throwable latest = null;
         for (String url : this.baseUrls)
             try {
-                return new URL(url + resourcePath).openStream();
+                URLConnection connection = new URL(url + resourcePath).openConnection();
+                connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
+                connection.setReadTimeout(CONNECT_READ_TIMEOUT);
+                return connection.getInputStream();
             } catch (MalformedURLException e) {
                 throw new IllegalStateException("Unreachable code");
             } catch (IOException e) {
