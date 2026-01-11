@@ -57,7 +57,7 @@ final class CachedDownloader extends DownloaderImpl {
                                            final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
         String finalPath = resourcePath + "." + algorithm.getExtension();
         try (InputStream stream = resolve(finalPath)) {
-            return stream.toString();
+            return new String(stream.readAllBytes());
         } catch (IOException e) {
             throw new DownloadException(String.format("Error while downloading resource '%s'", finalPath), e);
         }
