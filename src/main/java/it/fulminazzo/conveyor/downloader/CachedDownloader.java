@@ -19,6 +19,8 @@ import java.util.HexFormat;
 final class CachedDownloader extends DownloaderImpl {
     private static final int readingBufferSize = 8192;
 
+    private boolean redownloadOnUnverified = true;
+
     /**
      * Instantiates a new Cached downloader.
      *
@@ -44,7 +46,8 @@ final class CachedDownloader extends DownloaderImpl {
     public @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
         File resourceFile = getResourceFile(resourcePath);
         if (resourceFile.exists()) {
-            if (verifyCachedResource(resourcePath)) return resourceFile;
+            if (verifyCachedResource(resourcePath) || !this.redownloadOnUnverified)
+                return resourceFile;
         }
         return super.resolveToFile(resourcePath);
     }
@@ -120,6 +123,21 @@ final class CachedDownloader extends DownloaderImpl {
         }
 
         return HexFormat.of().formatHex(messageDigest.digest());
+    }
+
+    /**
+     * If <code>redownloadOnUnverified</code> is set to <code>true</code>,
+     * when {@link #resolveToFile(String)} is invoked but {@link #verifyCachedResource(String)} fails,
+     * it will attempt to re-download the resource.
+     * <br>
+     * <code>true</code> by default.
+     *
+     * @param redownloadOnUnverified the redownload on unverified
+     * @return this cached downloader
+     */
+    public @NotNull CachedDownloader setRedownloadOnUnverified(final boolean redownloadOnUnverified) {
+        this.redownloadOnUnverified = redownloadOnUnverified;
+        return this;
     }
 
 }
