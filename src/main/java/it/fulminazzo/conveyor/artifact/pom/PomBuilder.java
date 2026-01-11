@@ -20,6 +20,8 @@ import java.util.*;
 final class PomBuilder {
     private final @NotNull Map<String, String> properties = new HashMap<>();
     private final @NotNull Set<Repository> repositories = new HashSet<>();
+    private final @NotNull Set<Dependency> dependencyManagement = new HashSet<>();
+    private final @NotNull List<Dependency> dependencies = new ArrayList<>();
 
     private final @NotNull XMLStreamReader reader;
 
@@ -92,6 +94,30 @@ final class PomBuilder {
             }
         });
         return builder.build();
+    }
+
+    /**
+     * Handles a <b>&lt;dependencyManagement&gt;</b> tag in the document.
+     *
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    void parseDependencyManagement() throws XMLStreamException {
+        parseGeneric(t -> {
+            if (t.equals("dependency"))
+                this.dependencyManagement.add(parseDependency());
+        });
+    }
+
+    /**
+     * Handles a <b>&lt;dependencies&gt;</b> tag in the document.
+     *
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    void parseDependencies() throws XMLStreamException {
+        parseGeneric(t -> {
+            if (t.equals("dependency"))
+                this.dependencies.add(parseDependency());
+        });
     }
 
     /**
