@@ -1,5 +1,8 @@
 package it.fulminazzo.conveyor.artifact.pom;
 
+import it.fulminazzo.conveyor.artifact.pom.repository.ChecksumPolicy;
+import it.fulminazzo.conveyor.artifact.pom.repository.Repository;
+import it.fulminazzo.conveyor.artifact.pom.repository.update.UpdatePolicy;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.stream.XMLInputFactory;
@@ -46,6 +49,62 @@ final class PomBuilder {
                     return;
                 }
             }
+    }
+
+    /**
+     * Handles a <b>&lt;repository&gt;</b> tag in the document.
+     *
+     * @return the repository
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    @NotNull Repository parseRepository() throws XMLStreamException {
+        Repository.RepositoryBuilder builder = Repository.builder();
+        while (this.reader.hasNext())
+            switch (this.reader.next()) {
+                case XMLStreamConstants.START_ELEMENT -> {
+                    String tagName = this.reader.getLocalName();
+                    String value = this.reader.getElementText();
+                    switch (tagName) {
+                        case "id" -> builder.id(value);
+                        case "name" -> builder.name(value);
+                        case "url" -> builder.url(value);
+                        case "releases", "snapshots" -> builder.releases(parseRepositoryPolicy());
+                    }
+                }
+                case XMLStreamConstants.END_ELEMENT -> {
+                    if (this.reader.getLocalName().equals("repository"))
+                        return builder.build();
+                }
+            }
+        return builder.build();
+    }
+
+    /**
+     * Generates a {@link Repository.Policy} from the current reader.
+     *
+     * @return the repository policy
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    @NotNull Repository.Policy parseRepositoryPolicy() throws XMLStreamException {
+        Repository.Policy.PolicyBuilder builder = Repository.Policy.builder();
+        String name = this.reader.getLocalName();
+        while (this.reader.hasNext())
+            switch (this.reader.next()) {
+                case XMLStreamConstants.START_ELEMENT -> {
+                    String tagName = this.reader.getLocalName();
+                    String value = this.reader.getElementText();
+                    switch (tagName) {
+                        case "enabled" -> builder.enabled(Boolean.parseBoolean(value));
+                        case "updatePolicy" -> builder.updatePolicy(UpdatePolicy.of(value));
+                        case "checksumPolicy" -> builder.checksumPolicy(ChecksumPolicy.valueOf(value.toUpperCase()));
+                    }
+                }
+                case XMLStreamConstants.END_ELEMENT -> {
+                    if (this.reader.getLocalName().equals(name))
+                        return builder.build();
+                }
+            }
+        return builder.build();
     }
 
 }
