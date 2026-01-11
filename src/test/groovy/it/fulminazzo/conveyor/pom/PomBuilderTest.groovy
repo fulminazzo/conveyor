@@ -9,6 +9,20 @@ import spock.lang.Specification
 
 class PomBuilderTest extends Specification {
 
+    def 'test that PomBuilder throws ParserException on initialization error'() {
+        given:
+        def mockStream = Mock(InputStream)
+        mockStream.read() >> {
+            throw new IOException('Test exception')
+        }
+
+        when:
+        new PomBuilder(mockStream)
+
+        then:
+        thrown(ParserException)
+    }
+
     def 'test that RuntimeException on build is replaced by ParserException'() {
         given:
         def builder = newBuilder("""
@@ -309,6 +323,30 @@ class PomBuilderTest extends Specification {
 
         then:
         dependency == expected
+    }
+
+    def 'test that parseGeneric throws ParserException on XMLStreamException'() {
+        given:
+        def builder = newBuilder('<project>')
+        builder.reader.next()
+
+        when:
+        builder.parseDocument()
+
+        then:
+        thrown(ParserException)
+    }
+
+    def 'test that getElementText throws ParserException on XMLStreamException'() {
+        given:
+        def builder = newBuilder('<properties><first><second></second></first></properties>')
+        builder.reader.next()
+
+        when:
+        builder.parseProperties()
+
+        then:
+        thrown(ParserException)
     }
 
     private static PomBuilder newBuilder(final String data) {
