@@ -3,6 +3,9 @@ package it.fulminazzo.conveyor.downloader
 import spock.lang.Specification
 
 class DownloaderImplTest extends Specification {
+    static final String MAVEN_CENTRAL_URL = 'repo.maven.apache.org/maven2'
+    static final String LOMBOK_PATH = 'org/projectlombok/lombok/1.18.42/lombok-1.18.42.pom'
+    
     private Downloader downloader
 
     void setup() {
@@ -18,7 +21,7 @@ class DownloaderImplTest extends Specification {
         and:
         this.downloader.addBaseUrls(
                 'invalidoffline.com',
-                'repo.maven.apache.org/maven2'
+                MAVEN_CENTRAL_URL
         )
 
         and:
@@ -35,8 +38,8 @@ class DownloaderImplTest extends Specification {
 
         where:
         path << [
-                'org/projectlombok/lombok/1.18.42/lombok-1.18.42.pom',
-                '/org/projectlombok/lombok/1.18.42/lombok-1.18.42.pom'
+                LOMBOK_PATH,
+                "/$LOMBOK_PATH"
         ]
     }
 
@@ -57,6 +60,24 @@ class DownloaderImplTest extends Specification {
         then:
         def e = thrown(DownloadException)
         e.message.contains("'path'")
+    }
+
+    def 'test that resolveToFile throws on IO error'() {
+        given:
+        def downloader = new DownloaderImpl(new File('/'))
+
+        and:
+        downloader.addBaseUrls(
+                'invalidoffline.com',
+                MAVEN_CENTRAL_URL
+        )
+
+        when:
+        downloader.resolveToFile(LOMBOK_PATH)
+
+        then:
+        def e = thrown(DownloadException)
+        e.message.contains("Error while downloading")
     }
 
     def 'test that resolve throws on missing URLs'() {
