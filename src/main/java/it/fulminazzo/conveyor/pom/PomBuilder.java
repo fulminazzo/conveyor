@@ -1,11 +1,13 @@
 package it.fulminazzo.conveyor.pom;
 
+import it.fulminazzo.conveyor.pom.artifact.Artifact;
 import it.fulminazzo.conveyor.pom.dependency.Dependency;
 import it.fulminazzo.conveyor.pom.repository.ChecksumPolicy;
 import it.fulminazzo.conveyor.pom.repository.Repository;
 import it.fulminazzo.conveyor.pom.repository.update.UpdatePolicy;
 import it.fulminazzo.conveyor.function.ConsumerException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -22,6 +24,7 @@ final class PomBuilder {
     private final @NotNull Set<Repository> repositories = new HashSet<>();
     private final @NotNull Set<Dependency> dependencyManagement = new HashSet<>();
     private final @NotNull List<Dependency> dependencies = new ArrayList<>();
+    private @Nullable Artifact parent;
 
     private final @NotNull XMLStreamReader reader;
 
@@ -34,6 +37,27 @@ final class PomBuilder {
     public PomBuilder(final @NotNull InputStream inputStream) throws XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         this.reader = factory.createXMLStreamReader(inputStream);
+    }
+
+    /**
+     * Handles the <b>&lt;parent&gt;</b> tag in the document.
+     *
+     * @throws XMLStreamException in case of reading or parsing errors
+     */
+    void parseParent() throws XMLStreamException {
+        this.parent = parseArtifact();
+    }
+
+    private @NotNull Artifact parseArtifact() throws XMLStreamException {
+        Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
+        parseGeneric(t -> {
+            switch (t) {
+                case "groupId" -> builder.groupId(getElementText());
+                case "artifactId" -> builder.artifactId(getElementText());
+                case "version" -> builder.version(getElementText());
+            }
+        });
+        return builder.build();
     }
 
     /**
