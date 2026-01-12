@@ -55,7 +55,7 @@ record OsActivation(
             if (expected.equalsIgnoreCase(unixFamily)) {
                 isMatch = actual.equals(unixFamily) || actual.equals(macFamily) || actual.equals(linuxFamily);
             } else {
-                isMatch = expected.toLowerCase().contains(actual.toLowerCase());
+                isMatch = actual.toLowerCase().contains(expected.toLowerCase());
             }
 
             if (negated == isMatch) return false;
@@ -73,7 +73,7 @@ record OsActivation(
 
     private @NotNull String getFamily(final @NotNull String osName) {
         for (String key : familiesMap.keySet())
-            if (osName.contains(key)) return familiesMap.get(key);
+            if (osName.toLowerCase().contains(key.toLowerCase())) return familiesMap.get(key);
         return unixFamily;
     }
 
@@ -90,7 +90,7 @@ record OsActivation(
                                final @NotNull String actual) {
         boolean negated = expected.startsWith(NEGATION);
         if (negated) expected = expected.substring(1);
-        if (expected.toLowerCase().contains(actual.toLowerCase())) return negated;
+        if (actual.toLowerCase().contains(expected.toLowerCase())) return negated;
         return !negated;
     }
 
