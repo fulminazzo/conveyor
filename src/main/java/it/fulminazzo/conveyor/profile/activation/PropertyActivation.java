@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @param value the value of the property (if <code>null</code>, any value)
  */
 record PropertyActivation(@NotNull String name, @Nullable String value) implements Activation {
+    private static final @NotNull String packaging = "packaging";
 
     @Override
     public boolean isEnabled(final @NotNull ActivationContext context) {
@@ -30,7 +31,7 @@ record PropertyActivation(@NotNull String name, @Nullable String value) implemen
             }
         }
 
-        String propertyValue = context.getProperty(actualName);
+        String propertyValue = actualName.equals(packaging) ? context.getPackaging() : context.getProperty(actualName);
         if (propertyValue == null) return !matchName;
         if (actualValue == null) return true;
 
