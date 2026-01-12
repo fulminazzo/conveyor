@@ -153,31 +153,31 @@ class ActivationTest extends Specification {
     def 'test that FileActivation isEnabled with #exists and #missing returns #expected'() {
         given:
         def activation = new FileActivation(exists, missing)
-        def context = newContext()
+        def context = newContext(new File(file))
 
         expect:
         activation.isEnabled(context) == expected
 
         where:
-        exists                                 | missing                                || expected
-        'invalid'                              | null                                   || false
-        'invalid'                              | 'invalid'                              || false
-        null                                   | 'src'                                  || false
-        'src'                                  | 'src'                                  || false
-        null                                   | null                                   || true
-        'src'                                  | null                                   || true
-        null                                   | 'invalid'                              || true
-        'src'                                  | 'invalid'                              || true
-        null                                   | '${user.home}'                         || false
-        '${user.home}'                         | null                                   || true
-        null                                   | '${env.JAVA_HOME}'                     || false
-        '${env.JAVA_HOME}'                     | null                                   || true
-        null                                   | '${basedir}'                           || false
-        '${basedir}'                           | null                                   || true
-        null                                   | '${project.basedir}'                   || false
-        '${project.basedir}'                   | null                                   || true
-        null                                   | '${maven.multiModuleProjectDirectory}' || false
-        '${maven.multiModuleProjectDirectory}' | null                                   || true
+        file | exists                                 | missing                                || expected
+        '.'  | 'invalid'                              | null                                   || false
+        '.'  | 'invalid'                              | 'invalid'                              || false
+        '.'  | null                                   | 'src'                                  || false
+        '.'  | 'src'                                  | 'src'                                  || false
+        '.'  | null                                   | null                                   || true
+        '.'  | 'src'                                  | null                                   || true
+        '.'  | null                                   | 'invalid'                              || true
+        '.'  | 'src'                                  | 'invalid'                              || true
+        '/'  | null                                   | '${user.home}'                         || false
+        '/'  | '${user.home}'                         | null                                   || true
+        '/'  | null                                   | '${env.JAVA_HOME}'                     || false
+        '/'  | '${env.JAVA_HOME}'                     | null                                   || true
+        '/'  | null                                   | '${basedir}'                           || false
+        '/'  | '${basedir}'                           | null                                   || true
+        '/'  | null                                   | '${project.basedir}'                   || false
+        '/'  | '${project.basedir}'                   | null                                   || true
+        '/'  | null                                   | '${maven.multiModuleProjectDirectory}' || false
+        '/'  | '${maven.multiModuleProjectDirectory}' | null                                   || true
     }
 
     def 'test that BooleanActivation isEnabled with #expected returns #expected'() {
