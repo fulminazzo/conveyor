@@ -7,7 +7,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Stack;
@@ -18,7 +17,6 @@ import java.util.Stack;
 final class XmlParserImpl implements XmlParser {
     private final @NotNull Stack<String> scopes = new Stack<>();
 
-    private final @NotNull InputStream inputStream;
     private final @NotNull XMLStreamReader reader;
 
     private @Nullable String nextTag;
@@ -35,7 +33,6 @@ final class XmlParserImpl implements XmlParser {
     public XmlParserImpl(final @NotNull InputStream inputStream) throws XmlParserException {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-            this.inputStream = inputStream;
             this.reader = factory.createXMLStreamReader(inputStream);
         } catch (XMLStreamException e) {
             throw XmlParserException.of("Could not create XmlParser", e);
@@ -116,7 +113,6 @@ final class XmlParserImpl implements XmlParser {
 
     private @Nullable String fetchNextTag() throws XmlParserException {
         try {
-            if (this.inputStream.available() <= 0) return null;
             while (this.reader.hasNext()) {
                 int event = this.reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT)
@@ -128,7 +124,7 @@ final class XmlParserImpl implements XmlParser {
                 }
             }
             return null;
-        } catch (XMLStreamException | IOException e) {
+        } catch (XMLStreamException e) {
             throw XmlParserException.of("Could not fetch next tag from XML document", e);
         }
     }
