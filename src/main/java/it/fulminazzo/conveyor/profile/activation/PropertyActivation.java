@@ -27,7 +27,7 @@ record PropertyActivation(@NotNull String name, @Nullable String value) implemen
         } else negatedValue = false;
 
         String propertyValue = actualName.equals(packaging) ? context.getPackaging() : context.getProperty(actualName);
-        if (propertyValue == null) return negatedName;
+        if (negatedName) return propertyValue == null;
         if (actualValue == null) return true;
 
         boolean matches = actualValue.equals(propertyValue);
