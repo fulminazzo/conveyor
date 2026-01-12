@@ -11,21 +11,21 @@ import org.jetbrains.annotations.NotNull;
 public final class XmlParserException extends Exception {
 
     /**
-     * Instantiates a new Parser exception.
+     * Instantiates a new XML parser exception.
      *
      * @param message the message
-     * @return the parser exception
+     * @return the XML parser exception
      */
     static @NotNull XmlParserException of(final @NotNull String message) {
         return new XmlParserException(message);
     }
 
     /**
-     * Instantiates a new Parser exception.
+     * Instantiates a new XML parser exception.
      *
      * @param message the message
      * @param cause   the cause
-     * @return the parser exception
+     * @return the XML parser exception
      */
     static @NotNull XmlParserException of(final @NotNull String message,
                                           final @NotNull Throwable cause) {
