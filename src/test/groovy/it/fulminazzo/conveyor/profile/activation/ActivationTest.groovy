@@ -14,71 +14,77 @@ class ActivationTest extends Specification {
         activation.isEnabled(context) == expected
 
         where:
-        jdk         || osJdk      || expected
-        '1.8'       || '1.8'      || true
-        '!1.8'      || '1.8'      || false
-        '1.8'       || '1.8.0_08' || true
-        '!1.8'      || '1.8.0_08' || false
-        '1.8'       || '1.8.2.07' || true
-        '!1.8'      || '1.8.2.07' || false
-        '1.8'       || '17'       || false
-        '!1.8'      || '17'       || true
-        '(1.8,)'    || '17'       || true
-        '!(1.8,)'   || '17'       || false
-        '[1.8,)'    || '17'       || true
-        '![1.8,)'   || '17'       || false
-        '(1.8,)'    || '1.8'      || false
-        '!(1.8,)'   || '1.8'      || true
-        '[1.8,)'    || '1.8'      || true
-        '![1.8,)'   || '1.8'      || false
-        '(,17)'     || '1.8'      || true
-        '!(,17)'    || '1.8'      || false
-        '(,17]'     || '1.8'      || true
-        '!(,17]'    || '1.8'      || false
-        '(,17)'     || '17'       || false
-        '!(,17)'    || '17'       || true
-        '(,17]'     || '17'       || true
-        '!(,17]'    || '17'       || false
-        '(1.8,17]'  || '14'       || true
-        '!(1.8,17]' || '14'       || false
-        '[1.8,17]'  || '14'       || true
-        '![1.8,17]' || '14'       || false
-        '(1.8,17]'  || '1.8'      || false
-        '!(1.8,17]' || '1.8'      || true
-        '[1.8,17]'  || '1.8'      || true
-        '![1.8,17]' || '1.8'      || false
-        '(1.8,17]'  || '14'       || true
-        '!(1.8,17]' || '14'       || false
-        '[1.8,17]'  || '14'       || true
-        '![1.8,17]' || '14'       || false
-        '(1.8,17]'  || '1.8'      || false
-        '!(1.8,17]' || '1.8'      || true
-        '[1.8,17]'  || '1.8'      || true
-        '![1.8,17]' || '1.8'      || false
-        '[1.8,17)'  || '14'       || true
-        '![1.8,17)' || '14'       || false
-        '[1.8,17]'  || '14'       || true
-        '![1.8,17]' || '14'       || false
-        '[1.8,17)'  || '17'       || false
-        '![1.8,17)' || '17'       || true
-        '[1.8,17]'  || '17'       || true
-        '![1.8,17]' || '17'       || false
-        '!1.8'      || '1.8'      || false
-        '!1.8'      || '17'       || true
-        '!17'       || '1.8'      || true
-        '!17'       || '17'       || false
-        '(1.8.8,)'  || '1.8.8'    || false
-        '!(1.8.8,)' || '1.8.8'    || true
-        '[1.8.8,)'  || '1.8.8'    || true
-        '![1.8.8,)' || '1.8.8'    || false
-        '[1.8.8,)'  || '1.8.9'    || true
-        '![1.8.8,)' || '1.8.9'    || false
-        '[1.8.8,)'  || '1.8.10'   || true
-        '![1.8.8,)' || '1.8.10'   || false
-        '(1.8.9,)'  || '1.8.8'    || false
-        '!(1.8.9,)' || '1.8.8'    || true
-        '[1.8.9,)'  || '1.8.8'    || false
-        '![1.8.9,)' || '1.8.8'    || true
+        jdk                 || osJdk      || expected
+        '1.8'               || '1.8'      || true
+        '!1.8'              || '1.8'      || false
+        '1.8'               || '1.8.0_08' || true
+        '!1.8'              || '1.8.0_08' || false
+        '1.8'               || '1.8.2.07' || true
+        '!1.8'              || '1.8.2.07' || false
+        '1.8'               || '17'       || false
+        '!1.8'              || '17'       || true
+        '(1.8,)'            || '17'       || true
+        '!(1.8,)'           || '17'       || false
+        '[1.8,)'            || '17'       || true
+        '![1.8,)'           || '17'       || false
+        '(1.8,)'            || '1.8'      || false
+        '!(1.8,)'           || '1.8'      || true
+        '[1.8,)'            || '1.8'      || true
+        '![1.8,)'           || '1.8'      || false
+        '(,17)'             || '1.8'      || true
+        '!(,17)'            || '1.8'      || false
+        '(,17]'             || '1.8'      || true
+        '!(,17]'            || '1.8'      || false
+        '(,17)'             || '17'       || false
+        '!(,17)'            || '17'       || true
+        '(,17]'             || '17'       || true
+        '!(,17]'            || '17'       || false
+        '(1.8,17]'          || '14'       || true
+        '!(1.8,17]'         || '14'       || false
+        '[1.8,17]'          || '14'       || true
+        '![1.8,17]'         || '14'       || false
+        '(1.8,17]'          || '1.8'      || false
+        '!(1.8,17]'         || '1.8'      || true
+        '[1.8,17]'          || '1.8'      || true
+        '![1.8,17]'         || '1.8'      || false
+        '(1.8,17]'          || '14'       || true
+        '!(1.8,17]'         || '14'       || false
+        '[1.8,17]'          || '14'       || true
+        '![1.8,17]'         || '14'       || false
+        '(1.8,17]'          || '1.8'      || false
+        '!(1.8,17]'         || '1.8'      || true
+        '[1.8,17]'          || '1.8'      || true
+        '![1.8,17]'         || '1.8'      || false
+        '[1.8,17)'          || '14'       || true
+        '![1.8,17)'         || '14'       || false
+        '[1.8,17]'          || '14'       || true
+        '![1.8,17]'         || '14'       || false
+        '[1.8,17)'          || '17'       || false
+        '![1.8,17)'         || '17'       || true
+        '[1.8,17]'          || '17'       || true
+        '![1.8,17]'         || '17'       || false
+        '!1.8'              || '1.8'      || false
+        '!1.8'              || '17'       || true
+        '!17'               || '1.8'      || true
+        '!17'               || '17'       || false
+        '(1.8.8,)'          || '1.8.8'    || false
+        '!(1.8.8,)'         || '1.8.8'    || true
+        '[1.8.8,)'          || '1.8.8'    || true
+        '![1.8.8,)'         || '1.8.8'    || false
+        '[1.8.8,)'          || '1.8.9'    || true
+        '![1.8.8,)'         || '1.8.9'    || false
+        '[1.8.8,)'          || '1.8.10'   || true
+        '![1.8.8,)'         || '1.8.10'   || false
+        '(1.8.9,)'          || '1.8.8'    || false
+        '!(1.8.9,)'         || '1.8.8'    || true
+        '[1.8.9,)'          || '1.8.8'    || false
+        '![1.8.9,)'         || '1.8.8'    || true
+        '[1.8.-SNAPSHOT,)'  || '1.8.8'    || true
+        '![1.8.-SNAPSHOT,)' || '1.8.8'    || false
+        '[1,)'              || '1.8.8'    || true
+        '![1,)'             || '1.8.8'    || false
+        '[1.8.-SNAPSHOT,)'  || '1.8'      || true
+        '![1.8.-SNAPSHOT,)' || '1.8'      || false
     }
 
     def 'test that OsActivation isEnabled with #name, #family, #arch and #version of #osName, #osArch and #osVersion returns #expected'() {
@@ -90,29 +96,44 @@ class ActivationTest extends Specification {
         activation.isEnabled(context) == expected
 
         where:
-        name             | family    | arch      | version || osName           | osArch   | osVersion || expected
-        'Linux'          | 'unix'    | 'x86-64'  | '6.2'   || 'Mac'            | 'x86-64' | '6.2.1'   || false
-        'Linux'          | 'unix'    | 'arm'     | '6.2'   || 'Linux'          | 'x86-64' | '6.2.1'   || false
-        'Linux'          | 'unix'    | 'x86-64'  | '5.6'   || 'Linux'          | 'x86-64' | '6.2.1'   || false
-        'Windows'        | 'windows' | 'x86-64'  | '7'     || 'Windows 7'      | 'x86-64' | '7'       || true
-        'dos'            | 'dos'     | 'x86-64'  | '1.0'   || 'dos'            | 'x86-64' | '1.0'     || true
-        'ms-dos'         | 'dos'     | 'x86-64'  | '1.0'   || 'ms-dos'         | 'x86-64' | '1.0'     || true
-        'os/2'           | 'os/2'    | 'x86-64'  | '1.0'   || 'os/2'           | 'x86-64' | '1.0'     || true
-        'netware'        | 'netware' | 'x86-64'  | '1.0'   || 'netware'        | 'x86-64' | '1.0'     || true
-        'os/400'         | 'os/400'  | 'x86-64'  | '1.0'   || 'os/400'         | 'x86-64' | '1.0'     || true
-        'z/os'           | 'z/os'    | 'x86-64'  | '1.0'   || 'z/os'           | 'x86-64' | '1.0'     || true
-        'os/390'         | 'z/os'    | 'x86-64'  | '1.0'   || 'os/390'         | 'x86-64' | '1.0'     || true
-        'nonstop-kernel' | 'tandem'  | 'x86-64'  | '1.0'   || 'nonstop-kernel' | 'x86-64' | '1.0'     || true
-        'openvms'        | 'openvms' | 'x86-64'  | '1.0'   || 'openvms'        | 'x86-64' | '1.0'     || true
-        'Mac'            | 'unix'    | 'x86-64'  | '15'    || 'Mac'            | 'x86-64' | '15.4'    || true
-        'Mac'            | 'mac'     | 'x86-64'  | '15'    || 'Mac'            | 'x86-64' | '15.4'    || true
-        'Linux'          | 'unix'    | 'x86-64'  | '6.2'   || 'Linux'          | 'x86-64' | '6.2.1'   || true
-        'Linux'          | 'linux'   | 'x86-64'  | '6.2'   || 'Linux'          | 'x86-64' | '6.2.1'   || true
-        '!Linux'         | 'linux'   | 'x86-64'  | '6.2'   || 'Linux'          | 'x86-64' | '6.2.1'   || false
-        'Linux'          | '!unix'   | 'x86-64'  | '6.2'   || 'Linux'          | 'x86-64' | '6.2.1'   || false
-        'Linux'          | '!linux'  | 'x86-64'  | '6.2'   || 'Linux'          | 'x86-64' | '6.2.1'   || false
-        'Linux'          | 'linux'   | '!x86-64' | '6.2'   || 'Linux'          | 'x86-64' | '6.2.1'   || false
-        'Linux'          | 'linux'   | 'x86-64'  | '!6.2'  || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        name             | family    | arch      | version               || osName           | osArch   | osVersion || expected
+        'Linux'          | 'unix'    | 'x86-64'  | '6.2'                 || 'Mac'            | 'x86-64' | '6.2.1'   || false
+        'Linux'          | 'unix'    | 'arm'     | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        'Linux'          | 'unix'    | 'x86-64'  | '5.6'                 || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        'Windows'        | 'windows' | 'x86-64'  | '7'                   || 'Windows 7'      | 'x86-64' | '7'       || true
+        'dos'            | 'dos'     | 'x86-64'  | '1.0'                 || 'dos'            | 'x86-64' | '1.0'     || true
+        'ms-dos'         | 'dos'     | 'x86-64'  | '1.0'                 || 'ms-dos'         | 'x86-64' | '1.0'     || true
+        'os/2'           | 'os/2'    | 'x86-64'  | '1.0'                 || 'os/2'           | 'x86-64' | '1.0'     || true
+        'netware'        | 'netware' | 'x86-64'  | '1.0'                 || 'netware'        | 'x86-64' | '1.0'     || true
+        'os/400'         | 'os/400'  | 'x86-64'  | '1.0'                 || 'os/400'         | 'x86-64' | '1.0'     || true
+        'z/os'           | 'z/os'    | 'x86-64'  | '1.0'                 || 'z/os'           | 'x86-64' | '1.0'     || true
+        'os/390'         | 'z/os'    | 'x86-64'  | '1.0'                 || 'os/390'         | 'x86-64' | '1.0'     || true
+        'nonstop-kernel' | 'tandem'  | 'x86-64'  | '1.0'                 || 'nonstop-kernel' | 'x86-64' | '1.0'     || true
+        'openvms'        | 'openvms' | 'x86-64'  | '1.0'                 || 'openvms'        | 'x86-64' | '1.0'     || true
+        'Unix'           | 'unix'    | 'arm'     | '1.0'                 || 'unix'           | 'arm'    | '1.0'     || true
+        'Mac'            | 'unix'    | 'x86-64'  | '15'                  || 'Mac'            | 'x86-64' | '15.4'    || true
+        'Mac'            | 'mac'     | 'x86-64'  | '15'                  || 'Mac'            | 'x86-64' | '15.4'    || true
+        'Linux'          | 'unix'    | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        'Linux'          | 'linux'   | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        '!Linux'         | 'linux'   | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        'Linux'          | '!unix'   | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        'Linux'          | '!linux'  | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        'Linux'          | 'linux'   | '!x86-64' | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        'Linux'          | 'linux'   | 'x86-64'  | '!6.2'                || 'Linux'          | 'x86-64' | '6.2.1'   || false
+        null             | 'linux'   | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        'Linux'          | null      | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        null             | null      | 'x86-64'  | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        'Linux'          | 'linux'   | null      | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        'Linux'          | null      | null      | '6.2'                 || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        'Linux'          | 'linux'   | 'x86-64'  | null                  || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        'Linux'          | 'linux'   | null      | null                  || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        'Linux'          | null      | null      | null                  || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        null             | null      | null      | null                  || 'Linux'          | 'x86-64' | '6.2.1'   || true
+        null             | null      | null      | 'regex:[0-9]\\.[0-9]' || 'Linux'          | 'x86-64' | '6.2'     || true
+        null             | 'unix'    | null      | null                  || 'unknown'        | 'x86-64' | '1.0'     || true
+        null             | 'unknown' | null      | null                  || 'unknown'        | 'x86-64' | '1.0'     || false
+        '!Linux'         | null      | null      | null                  || 'Linux'          | 'x86-64' | '1.0'     || false
+        '!Mac'           | null      | null      | null                  || 'Linux'          | 'x86-64' | '1.0'     || true
     }
 
     def 'test that PropertyActivation isEnabled with #name and #value returns #expected'() {
