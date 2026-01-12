@@ -170,8 +170,8 @@ class ActivationTest extends Specification {
         '.'  | 'src'                                  | 'invalid'                              || true
         '/'  | null                                   | '${user.home}'                         || false
         '/'  | '${user.home}'                         | null                                   || true
-        '/'  | null                                   | '${env.JAVA_HOME}'                     || false
-        '/'  | '${env.JAVA_HOME}'                     | null                                   || true
+        '/'  | null                                   | '${env.SHELL}'                         || false
+        '/'  | '${env.SHELL}'                         | null                                   || true
         '/'  | null                                   | '${basedir}'                           || false
         '/'  | '${basedir}'                           | null                                   || true
         '/'  | null                                   | '${project.basedir}'                   || false
