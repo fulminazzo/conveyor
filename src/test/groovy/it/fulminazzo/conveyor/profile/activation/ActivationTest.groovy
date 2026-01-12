@@ -206,8 +206,12 @@ class ActivationTest extends Specification {
         return context
     }
 
-    private ActivationContext newContext() {
-        //TODO: proper activation context
+    private static ActivationContext newContext() {
+        return newContext(new File('.').absoluteFile)
+    }
+
+    private static ActivationContext newContext(final File currentDir) {
+        return ActivationContext.current(currentDir, 'jar')
     }
 
 }
