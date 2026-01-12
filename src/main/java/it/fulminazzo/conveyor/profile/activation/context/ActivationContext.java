@@ -53,6 +53,13 @@ public interface ActivationContext {
     @Nullable String getProperty(final @NotNull String name);
 
     /**
+     * Gets the packaging defined in the associated <b>pom.xml</b> file.
+     *
+     * @return the packaging
+     */
+    @NotNull String getPackaging();
+
+    /**
      * Gets the base directory of the context.
      *
      * @return the current dir
