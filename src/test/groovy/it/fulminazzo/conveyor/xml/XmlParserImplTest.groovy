@@ -8,25 +8,31 @@ class XmlParserImplTest extends Specification {
 
     def 'test hasNext and next methods return correct values'() {
         given:
-        def parser = newParser('<first></first><second></second><third></third>')
+        def parser = newParser('<project><first></first><second></second><third></third></project>')
 
-        when:
-        def next = parser.hasNext()
-
-        then:
-        next
+        expect:
+        parser.hasNext()
 
         when:
         def tag = parser.next()
 
         then:
-        tag == 'first'
+        tag == 'project'
+
+        and:
+        parser.hasNext()
 
         when:
-        next = parser.hasNext()
+        tag = parser.next()
 
         then:
-        next
+        tag == 'first'
+
+        and:
+        !parser.hasNext()
+
+        and:
+        parser.hasNext()
 
         when:
         tag = parser.next()
@@ -34,11 +40,11 @@ class XmlParserImplTest extends Specification {
         then:
         tag == 'second'
 
-        when:
-        next = parser.hasNext()
+        and:
+        !parser.hasNext()
 
-        then:
-        next
+        and:
+        parser.hasNext()
 
         when:
         tag = parser.next()
@@ -46,11 +52,11 @@ class XmlParserImplTest extends Specification {
         then:
         tag == 'third'
 
-        when:
-        next = parser.hasNext()
+        and:
+        !parser.hasNext()
 
-        then:
-        !next
+        and:
+        !parser.hasNext()
     }
 
     def 'test children returns all the children'() {
