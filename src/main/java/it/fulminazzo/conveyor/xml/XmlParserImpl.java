@@ -1,28 +1,47 @@
 package it.fulminazzo.conveyor.xml;
 
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Stack;
 
 /**
  * An implementation of {@link XmlParser} that uses the StAX XML library.
  */
-@RequiredArgsConstructor
 final class XmlParserImpl implements XmlParser {
     private final @NotNull Stack<String> scopes = new Stack<>();
 
+    private final @NotNull InputStream inputStream;
     private final @NotNull XMLStreamReader reader;
 
     private @Nullable String nextTag;
 
     private @Nullable String currentTag;
     private @Nullable String currentContent;
+
+    /**
+     * Instantiates a new XML parser.
+     *
+     * @param inputStream the stream containing the XML document
+     * @throws XmlParserException in case of initialization errors
+     */
+    public XmlParserImpl(final @NotNull InputStream inputStream) throws XmlParserException {
+        try {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            this.inputStream = inputStream;
+            this.reader = factory.createXMLStreamReader(inputStream);
+        } catch (XMLStreamException e) {
+            throw XmlParserException.of("Could not create XmlParser", e);
+        }
+    }
+
 
     @Override
     public boolean hasNext() throws XmlParserException {
@@ -97,6 +116,7 @@ final class XmlParserImpl implements XmlParser {
 
     private @Nullable String fetchNextTag() throws XmlParserException {
         try {
+            if (this.inputStream.available() <= 0) return null;
             while (this.reader.hasNext()) {
                 int event = this.reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT)
@@ -108,7 +128,7 @@ final class XmlParserImpl implements XmlParser {
                 }
             }
             return null;
-        } catch (XMLStreamException e) {
+        } catch (XMLStreamException | IOException e) {
             throw XmlParserException.of("Could not fetch next tag from XML document", e);
         }
     }
