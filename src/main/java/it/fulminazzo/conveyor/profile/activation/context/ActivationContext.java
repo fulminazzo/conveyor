@@ -4,11 +4,39 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * Represents the current context where an {@link it.fulminazzo.conveyor.profile.activation.Activation} is checked.
  */
 public interface ActivationContext {
+
+    /**
+     * Gets the context Operating System name.
+     *
+     * @return the os name
+     */
+    default @NotNull String getOsName() {
+        return Objects.requireNonNull(getProperty("os.name"), "Could not find OS name");
+    }
+
+    /**
+     * Gets the context Operating System arch.
+     *
+     * @return the os arch
+     */
+    default @NotNull String getOsArch() {
+        return Objects.requireNonNull(getProperty("os.arch"), "Could not find OS arch");
+    }
+
+    /**
+     * Gets the context Operating System version.
+     *
+     * @return the os version
+     */
+    default @NotNull String getOsVersion() {
+        return Objects.requireNonNull(getProperty("os.version"), "Could not find OS version");
+    }
 
     /**
      * Applies all the properties of the current context to the given string.
