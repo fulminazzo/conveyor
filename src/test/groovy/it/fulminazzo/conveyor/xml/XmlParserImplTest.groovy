@@ -121,6 +121,12 @@ class XmlParserImplTest extends Specification {
 
         then:
         content == 'Hello, world!'
+
+        when:
+        content = parser.currentContent
+
+        then:
+        content == 'Hello, world!'
     }
 
     def 'test getCurrentContent throws on non-text content'() {
