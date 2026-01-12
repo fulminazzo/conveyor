@@ -18,7 +18,7 @@ class CurrentActivationContext implements ActivationContext {
     private static final Pattern propertiesRegex = Pattern.compile("\\$\\{([^}]+)}");
     private static final @NotNull String envPropertyPrefix = "env.";
     private static final @NotNull List<String> projectDirectoryPropertyNames = Arrays.asList(
-            "name", "project.basedir", "maven.multiModuleProjectDirectory"
+            "basedir", "project.basedir", "maven.multiModuleProjectDirectory"
     );
 
     @NotNull File currentDir;
