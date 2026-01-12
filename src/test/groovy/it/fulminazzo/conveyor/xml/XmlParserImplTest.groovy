@@ -4,6 +4,41 @@ import spock.lang.Specification
 
 class XmlParserImplTest extends Specification {
 
+    def 'test that invalid getCurrentContent does not prevent reading of next element'() {
+        given:
+        def parser = newParser('<project><first>Hello, world</first></project>')
+
+        expect:
+        parser.hasNext()
+
+        and:
+        parser.next() == 'project'
+
+        when:
+        parser.currentContent
+
+        then:
+        thrown(XmlParserException)
+
+        and:
+        parser.hasNext()
+
+        and:
+        parser.next() == 'first'
+
+        and:
+        parser.currentContent == 'Hello, world'
+
+        and:
+        !parser.hasNext()
+
+        and:
+        !parser.hasNext()
+
+        and:
+        !parser.hasNext()
+    }
+
     def 'test that getCurrentContent does not throw on ended data'() {
         given:
         def parser = newParser('')
