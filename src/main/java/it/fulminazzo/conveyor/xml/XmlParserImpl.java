@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.util.Iterator;
 import java.util.Stack;
 
 /**
@@ -41,8 +42,29 @@ final class XmlParserImpl implements XmlParser {
     }
 
     @Override
-    public @NotNull Iterable<String> children() throws XmlParserException {
-        throw new UnsupportedOperationException();
+    public @NotNull Iterable<String> children() throws RuntimeXmlParserException {
+        int current = this.scopes.size();
+        return () -> new Iterator<>() {
+            @Override
+            public boolean hasNext() {
+                try {
+                    if (XmlParserImpl.this.hasNext()) return true;
+                    if (XmlParserImpl.this.scopes.size() < current) return false;
+                    else return hasNext();
+                } catch (XmlParserException e) {
+                    throw new RuntimeXmlParserException(e);
+                }
+            }
+
+            @Override
+            public String next() {
+                try {
+                    return XmlParserImpl.this.next();
+                } catch (XmlParserException e) {
+                    throw new RuntimeXmlParserException(e);
+                }
+            }
+        };
     }
 
     @Override
