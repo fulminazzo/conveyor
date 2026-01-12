@@ -87,6 +87,46 @@ class ActivationTest extends Specification {
         '![1.8.-SNAPSHOT,)' || '1.8'      || false
     }
 
+    def 'test that JdkActivation with range #range throws IllegalArgumentException'() {
+        given:
+        def activation = new JdkActivation(range)
+        def context = newContext('17')
+
+        when:
+        activation.isEnabled(context)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        range << [
+                '[1.8,',
+                '[1.8,17',
+                '[1.8|17]',
+                '[1.8|17)',
+                '[1.8]',
+                '[1.8)',
+                '(1.8,',
+                '(1.8,17',
+                '(1.8|17]',
+                '(1.8|17)',
+                '(1.8]',
+                '(1.8)',
+                '![1.8,',
+                '![1.8,17',
+                '![1.8|17]',
+                '![1.8|17)',
+                '![1.8]',
+                '![1.8)',
+                '!(1.8,',
+                '!(1.8,17',
+                '!(1.8|17]',
+                '!(1.8|17)',
+                '!(1.8]',
+                '!(1.8)',
+        ]
+    }
+
     def 'test that OsActivation isEnabled with #name, #family, #arch and #version of #osName, #osArch and #osVersion returns #expected'() {
         given:
         def activation = new OsActivation(name, family, arch, version)
