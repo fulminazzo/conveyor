@@ -33,9 +33,11 @@ public interface XmlParser {
      * Gets all the children of the current element.
      *
      * @return the children
-     * @throws XmlParserException in case of any errors
+     * @throws RuntimeXmlParserException if there were errors in the internal {@link java.util.Iterator}.
+     *                                   The actual {@link XmlParserException} that caused the error will be available in
+     *                                   {@link RuntimeXmlParserException#getCause()}.
      */
-    @NotNull Iterable<String> children() throws XmlParserException;
+    @NotNull Iterable<String> children() throws RuntimeXmlParserException;
 
     /**
      * Gets the tag of the latest read element.
