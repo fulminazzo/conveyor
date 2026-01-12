@@ -2,9 +2,41 @@ package it.fulminazzo.conveyor.xml
 
 import spock.lang.Specification
 
-import javax.xml.stream.XMLInputFactory
-
 class XmlParserImplTest extends Specification {
+
+    def 'test that getCurrentContent does not throw on ended data'() {
+        given:
+        def parser = newParser('')
+
+        when:
+        parser.currentContent
+
+        then:
+        thrown(XmlParserException)
+
+        when:
+        parser.currentContent
+
+        then:
+        thrown(XmlParserException)
+    }
+
+    def 'test that next does not throw after currentContent ended data'() {
+        given:
+        def parser = newParser('')
+
+        when:
+        parser.currentContent
+
+        then:
+        thrown(XmlParserException)
+
+        when:
+        parser.next()
+
+        then:
+        thrown(XmlParserException)
+    }
 
     def 'test hasNext and next methods return correct values'() {
         given:
