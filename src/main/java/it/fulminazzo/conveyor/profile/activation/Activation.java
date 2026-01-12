@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * A condition to <b>enable</b> or <b>disable</b> a {@link it.fulminazzo.conveyor.profile.Profile}.
  */
 public interface Activation {
+    @NotNull String NEGATION = "!";
 
     /**
      * Checks if the expected condition is met.
