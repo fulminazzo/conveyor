@@ -204,8 +204,7 @@ class XmlParserImplTest extends Specification {
 
     private XmlParserImpl newParser(final String rawData) {
         InputStream inputStream = new ByteArrayInputStream(rawData.getBytes());
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        return new XmlParserImpl(factory.createXMLStreamReader(inputStream));
+        return new XmlParserImpl(inputStream);
     }
 
 }
