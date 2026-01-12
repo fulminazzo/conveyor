@@ -21,24 +21,30 @@ record JdkActivation(@NotNull String jdk) implements Activation {
         if (negated) jdk = jdk.substring(1);
 
         if (jdk.startsWith("[") || jdk.startsWith("(")) {
-            Matcher matcher = Pattern.compile("([\\[(])([^,]*),([^])]*)([])])").matcher(jdk);
-            if (matcher.find()) {
-                boolean leftInclusive = matcher.group(1).equals("[");
-                String leftVersion = matcher.group(2);
-                int left = leftVersion.isEmpty() ? 1 : compareVersion(current, leftVersion);
-
-                if (left < 0 || (!leftInclusive && left == 0)) return false;
-
-                boolean rightInclusive = matcher.group(4).equals("]");
-                String rightVersion = matcher.group(3);
-                int right = rightVersion.isEmpty() ? -1 : compareVersion(current, rightVersion);
-
-                return right <= 0 && (rightInclusive || right != 0);
-            } else throw new IllegalArgumentException(String.format("Invalid range '%s'", this.jdk));
+            if (verifyRange(current, jdk)) return !negated;
+            else return negated;
         }
 
         if (current.startsWith(jdk)) return !negated;
         else return negated;
+    }
+
+    private boolean verifyRange(final @NotNull String current,
+                                final @NotNull String jdk) {
+        Matcher matcher = Pattern.compile("([\\[(])([^,]*),([^])]*)([])])").matcher(jdk);
+        if (matcher.find()) {
+            boolean leftInclusive = matcher.group(1).equals("[");
+            String leftVersion = matcher.group(2);
+            int left = leftVersion.isEmpty() ? 1 : compareVersion(current, leftVersion);
+
+            if (left < 0 || (!leftInclusive && left == 0)) return false;
+
+            boolean rightInclusive = matcher.group(4).equals("]");
+            String rightVersion = matcher.group(3);
+            int right = rightVersion.isEmpty() ? -1 : compareVersion(current, rightVersion);
+
+            return right <= 0 && (rightInclusive || right != 0);
+        } else throw new IllegalArgumentException(String.format("Invalid range '%s'", this.jdk));
     }
 
     private int compareVersion(final @NotNull String version1,
