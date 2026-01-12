@@ -19,26 +19,11 @@ import java.util.function.Supplier;
  */
 @RequiredArgsConstructor
 abstract class MavenModelBuilder {
-    /**
-     * The Properties.
-     */
     protected final @NotNull Map<String, String> properties = new HashMap<>();
-    /**
-     * The Repositories.
-     */
     protected final @NotNull Set<Repository> repositories = new HashSet<>();
-    /**
-     * The Dependency management.
-     */
     protected final @NotNull Set<Dependency> dependencyManagement = new HashSet<>();
-    /**
-     * The Dependencies.
-     */
     protected final @NotNull List<Dependency> dependencies = new ArrayList<>();
 
-    /**
-     * The Reader.
-     */
     protected final @NotNull XMLStreamReader reader;
 
     /**
