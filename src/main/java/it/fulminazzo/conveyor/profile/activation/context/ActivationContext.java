@@ -12,6 +12,15 @@ import java.util.Objects;
 public interface ActivationContext {
 
     /**
+     * Gets the context JDK version.
+     *
+     * @return the jdk version
+     */
+    default @NotNull String getJdkVersion() {
+        return Objects.requireNonNull(getProperty("java.version"), "Could not find JDK version");
+    }
+
+    /**
      * Gets the context Operating System name.
      *
      * @return the os name
