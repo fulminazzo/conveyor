@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.profile.activation.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -29,6 +30,27 @@ public interface ActivationContext {
      * @return the string
      */
     @NotNull String applyProperties(final @NotNull String string);
+
+    /**
+     * Gets the value of a property.
+     * <br>
+     * Supports three types:
+     * <ol>
+     *     <li>system properties (provided by the <b>JVM</b>), like <code>${user.home}</code>;</li>
+     *     <li>environment properties with the prefix <code>env.</code>, like <code>${env.JAVA_HOME}</code>;</li>
+     *     <li>three maven special properties:
+     *          <ul>
+     *              <li><code>${basedir}</code></li>
+     *              <li><code>${project.basedir}</code></li>
+     *              <li><code>${maven.multiModuleProjectDirectory}</code></li>
+     *          </ul>
+     *     </li>
+     * </ol>
+     *
+     * @param name the name of the property
+     * @return the value, <code>null</code> if not defined, <code>true</code> if defined with no value
+     */
+    @Nullable String getProperty(final @NotNull String name);
 
     /**
      * Gets the base directory of the context.
