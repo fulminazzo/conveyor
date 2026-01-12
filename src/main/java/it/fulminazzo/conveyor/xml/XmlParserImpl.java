@@ -17,7 +17,7 @@ import java.util.Stack;
 final class XmlParserImpl implements XmlParser {
     private final @NotNull Stack<String> scopes = new Stack<>();
 
-    private final @NotNull XMLStreamReader reader;
+    private @Nullable XMLStreamReader reader;
 
     private @Nullable String nextTag;
 
@@ -113,6 +113,7 @@ final class XmlParserImpl implements XmlParser {
 
     private @Nullable String fetchNextTag() throws XmlParserException {
         try {
+            if (this.reader == null) return null;
             while (this.reader.hasNext()) {
                 int event = this.reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT)
@@ -123,10 +124,13 @@ final class XmlParserImpl implements XmlParser {
                     return null;
                 }
             }
+            this.reader = null;
             return null;
         } catch (XMLStreamException e) {
+            this.reader = null;
             throw XmlParserException.of("Could not fetch next tag from XML document", e);
         }
+
     }
 
 }
