@@ -62,14 +62,17 @@ class XmlParserImplTest extends Specification {
     def 'test children returns all the children'() {
         given:
         def parser = newParser("""
-            <parent>
+            <project>
+                <parent>
                 <first></first>
                 <second></second>
                 <third></third>
-            </parent>
-            <sibling>
-            </sibling>
+                </parent>
+                <sibling>
+                </sibling>
+            </project>
             """)
+        parser.next()
 
         when:
         parser.next()
