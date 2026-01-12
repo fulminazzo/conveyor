@@ -54,7 +54,18 @@ final class XmlParserImpl implements XmlParser {
 
     @Override
     public @NotNull String getCurrentContent() throws XmlParserException {
-        throw new UnsupportedOperationException();
+        if (this.currentContent == null)
+            try {
+                int event = -1;
+                while (this.reader.hasNext() && (event = this.reader.next()) == XMLStreamConstants.CHARACTERS)
+                    if (!this.reader.isWhiteSpace()) break;
+                if (event == XMLStreamConstants.CHARACTERS) this.currentContent = this.reader.getText();
+                if (this.currentContent == null)
+                    throw XmlParserException.of("No text content available");
+            } catch (XMLStreamException e) {
+                throw XmlParserException.of("Could not get current content", e);
+            }
+        return this.currentContent;
     }
 
     private void updateTag(final @Nullable String newTag) {
