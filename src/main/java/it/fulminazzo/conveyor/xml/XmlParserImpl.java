@@ -66,7 +66,7 @@ final class XmlParserImpl implements XmlParser {
                 try {
                     if (XmlParserImpl.this.hasNext()) return true;
                     if (XmlParserImpl.this.scopes.size() < current) return false;
-                    else return hasNext();
+                    else return XmlParserImpl.this.hasNext();
                 } catch (XmlParserException e) {
                     throw new RuntimeXmlParserException(e);
                 }
