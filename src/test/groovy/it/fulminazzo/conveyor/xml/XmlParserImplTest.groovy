@@ -59,6 +59,17 @@ class XmlParserImplTest extends Specification {
         !parser.hasNext()
     }
 
+    def 'test hasNext throws XmlParserException on XMLStreamException'() {
+        given:
+        def parser = newParser('')
+
+        when:
+        parser.hasNext()
+
+        then:
+        thrown(XmlParserException)
+    }
+
     def 'test children returns all the children'() {
         given:
         def parser = newParser("""
@@ -85,6 +96,40 @@ class XmlParserImplTest extends Specification {
 
         and:
         parser.hasNext()
+    }
+
+    def 'test children iterator throws RuntimeXmlParserException on XmlParserException'() {
+        given:
+        def parser = newParser('')
+
+        and:
+        def children = parser.children().iterator()
+
+        when:
+        children.hasNext()
+
+        then:
+        def e = thrown(RuntimeXmlParserException)
+
+        when:
+        def cause = e.cause
+
+        then:
+        cause != null
+        cause.class == XmlParserException
+
+        when:
+        children.next()
+
+        then:
+        e = thrown(RuntimeXmlParserException)
+
+        when:
+        cause = e.cause
+
+        then:
+        cause != null
+        cause.class == XmlParserException
     }
 
     def 'test getCurrentTag returns correct value'() {
