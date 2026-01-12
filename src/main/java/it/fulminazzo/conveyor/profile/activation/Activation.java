@@ -1,0 +1,19 @@
+package it.fulminazzo.conveyor.profile.activation;
+
+import it.fulminazzo.conveyor.profile.activation.context.ActivationContext;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * A condition to <b>enable</b> or <b>disable</b> a {@link it.fulminazzo.conveyor.profile.Profile}.
+ */
+public interface Activation {
+
+    /**
+     * Checks if the expected condition is met.
+     *
+     * @param context the context of activation
+     * @return true if it is
+     */
+    boolean isEnabled(final @NotNull ActivationContext context);
+
+}
