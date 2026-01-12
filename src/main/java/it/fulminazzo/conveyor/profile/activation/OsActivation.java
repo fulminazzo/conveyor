@@ -65,7 +65,7 @@ record OsActivation(
             final String actualVersion = context.getOsVersion();
             if (this.version.startsWith(regexPrefix)) {
                 String regex = this.version.substring(regexPrefix.length());
-                return actualVersion.matches(regex);
+                return actualVersion.toLowerCase().matches(regex);
             } else if (checkValue(this.version, actualVersion)) return false;
         }
         return true;
