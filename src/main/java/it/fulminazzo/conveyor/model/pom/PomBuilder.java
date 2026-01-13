@@ -62,6 +62,7 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
                 case "classifier" -> this.projectBuilder.classifier(getCurrentTextContent());
                 case "packaging" -> this.packaging = getCurrentTextContent();
                 case "parent" -> this.parent = parseParent();
+                case "profiles" -> parseProfiles();
                 case "properties" -> parseProperties();
                 case "repositories" -> parseRepositories();
                 case "dependencyManagement" -> parseDependencyManagement();
