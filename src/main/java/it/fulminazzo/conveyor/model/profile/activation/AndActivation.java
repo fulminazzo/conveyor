@@ -15,7 +15,7 @@ final class AndActivation implements Activation {
 
     @Override
     public boolean isEnabled(final @NotNull ActivationContext context) {
-        return this.activations.values().stream().allMatch(a -> a.isEnabled(context));
+        return !this.activations.isEmpty() && this.activations.values().stream().allMatch(a -> a.isEnabled(context));
     }
 
     /**
