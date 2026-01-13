@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.profile.activation;
 
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @param name  the name of the property
  * @param value the value of the property (if <code>null</code>, any value)
  */
+@Builder
 record PropertyActivation(@NotNull String name, @Nullable String value) implements Activation {
     private static final @NotNull String packaging = "packaging";
 
