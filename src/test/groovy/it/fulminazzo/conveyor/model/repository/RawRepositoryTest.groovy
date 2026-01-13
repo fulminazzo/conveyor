@@ -40,7 +40,7 @@ class RawRepositoryTest extends Specification {
         and:
         def expected = Repository.builder()
                 .id('fulminazzo-repo')
-                .url('https://repo.fulminazzo.it')
+                .url('https://repo.fulminazzo.it/')
                 .name('Fulminazzo official repository')
                 .releases(Repository.Policy.builder()
                         .enabled(true)
