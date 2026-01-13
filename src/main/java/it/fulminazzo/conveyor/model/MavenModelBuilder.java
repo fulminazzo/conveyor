@@ -30,6 +30,13 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     }
 
     /**
+     * Parses the given document trying to populate all the fields.
+     *
+     * @throws BuilderException in case of any errors
+     */
+    protected abstract void parseDocument() throws BuilderException;
+
+    /**
      * Handles the <b>&lt;properties&gt;</b> tag in the document.
      *
      * @throws BuilderException in case of any errors

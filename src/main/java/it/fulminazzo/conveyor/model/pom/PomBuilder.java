@@ -33,7 +33,7 @@ final class PomBuilder extends MavenModelBuilder<MavenModel> {
      * @return the project artifact
      * @throws BuilderException in case of reading or parsing errors
      */
-    @NotNull Artifact parseDocument() throws BuilderException {
+    protected void parseDocument() throws BuilderException {
         Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
         onChildElements(t -> {
             switch (t) {
@@ -49,7 +49,7 @@ final class PomBuilder extends MavenModelBuilder<MavenModel> {
                 case "dependencies" -> parseDependencies();
             }
         });
-        return buildObject("project", builder::build);
+//        return buildObject("project", builder::build);
     }
 
     /**

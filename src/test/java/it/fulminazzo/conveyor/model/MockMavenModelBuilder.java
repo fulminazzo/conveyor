@@ -19,6 +19,11 @@ final class MockMavenModelBuilder extends MavenModelBuilder<MavenModel> {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected void parseDocument() {
+        throw new UnsupportedOperationException();
+    }
+
     public static @NotNull MavenModelBuilder<?> newBuilder(final @NotNull String rawData) throws BuilderException {
         try {
             InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.UTF_8));
