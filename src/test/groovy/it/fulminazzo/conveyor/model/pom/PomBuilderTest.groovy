@@ -2,11 +2,158 @@ package it.fulminazzo.conveyor.model.pom
 
 import it.fulminazzo.conveyor.model.XmlObjectBuilderUtils
 import it.fulminazzo.conveyor.model.artifact.Artifact
+import it.fulminazzo.conveyor.model.dependency.Dependency
 import it.fulminazzo.conveyor.model.profile.Profile
+import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
+import it.fulminazzo.conveyor.model.repository.Repository
+import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
 class PomBuilderTest extends Specification {
+
+    def 'test that build returns correct profile'() {
+        given:
+        def expected = new Pom(
+                Artifact.builder()
+                        .groupId('com.example.superapp')
+                        .artifactId('super-app-core')
+                        .version('1.0.0-SNAPSHOT')
+                        .build(),
+                'war',
+                Artifact.builder()
+                        .groupId('com.example.superapp')
+                        .artifactId('super-app-parent')
+                        .version('1.0.0-SNAPSHOT')
+                        .build(),
+                [
+                        newProfile("""
+                            <profile>
+                                <id>development</id>
+                                <activation>
+                                    <activeByDefault>true</activeByDefault>
+                                    <property>
+                                        <name>env</name>
+                                        <value>dev</value>
+                                    </property>
+                                </activation>
+                                <properties>
+                                    <db.url>jdbc:mysql://localhost:3306/dev_db</db.url>
+                                </properties>
+                            </profile>"""),
+                        newProfile("""
+                            <profile>
+                                <id>production</id>
+                                <activation>
+                                    <property>
+                                        <name>env</name>
+                                        <value>prod</value>
+                                    </property>
+                                </activation>
+                                <properties>
+                                    <db.url>jdbc:mysql://prod-db:3306/prod_db</db.url>
+                                </properties>
+                                <build>
+                                    <plugins>
+                                        <plugin>
+                                            <groupId>com.github.wvengen</groupId>
+                                            <artifactId>proguard-maven-plugin</artifactId>
+                                            <version>2.5.3</version>
+                                            <executions>
+                                                <execution>
+                                                    <phase>package</phase>
+                                                    <goals>
+                                                        <goal>proguard</goal>
+                                                    </goals>
+                                                </execution>
+                                            </executions>
+                                        </plugin>
+                                    </plugins>
+                                </build>
+                            </profile>""")
+                ],
+                [
+                        'project.build.sourceEncoding': 'UTF-8',
+                        'java.version'                : '17',
+                        'spring.version'              : '6.0.0',
+                        'junit.version'               : '5.9.2'
+                ],
+                [
+                        Repository.builder()
+                                .id('central')
+                                .name('Central Repository')
+                                .url('https://repo.maven.apache.org/maven2')
+                                .snapshots(Repository.Policy.builder().enabled(false).build())
+                                .build(),
+                        Repository.builder()
+                                .id('internal-repo')
+                                .name('Internal Company Repository')
+                                .url('https://repo.example.com/releases')
+                                .releases(
+                                        Repository.Policy.builder()
+                                                .enabled(true)
+                                                .updatePolicy(UpdatePolicy.of('always'))
+                                                .checksumPolicy(ChecksumPolicy.WARN)
+                                                .build()
+                                )
+                                .snapshots(Repository.Policy.builder().enabled(false).build())
+                                .build(),
+                        Repository.builder()
+                                .id('internal-snapshots')
+                                .name('Internal Company Snapshots')
+                                .url('https://repo.example.com/snapshots')
+                                .releases(
+                                        Repository.Policy.builder().enabled(false).build()
+                                )
+                                .snapshots(
+                                        Repository.Policy.builder()
+                                                .enabled(true)
+                                                .updatePolicy(UpdatePolicy.of('daily'))
+                                                .build()
+                                )
+                                .build()
+                ],
+                [
+                        Dependency.builder()
+                                .groupId('org.springframework')
+                                .artifactId('spring-core')
+                                .version('${spring.version}')
+                                .build()
+                ],
+                [
+                        Dependency.builder()
+                                .groupId('org.springframework')
+                                .artifactId('spring-context')
+                                .version('${spring.version}')
+                                .build(),
+                        Dependency.builder()
+                                .groupId('org.junit.jupiter')
+                                .artifactId('junit-jupiter-api')
+                                .version('${junit.version}')
+                                .scope(Dependency.Scope.TEST)
+                                .build(),
+                        Dependency.builder()
+                                .groupId('javax.servlet')
+                                .artifactId('javax.servlet-api')
+                                .version('4.0.1')
+                                .scope(Dependency.Scope.PROVIDED)
+                                .build(),
+                ]
+        )
+
+        and:
+        def file = new File('build/resources/test/pom.xml')
+        def parser = XmlParser.newParser(file.newInputStream())
+
+        and:
+        def builder = new PomBuilder(parser)
+
+        when:
+        def actual = builder.build()
+
+        then:
+        actual == expected
+    }
 
     def 'test that parseParent returns correct parent'() {
         given:
