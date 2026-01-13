@@ -74,7 +74,7 @@ class MavenModelBuilderTest extends Specification {
         def repositories = field.get(builder)
 
         then:
-        repositories.sort() == expected.sort()
+        repositories.values().sort() == expected.sort()
     }
 
     def 'test that parseRepository returns correct repository'() {
