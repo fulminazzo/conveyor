@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.dependency;
 
 import it.fulminazzo.conveyor.model.Properties;
+import it.fulminazzo.conveyor.model.RawObject;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -13,20 +14,14 @@ import java.util.Set;
  */
 @ToString(includeFieldNames = false)
 @EqualsAndHashCode
-public final class Exclusions {
+public final class Exclusions implements RawObject<Exclusions> {
     private static final @NotNull String wildcard = "*";
     private static final @NotNull String separator = ":";
 
     private final @NotNull Set<String> exclusions = new HashSet<>();
 
-    /**
-     * For each of the current {@link #exclusions},
-     * replaces the properties with their values.
-     *
-     * @param properties the properties
-     * @return the new exclusions object with the parsed properties
-     */
-    public @NotNull Exclusions parseProperties(final @NotNull Properties properties) {
+    @Override
+    public @NotNull Exclusions applyProperties(final @NotNull Properties properties) {
         Exclusions exclusions = new Exclusions();
         for (String exclusion : this.exclusions)
             exclusions.exclusions.add(properties.apply(exclusion));
