@@ -1,25 +1,11 @@
 package it.fulminazzo.conveyor.model.pom
 
-import it.fulminazzo.conveyor.model.BuilderException
 import it.fulminazzo.conveyor.model.XmlObjectBuilderUtils
 import it.fulminazzo.conveyor.model.artifact.Artifact
+import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
 class PomBuilderTest extends Specification {
-
-    def 'test that PomBuilder throws BuilderException on initialization error'() {
-        given:
-        def mockStream = Mock(InputStream)
-        mockStream.read() >> {
-            throw new IOException('Test exception')
-        }
-
-        when:
-        PomBuilder.of(mockStream)
-
-        then:
-        thrown(BuilderException)
-    }
 
     def 'test that parseParent returns correct parent'() {
         given:
@@ -47,7 +33,9 @@ class PomBuilderTest extends Specification {
     }
 
     private static PomBuilder newBuilder(final String data) {
-        return PomBuilder.of(new ByteArrayInputStream(data.bytes))
+        def inputStream = new ByteArrayInputStream(data.bytes)
+        def parser = XmlParser.newParser(inputStream)
+        return new PomBuilder(parser)
     }
 
 }
