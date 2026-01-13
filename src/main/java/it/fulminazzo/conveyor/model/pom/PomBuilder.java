@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
  * Responsible for creating a {@link Pom} object.
  */
 public final class PomBuilder extends MavenModelBuilder<MavenModel> {
+    private static final String defaultPackaging = "jar";
+
     private final @NotNull Artifact.ArtifactBuilder<?, ?> projectBuilder = Artifact.builder();
     private @Nullable String packaging;
     private @Nullable Artifact parent;
@@ -26,8 +28,17 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     }
 
     @Override
-    public MavenModel build() {
-        throw new UnsupportedOperationException();
+    public Pom build() throws BuilderException {
+        parseDocument();
+        return buildObject("pom", () -> new Pom(
+                this.projectBuilder.build(),
+                this.packaging == null ? defaultPackaging : this.packaging,
+                this.parent,
+                this.properties,
+                this.repositories.values(),
+                this.dependencyManagement.values(),
+                this.dependencies.values()
+        ));
     }
 
     /**
