@@ -169,7 +169,7 @@ class MavenModelBuilderTest extends Specification {
         def dependencies = field.get(builder)
 
         then:
-        dependencies.sort() == expected.sort()
+        dependencies.values().sort() == expected.sort()
     }
 
     def 'test that parseDependencies returns correct dependencies'() {
@@ -212,7 +212,7 @@ class MavenModelBuilderTest extends Specification {
         def dependencies = field.get(builder)
 
         then:
-        dependencies.sort() == expected.sort()
+        dependencies.values().sort() == expected.sort()
     }
 
     def 'test that parseDependency returns correct dependency'() {
