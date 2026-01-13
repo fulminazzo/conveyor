@@ -4,6 +4,8 @@ import it.fulminazzo.conveyor.function.ConsumerException;
 import it.fulminazzo.conveyor.function.SupplierException;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import it.fulminazzo.conveyor.xml.XmlParserException;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @RequiredArgsConstructor
 public abstract class XmlObjectBuilder<O> {
+    @Getter(AccessLevel.PROTECTED)
     private final @NotNull XmlParser parser;
 
     /**
