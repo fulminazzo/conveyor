@@ -106,11 +106,14 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
      */
     protected void parseDependencyManagement() throws BuilderException {
         onChildElements(t -> {
-            if (t.equals("dependency")) {
-                Dependency dependency = parseDependency();
-                String key = dependency.getCoordinates();
-                this.dependencyManagement.put(key, dependency);
-            }
+            if (t.equals("dependencies"))
+                onChildElements(t2 -> {
+                    if (t2.equals("dependency")) {
+                        Dependency dependency = parseDependency();
+                        String key = dependency.getCoordinates();
+                        this.dependencyManagement.put(key, dependency);
+                    }
+                });
         });
     }
 
