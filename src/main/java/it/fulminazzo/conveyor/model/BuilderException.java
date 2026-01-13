@@ -6,7 +6,7 @@ import lombok.experimental.StandardException;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An exception thrown by {@link XmlDtoBuilder} and subclasses.
+ * An exception thrown by {@link XmlObjectBuilder} and subclasses.
  */
 @StandardException(access = AccessLevel.PACKAGE)
 public final class BuilderException extends Exception {
