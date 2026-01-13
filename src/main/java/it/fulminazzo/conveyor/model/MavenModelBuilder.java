@@ -1,9 +1,7 @@
 package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
-import it.fulminazzo.conveyor.model.repository.ChecksumPolicy;
-import it.fulminazzo.conveyor.model.repository.Repository;
-import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy;
+import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +14,7 @@ import java.util.*;
  */
 public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectBuilder<O> {
     protected final @NotNull Map<String, String> properties = new HashMap<>();
-    protected final @NotNull Map<String, Repository> repositories = new LinkedHashMap<>();
+    protected final @NotNull Map<String, RawRepository> repositories = new LinkedHashMap<>();
     protected final @NotNull Map<String, RawDependency> dependencyManagement = new LinkedHashMap<>();
     protected final @NotNull Map<String, RawDependency> dependencies = new LinkedHashMap<>();
 
@@ -53,7 +51,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     protected void parseRepositories() throws BuilderException {
         onChildElements(t -> {
             if (t.equals("repository")) {
-                Repository repository = parseRepository();
+                RawRepository repository = parseRepository();
                 String key = repository.getId();
                 this.repositories.put(key, repository);
             }
@@ -66,8 +64,8 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
      * @return the repository
      * @throws BuilderException in case of any errors
      */
-    protected @NotNull Repository parseRepository() throws BuilderException {
-        final Repository.RepositoryBuilder builder = Repository.builder();
+    protected @NotNull RawRepository parseRepository() throws BuilderException {
+        final RawRepository.RawRepositoryBuilder builder = RawRepository.builder();
         onChildElements(t -> {
             switch (t) {
                 case "id" -> builder.id(getCurrentTextContent());
@@ -81,19 +79,19 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     }
 
     /**
-     * Generates a {@link Repository.Policy} from the current reader.
+     * Generates a {@link RawRepository.Policy} from the current reader.
      *
      * @return the repository policy
      * @throws BuilderException in case of any errors
      */
-    protected @NotNull Repository.Policy parseRepositoryPolicy() throws BuilderException {
-        final Repository.Policy.PolicyBuilder builder = Repository.Policy.builder();
+    protected @NotNull RawRepository.Policy parseRepositoryPolicy() throws BuilderException {
+        final RawRepository.Policy.PolicyBuilder builder = RawRepository.Policy.builder();
         onChildElements(t -> {
             String value = getCurrentTextContent();
             switch (t) {
-                case "enabled" -> builder.enabled(Boolean.parseBoolean(value));
-                case "updatePolicy" -> builder.updatePolicy(UpdatePolicy.of(value));
-                case "checksumPolicy" -> builder.checksumPolicy(ChecksumPolicy.valueOf(value.toUpperCase()));
+                case "enabled" -> builder.enabled(value);
+                case "updatePolicy" -> builder.updatePolicy(value);
+                case "checksumPolicy" -> builder.checksumPolicy(value);
             }
         });
         return buildObject("repository policy", builder::build);

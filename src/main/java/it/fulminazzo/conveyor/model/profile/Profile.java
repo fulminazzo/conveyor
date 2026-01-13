@@ -3,7 +3,7 @@ package it.fulminazzo.conveyor.model.profile;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
-import it.fulminazzo.conveyor.model.repository.Repository;
+import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public final class Profile extends MavenModel {
     Profile(final @NotNull String id,
             final @NotNull Activation activation,
             final @NotNull Map<String, String> properties,
-            final @NotNull Collection<Repository> repositories,
+            final @NotNull Collection<RawRepository> repositories,
             final @NotNull Collection<RawDependency> dependencyManagement,
             final @NotNull Collection<RawDependency> dependencies
     ) {
