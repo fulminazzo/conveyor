@@ -1,6 +1,8 @@
 package it.fulminazzo.conveyor.model.profile.activation;
 
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -10,6 +12,8 @@ import java.util.Map;
  * A special type of {@link Activation} that will check for all
  * the given {@link Activation}s in its {@link #isEnabled(ActivationContext)} method.
  */
+@EqualsAndHashCode
+@ToString(includeFieldNames = false)
 final class AndActivation implements Activation {
     private final @NotNull Map<String, Activation> activations = new HashMap<>();
 
