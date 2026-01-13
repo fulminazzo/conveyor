@@ -30,7 +30,16 @@ public final class ProfileBuilder extends MavenModelBuilder<Profile> {
 
     @Override
     protected void parseDocument() throws BuilderException {
-        throw new UnsupportedOperationException();
+        onChildElements(t -> {
+            switch (t) {
+                case "id" -> parseId();
+                case "activation" -> parseActivation();
+                case "properties" -> parseProperties();
+                case "repositories" -> parseRepositories();
+                case "dependencyManagement" -> parseDependencyManagement();
+                case "dependencies" -> parseDependencies();
+            }
+        });
     }
 
     /**
