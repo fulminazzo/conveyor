@@ -1,9 +1,9 @@
 package it.fulminazzo.conveyor.model
 
-import it.fulminazzo.conveyor.pom.dependency.Dependency
-import it.fulminazzo.conveyor.pom.repository.ChecksumPolicy
-import it.fulminazzo.conveyor.pom.repository.Repository
-import it.fulminazzo.conveyor.pom.repository.update.UpdatePolicy
+import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
+import it.fulminazzo.conveyor.model.repository.Repository
+import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy
 import spock.lang.Specification
 
 class MavenModelBuilderTest extends Specification {

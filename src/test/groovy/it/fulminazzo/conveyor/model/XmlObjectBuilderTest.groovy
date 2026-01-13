@@ -36,7 +36,7 @@ class XmlObjectBuilderTest extends Specification {
     def 'test that getCurrentTag returns expected'() {
         given:
         def builder = MockXmlObjectBuilder.newBuilder('<project>Hello, world!</project>')
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         when:
         def actual = builder.currentTag
@@ -59,7 +59,7 @@ class XmlObjectBuilderTest extends Specification {
     def 'test that getCurrentTextContent returns expected'() {
         given:
         def builder = MockXmlObjectBuilder.newBuilder('<project>Hello, world!</project>')
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         when:
         def actual = builder.currentTextContent
