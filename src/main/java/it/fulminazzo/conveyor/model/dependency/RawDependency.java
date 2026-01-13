@@ -54,7 +54,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike 
                 .type(properties.apply(getType()))
                 .scope(Scope.of(properties.apply(getScope())))
                 .optional(Boolean.parseBoolean(properties.apply(getOptional())))
-                .exclusions(getExclusions())
+                .exclusions(getExclusions().parseProperties(properties))
                 .build();
     }
 
