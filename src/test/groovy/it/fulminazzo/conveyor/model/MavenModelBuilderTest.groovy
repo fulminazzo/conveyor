@@ -19,7 +19,7 @@ class MavenModelBuilderTest extends Specification {
                 <name>\${dependency.name}</name>
             </properties>
         """)
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         when:
         builder.parseProperties()
@@ -57,7 +57,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </repositories>
         """)
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
         def expected = [
@@ -104,7 +104,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </repository>
         """)
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
         def expected = Repository.builder()
@@ -152,7 +152,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </dependencyManagement>
         """)
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
         def expected = [
@@ -195,7 +195,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </dependencies>
         """)
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
         def expected = [
@@ -246,7 +246,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </dependency>
         """)
-        builder.parser.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
         def expected = Dependency.builder()
