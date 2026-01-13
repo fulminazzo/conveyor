@@ -20,8 +20,9 @@ public abstract class XmlObjectBuilder<O> {
      * Builds the object.
      *
      * @return the object
+     * @throws BuilderException in case of building errors
      */
-    public abstract O build();
+    public abstract O build() throws BuilderException;
 
     /**
      * Wrapper for building new objects from builders.
