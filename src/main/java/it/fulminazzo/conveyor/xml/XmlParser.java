@@ -56,4 +56,9 @@ public interface XmlParser {
      */
     @NotNull String getCurrentContent() throws XmlParserException;
 
+    /**
+     * Closes the current parser.
+     */
+    void close();
+
 }
