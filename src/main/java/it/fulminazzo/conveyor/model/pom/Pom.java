@@ -1,0 +1,63 @@
+package it.fulminazzo.conveyor.model.pom;
+
+import it.fulminazzo.conveyor.model.MavenModel;
+import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.repository.Repository;
+import it.fulminazzo.conveyor.xml.XmlParser;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Map;
+
+/**
+ * Represents a Maven project.
+ */
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public final class Pom extends MavenModel {
+    private final @NotNull Artifact project;
+    private final @NotNull String packaging;
+    private final @Nullable Artifact parent;
+
+    /**
+     * Instantiates a new Pom.
+     *
+     * @param project              the project
+     * @param packaging            the packaging
+     * @param parent               the parent
+     * @param properties           the properties
+     * @param repositories         the repositories
+     * @param dependencyManagement the dependency management
+     * @param dependencies         the dependencies
+     */
+    Pom(final @NotNull Artifact project,
+        final @NotNull String packaging,
+        final @Nullable Artifact parent,
+        final @NotNull Map<String, String> properties,
+        final @NotNull Collection<Repository> repositories,
+        final @NotNull Collection<Dependency> dependencyManagement,
+        final @NotNull Collection<Dependency> dependencies
+    ) {
+        super(properties, repositories, dependencyManagement, dependencies);
+        this.project = project;
+        this.packaging = packaging;
+        this.parent = parent;
+    }
+
+    /**
+     * Instantiates a new builder to create a {@link Pom} object.
+     *
+     * @param parser the XML parser
+     * @return the builder
+     */
+    public static @NotNull PomBuilder builder(final @NotNull XmlParser parser) {
+        return new PomBuilder(parser);
+    }
+
+}
