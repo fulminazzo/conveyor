@@ -129,9 +129,6 @@ class XmlParserImplTest extends Specification {
         tag == 'first'
 
         and:
-        !parser.hasNext()
-
-        and:
         parser.hasNext()
 
         when:
@@ -141,9 +138,6 @@ class XmlParserImplTest extends Specification {
         tag == 'second'
 
         and:
-        !parser.hasNext()
-
-        and:
         parser.hasNext()
 
         when:
@@ -151,9 +145,6 @@ class XmlParserImplTest extends Specification {
 
         then:
         tag == 'third'
-
-        and:
-        !parser.hasNext()
 
         and:
         !parser.hasNext()
