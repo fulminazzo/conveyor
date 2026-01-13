@@ -34,4 +34,14 @@ public final class ActivationBuilder extends XmlObjectBuilder<Activation> {
         return new BooleanActivation(Boolean.parseBoolean(getCurrentTextContent()));
     }
 
+    /**
+     * Attempts to retrieve a {@link JdkActivation} from the parser.
+     *
+     * @return the jdk activation
+     * @throws BuilderException in case of any errors
+     */
+    @NotNull JdkActivation parseJdk() throws BuilderException {
+        return new JdkActivation(getCurrentTextContent());
+    }
+
 }
