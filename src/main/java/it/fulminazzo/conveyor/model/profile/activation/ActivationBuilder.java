@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.profile.activation;
 
+import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.XmlObjectBuilder;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,16 @@ public final class ActivationBuilder extends XmlObjectBuilder<Activation> {
     @Override
     public Activation build() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Attempts to retrieve a {@link BooleanActivation} from the parser.
+     *
+     * @return the activation
+     * @throws BuilderException in case of any errors
+     */
+    @NotNull BooleanActivation parseActiveByDefault() throws BuilderException {
+        return new BooleanActivation(Boolean.parseBoolean(getCurrentTextContent()));
     }
 
 }
