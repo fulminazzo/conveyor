@@ -71,6 +71,20 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     }
 
     /**
+     * Handles the <b>&lt;profiles&gt;</b> tag in the document.
+     *
+     * @throws BuilderException in case of any errors
+     */
+    void parseProfiles() throws BuilderException {
+        onChildElements(t -> {
+            if (t.equals("profile")) {
+                Profile profile = Profile.builder(getParser()).build();
+                this.profiles.put(profile.getId(), profile);
+            }
+        });
+    }
+
+    /**
      * Handles the <b>&lt;parent&gt;</b> tag in the document.
      *
      * @return the parent artifact
