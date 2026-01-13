@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @Value
 @Builder
-public class RawRepository implements RepositoryLike {
+public class RawRepository implements RepositoryLike, RawObject<Repository> {
     @NotNull String id;
     @NotNull String url;
     @Nullable String name;
@@ -22,6 +22,18 @@ public class RawRepository implements RepositoryLike {
     @NotNull Policy releases = Policy.builder().enabled(Boolean.TRUE.toString()).build();
     @Builder.Default
     @NotNull Policy snapshots = Policy.builder().build();
+
+    @Override
+    public @NotNull Repository applyProperties(final @NotNull Properties properties) {
+        String name = getName();
+        return Repository.builder()
+                .id(properties.apply(getId()))
+                .url(properties.apply(getUrl()))
+                .name(name == null ? null : properties.apply(name))
+                .releases(getReleases().applyProperties(properties))
+                .snapshots(getSnapshots().applyProperties(properties))
+                .build();
+    }
 
     /**
      * Represents a raw {@link Repository.Policy},
