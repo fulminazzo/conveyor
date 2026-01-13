@@ -26,6 +26,6 @@ public final class Dependency extends Artifact implements DependencyLike {
     @Builder.Default
     private final boolean optional = false;
 
-    private final @NotNull Exclusions exclusions = new Exclusions();
+    private final @NotNull Exclusions exclusions;
 
 }
