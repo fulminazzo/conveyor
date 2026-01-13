@@ -1,10 +1,12 @@
 package it.fulminazzo.conveyor.model.dependency;
 
-import it.fulminazzo.conveyor.model.artifact.ArtifactLike;
-import lombok.*;
+import it.fulminazzo.conveyor.model.artifact.Artifact;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a Maven dependency.
@@ -13,11 +15,7 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public final class Dependency extends ArtifactLike {
-    private static final @NotNull String separator = ":";
-
-    @Builder.Default
-    private final @Nullable String version = null;
+public final class Dependency extends Artifact implements DependencyLike {
 
     @Builder.Default
     private final @NotNull String type = "jar";
@@ -29,19 +27,6 @@ public final class Dependency extends ArtifactLike {
     private final boolean optional = false;
 
     private final @NotNull Exclusions exclusions = new Exclusions();
-
-    /**
-     * Gets the coordinates of the current dependency.
-     *
-     * @return the coordinates
-     */
-    public @NotNull String getCoordinates() {
-        String classifier = getClassifier();
-        return getGroupId() + separator +
-                getArtifactId() + separator +
-                getType() + separator +
-                (classifier == null ? "" : classifier);
-    }
 
     /**
      * Defines the scope of this dependency.
