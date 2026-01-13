@@ -27,7 +27,7 @@ public final class ActivationBuilder extends XmlObjectBuilder<Activation> {
     /**
      * Attempts to retrieve a {@link BooleanActivation} from the parser.
      *
-     * @return the activation
+     * @return the activeByDefault activation
      * @throws BuilderException in case of any errors
      */
     @NotNull BooleanActivation parseActiveByDefault() throws BuilderException {
@@ -78,6 +78,23 @@ public final class ActivationBuilder extends XmlObjectBuilder<Activation> {
             }
         });
         return buildObject("property activation", builder::build);
+    }
+
+    /**
+     * Attempts to retrieve a {@link FileActivation} from the parser.
+     *
+     * @return the file activation
+     * @throws BuilderException in case of any errors
+     */
+    @NotNull FileActivation parseFile() throws BuilderException {
+        FileActivation.FileActivationBuilder builder = FileActivation.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "exists" -> builder.exists(getCurrentTextContent());
+                case "missing" -> builder.missing(getCurrentTextContent());
+            }
+        });
+        return buildObject("file activation", builder::build);
     }
 
 }
