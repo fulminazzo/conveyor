@@ -1,40 +1,46 @@
 package it.fulminazzo.conveyor.pom;
 
+import it.fulminazzo.conveyor.model.BuilderException;
+import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.pom.artifact.Artifact;
+import it.fulminazzo.conveyor.xml.XmlParser;
+import it.fulminazzo.conveyor.xml.XmlParserException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 
 /**
  * Responsible for creating a {@link Pom} object.
  */
-final class PomBuilder extends MavenModelBuilder {
+final class PomBuilder extends MavenModelBuilder<Object> {
     private @Nullable String packaging;
     private @Nullable Artifact parent;
+    
+    public PomBuilder(final @NotNull XmlParser parser) {
+        super(parser);
+    }
 
-    private PomBuilder(final @NotNull XMLStreamReader reader) {
-        super(reader);
+    @Override
+    public Object build() {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * Parses the given document trying to populate all the above fields.
      *
      * @return the project artifact
-     * @throws ParserException in case of reading or parsing errors
+     * @throws BuilderException in case of reading or parsing errors
      */
-    @NotNull Artifact parseDocument() throws ParserException {
+    @NotNull Artifact parseDocument() throws BuilderException {
         Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
-        parseGeneric(t -> {
+        onChildElements(t -> {
             switch (t) {
-                case "groupId" -> builder.groupId(getElementText());
-                case "artifactId" -> builder.artifactId(getElementText());
-                case "version" -> builder.version(getElementText());
-                case "classifier" -> builder.classifier(getElementText());
-                case "packaging" -> this.packaging = getElementText();
+                case "groupId" -> builder.groupId(getCurrentTextContent());
+                case "artifactId" -> builder.artifactId(getCurrentTextContent());
+                case "version" -> builder.version(getCurrentTextContent());
+                case "classifier" -> builder.classifier(getCurrentTextContent());
+                case "packaging" -> this.packaging = getCurrentTextContent();
                 case "parent" -> this.parent = parseParent();
                 case "properties" -> parseProperties();
                 case "repositories" -> parseRepositories();
@@ -49,16 +55,16 @@ final class PomBuilder extends MavenModelBuilder {
      * Handles the <b>&lt;parent&gt;</b> tag in the document.
      *
      * @return the parent artifact
-     * @throws ParserException in case of reading or parsing errors
+     * @throws BuilderException in case of reading or parsing errors
      */
-    @NotNull Artifact parseParent() throws ParserException {
+    @NotNull Artifact parseParent() throws BuilderException {
         Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
-        parseGeneric(t -> {
+        onChildElements(t -> {
             switch (t) {
-                case "groupId" -> builder.groupId(getElementText());
-                case "artifactId" -> builder.artifactId(getElementText());
-                case "version" -> builder.version(getElementText());
-                case "classifier" -> builder.classifier(getElementText());
+                case "groupId" -> builder.groupId(getCurrentTextContent());
+                case "artifactId" -> builder.artifactId(getCurrentTextContent());
+                case "version" -> builder.version(getCurrentTextContent());
+                case "classifier" -> builder.classifier(getCurrentTextContent());
             }
         });
         return buildObject("parent", builder::build);
@@ -69,14 +75,14 @@ final class PomBuilder extends MavenModelBuilder {
      *
      * @param inputStream the input stream
      * @return the pom builder
-     * @throws ParserException in case of reading or parsing errors
+     * @throws BuilderException in case of reading or parsing errors
      */
-    static @NotNull PomBuilder of(final @NotNull InputStream inputStream) throws ParserException {
+    static @NotNull PomBuilder of(final @NotNull InputStream inputStream) throws BuilderException {
         try {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            return new PomBuilder(factory.createXMLStreamReader(inputStream));
-        } catch (XMLStreamException e) {
-            throw ParserException.of("Error while creating PomBuilder", e);
+            XmlParser parser = XmlParser.newParser(inputStream);
+            return new PomBuilder(parser);
+        } catch (XmlParserException e) {
+            throw new BuilderException(e);
         }
     }
 
