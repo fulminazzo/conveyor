@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class PomBuilderTest extends Specification {
 
-    def 'test that PomBuilder throws ParserException on initialization error'() {
+    def 'test that PomBuilder throws BuilderException on initialization error'() {
         given:
         def mockStream = Mock(InputStream)
         mockStream.read() >> {
@@ -16,7 +16,7 @@ class PomBuilderTest extends Specification {
         PomBuilder.of(mockStream)
 
         then:
-        thrown(ParserException)
+        thrown(BuilderException)
     }
 
     def 'test that parseParent returns correct parent'() {
@@ -30,7 +30,7 @@ class PomBuilderTest extends Specification {
                 <relativePath>../parent/pom.xml</relativePath>
             </parent>
         """)
-        builder.reader.next()
+        XmlObjectBuilderUtils.getParser(builder).next()
 
         when:
         def parent = builder.parseParent()
