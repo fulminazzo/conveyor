@@ -63,4 +63,21 @@ public final class ActivationBuilder extends XmlObjectBuilder<Activation> {
         return buildObject("os activation", builder::build);
     }
 
+    /**
+     * Attempts to retrieve a {@link PropertyActivation} from the parser.
+     *
+     * @return the property activation
+     * @throws BuilderException in case of any errors
+     */
+    @NotNull PropertyActivation parseProperty() throws BuilderException {
+        PropertyActivation.PropertyActivationBuilder builder = PropertyActivation.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "name" -> builder.name(getCurrentTextContent());
+                case "value" -> builder.value(getCurrentTextContent());
+            }
+        });
+        return buildObject("property activation", builder::build);
+    }
+
 }
