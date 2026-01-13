@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a general repository interface.
  */
-public interface RepositoryLike {
+interface RepositoryLike {
 
     /**
      * Gets id.

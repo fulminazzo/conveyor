@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a general dependency interface.
  */
-public interface DependencyLike {
+interface DependencyLike {
 
     /**
      * Gets the coordinates of the current dependency.
