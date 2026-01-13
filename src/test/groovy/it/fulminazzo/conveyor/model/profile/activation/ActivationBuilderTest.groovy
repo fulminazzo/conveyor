@@ -6,6 +6,23 @@ import spock.lang.Specification
 
 class ActivationBuilderTest extends Specification {
 
+    def 'test parseActiveByDefault of #data returns #expected'() {
+        given:
+        def builder = newBuilder(data)
+        XmlObjectBuilderUtils.getParser(builder).next()
+
+        when:
+        def actual = builder.parseActiveByDefault()
+
+        then:
+        actual == expected
+
+        where:
+        expected                     || data
+        new BooleanActivation(true)  || '<activeByDefault>true</activeByDefault>'
+        new BooleanActivation(false) || '<activeByDefault>false</activeByDefault>'
+    }
+
     def 'test parseJdk of #data returns #expected'() {
         given:
         def builder = newBuilder(data)
