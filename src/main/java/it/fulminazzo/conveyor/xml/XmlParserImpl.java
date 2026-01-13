@@ -111,10 +111,10 @@ final class XmlParserImpl implements XmlParser {
                 }
                 if (!this.reader.isWhiteSpace()) return true;
             }
-            this.reader = null;
+            closeReader();
             return false;
         } catch (XMLStreamException e) {
-            this.reader = null;
+            closeReader();
             throw XmlParserException.of("Could not get current content", e);
         }
     }
@@ -129,11 +129,20 @@ final class XmlParserImpl implements XmlParser {
             if (this.reader != null) {
                 while (this.reader.hasNext())
                     if (handleEvent(this.reader.next())) return;
-                this.reader = null;
+                closeReader();
             }
         } catch (XMLStreamException e) {
-            this.reader = null;
+            closeReader();
             throw XmlParserException.of("Could not fetch next tag from XML document", e);
+        }
+    }
+
+    private void closeReader() {
+        try {
+            if (this.reader != null) this.reader.close();
+            this.reader = null;
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
         }
     }
 
