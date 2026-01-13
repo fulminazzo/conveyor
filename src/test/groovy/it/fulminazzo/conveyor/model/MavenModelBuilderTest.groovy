@@ -1,6 +1,5 @@
 package it.fulminazzo.conveyor.model
 
-
 import it.fulminazzo.conveyor.pom.dependency.Dependency
 import it.fulminazzo.conveyor.pom.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.pom.repository.Repository
