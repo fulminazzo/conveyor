@@ -4,9 +4,13 @@ import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Responsible for creating a {@link Pom} object.
@@ -17,6 +21,8 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     private final @NotNull Artifact.ArtifactBuilder<?, ?> projectBuilder = Artifact.builder();
     private @Nullable String packaging;
     private @Nullable Artifact parent;
+
+    private final @NotNull Map<String, Profile> profiles = new LinkedHashMap<>();
 
     /**
      * Instantiates a new Pom builder.
@@ -34,6 +40,7 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
                 this.projectBuilder.build(),
                 this.packaging == null ? defaultPackaging : this.packaging,
                 this.parent,
+                this.profiles.values(),
                 this.properties,
                 this.repositories.values(),
                 this.dependencyManagement.values(),
