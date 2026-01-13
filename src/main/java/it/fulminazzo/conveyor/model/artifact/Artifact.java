@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public final class Artifact extends ArtifactLike {
+public class Artifact extends ArtifactLike {
     private final @NotNull String version;
 
 }
