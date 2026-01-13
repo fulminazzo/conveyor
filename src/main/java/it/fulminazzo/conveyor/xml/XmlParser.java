@@ -11,12 +11,6 @@ public interface XmlParser extends AutoCloseable {
 
     /**
      * Checks if another <b>XML</b> element is present.
-     * <br>
-     * <b>WARNING</b>: this method depends heavily on the current context.
-     * For example, if the parser is reading the children of an element,
-     * this method will return <code>false</code> for the last child,
-     * even though another element after the parent one is available.
-     * In this instance, calling the method again will return <code>true</code>.
      *
      * @return true if there is
      * @throws XmlParserException in case of any errors
