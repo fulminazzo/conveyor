@@ -5,21 +5,23 @@ import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.xml.XmlParser;
-import it.fulminazzo.conveyor.xml.XmlParserException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.InputStream;
 
 /**
  * Responsible for creating a {@link Pom} object.
  */
-final class PomBuilder extends MavenModelBuilder<MavenModel> {
+public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     private final @NotNull Artifact.ArtifactBuilder<?, ?> projectBuilder = Artifact.builder();
     private @Nullable String packaging;
     private @Nullable Artifact parent;
-    
-    public PomBuilder(final @NotNull XmlParser parser) {
+
+    /**
+     * Instantiates a new Pom builder.
+     *
+     * @param parser the XML parser
+     */
+    PomBuilder(final @NotNull XmlParser parser) {
         super(parser);
     }
 
@@ -67,22 +69,6 @@ final class PomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("parent", builder::build);
-    }
-
-    /**
-     * Instantiates a new Pom builder.
-     *
-     * @param inputStream the input stream
-     * @return the pom builder
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    static @NotNull PomBuilder of(final @NotNull InputStream inputStream) throws BuilderException {
-        try {
-            XmlParser parser = XmlParser.newParser(inputStream);
-            return new PomBuilder(parser);
-        } catch (XmlParserException e) {
-            throw new BuilderException(e);
-        }
     }
 
 }
