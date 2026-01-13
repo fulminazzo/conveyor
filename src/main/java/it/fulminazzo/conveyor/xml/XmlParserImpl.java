@@ -39,7 +39,6 @@ final class XmlParserImpl implements XmlParser {
         }
     }
 
-
     @Override
     public boolean hasNext() throws XmlParserException {
         if (this.nextTag != null) return true;
@@ -100,6 +99,16 @@ final class XmlParserImpl implements XmlParser {
         return this.currentContent;
     }
 
+    @Override
+    public void close() {
+        try {
+            if (this.reader != null) this.reader.close();
+            this.reader = null;
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private boolean isText() throws XmlParserException {
         try {
             if (this.reader == null) return false;
@@ -111,10 +120,10 @@ final class XmlParserImpl implements XmlParser {
                 }
                 if (!this.reader.isWhiteSpace()) return true;
             }
-            closeReader();
+            close();
             return false;
         } catch (XMLStreamException e) {
-            closeReader();
+            close();
             throw XmlParserException.of("Could not get current content", e);
         }
     }
@@ -129,20 +138,11 @@ final class XmlParserImpl implements XmlParser {
             if (this.reader != null) {
                 while (this.reader.hasNext())
                     if (handleEvent(this.reader.next())) return;
-                closeReader();
+                close();
             }
         } catch (XMLStreamException e) {
-            closeReader();
+            close();
             throw XmlParserException.of("Could not fetch next tag from XML document", e);
-        }
-    }
-
-    private void closeReader() {
-        try {
-            if (this.reader != null) this.reader.close();
-            this.reader = null;
-        } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
         }
     }
 
