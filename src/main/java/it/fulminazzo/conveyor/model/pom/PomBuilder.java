@@ -6,6 +6,7 @@ import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.xml.XmlParser;
+import it.fulminazzo.conveyor.xml.XmlParserException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +36,12 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
 
     @Override
     public Pom build() throws BuilderException {
+        try {
+            XmlParser parser = getParser();
+            if (parser.hasNext()) parser.next();
+        } catch (XmlParserException e) {
+            throw new BuilderException(e);
+        }
         parseDocument();
         return buildObject("pom", () -> new Pom(
                 this.projectBuilder.build(),
