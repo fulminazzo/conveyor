@@ -6,6 +6,58 @@ import spock.lang.Specification
 
 class ActivationBuilderTest extends Specification {
 
+    def 'test build of complete activation'() {
+        given:
+        def data = """
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <jdk>[1.8,17)</jdk>
+                <os>
+                    <name>name</name>
+                    <family>family</family>
+                    <arch>arch</arch>
+                    <version>version</version>
+                </os>
+                <property>
+                    <name>name</name>
+                    <value>value</value>
+                </property>
+                <file>
+                    <missing>missing</missing>
+                    <exists>exists</exists>
+                </file>
+            </activation>"""
+
+        and:
+        def expected = new AndActivation()
+        expected.addActivation('activeByDefault', new BooleanActivation(true))
+        expected.addActivation('jdk', new JdkActivation('[1.8,17)'))
+        expected.addActivation('os', OsActivation.builder()
+                .name('name')
+                .family('family')
+                .arch('arch')
+                .version('version')
+                .build())
+        expected.addActivation('property', PropertyActivation.builder()
+                .name('name')
+                .value('value')
+                .build())
+        expected.addActivation('file', FileActivation.builder()
+                .missing('missing')
+                .exists('exists')
+                .build())
+
+        and:
+        def builder = newBuilder(data)
+        XmlObjectBuilderUtils.getParser(builder).next()
+
+        when:
+        def activation = builder.build()
+
+        then:
+        activation == expected
+    }
+
     def 'test parseActiveByDefault of #data returns #expected'() {
         given:
         def builder = newBuilder(data)
