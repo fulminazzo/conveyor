@@ -38,7 +38,8 @@ public final class Profile extends MavenModel {
             final @NotNull Map<String, String> properties,
             final @NotNull Collection<Repository> repositories,
             final @NotNull Collection<Dependency> dependencyManagement,
-            final @NotNull Collection<Dependency> dependencies) {
+            final @NotNull Collection<Dependency> dependencies
+    ) {
         super(properties, repositories, dependencyManagement, dependencies);
         this.id = id;
         this.activation = activation;
