@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
 import it.fulminazzo.conveyor.model.repository.Repository;
+import it.fulminazzo.conveyor.xml.XmlParser;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -41,6 +42,16 @@ public final class Profile extends MavenModel {
         super(properties, repositories, dependencyManagement, dependencies);
         this.id = id;
         this.activation = activation;
+    }
+
+    /**
+     * Instantiates a new builder to create a {@link Profile} object.
+     *
+     * @param parser the XML parser
+     * @return the builder
+     */
+    public static @NotNull ProfileBuilder builder(final @NotNull XmlParser parser) {
+        return new ProfileBuilder(parser);
     }
 
 }
