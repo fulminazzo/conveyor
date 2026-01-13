@@ -43,7 +43,7 @@ final class XmlParserImpl implements XmlParser {
     @Override
     public boolean hasNext() throws XmlParserException {
         if (this.nextTag != null) return true;
-        this.nextTag = fetchNextTag();
+        fetchNextTag();
         return this.nextTag != null;
     }
 
@@ -105,7 +105,10 @@ final class XmlParserImpl implements XmlParser {
             if (this.reader == null) return false;
             while (this.reader.hasNext()) {
                 int event = this.reader.next();
-                if (event != XMLStreamConstants.CHARACTERS) return false;
+                if (event != XMLStreamConstants.CHARACTERS) {
+                    handleEvent(event);
+                    return false;
+                }
                 if (!this.reader.isWhiteSpace()) return true;
             }
             this.reader = null;
@@ -121,26 +124,31 @@ final class XmlParserImpl implements XmlParser {
         this.currentContent = null;
     }
 
-    private @Nullable String fetchNextTag() throws XmlParserException {
+    private void fetchNextTag() throws XmlParserException {
         try {
-            if (this.reader == null) return null;
-            while (this.reader.hasNext()) {
-                int event = this.reader.next();
-                if (event == XMLStreamConstants.START_ELEMENT)
-                    return this.reader.getLocalName();
-                else if (event == XMLStreamConstants.END_ELEMENT) {
-                    this.scopes.pop();
-                    updateTag(null);
-                    return null;
-                }
+            if (this.reader != null) {
+                while (this.reader.hasNext())
+                    if (handleEvent(this.reader.next())) return;
+                this.reader = null;
             }
-            this.reader = null;
-            return null;
         } catch (XMLStreamException e) {
             this.reader = null;
             throw XmlParserException.of("Could not fetch next tag from XML document", e);
         }
+    }
 
+    private boolean handleEvent(int event) {
+        if (this.reader == null) throw new IllegalStateException("reader has already been consumed");
+        if (event == XMLStreamConstants.START_ELEMENT) {
+            this.nextTag = this.reader.getLocalName();
+            return true;
+        } else if (event == XMLStreamConstants.END_ELEMENT) {
+            this.scopes.pop();
+            updateTag(null);
+            this.nextTag = null;
+            return true;
+        }
+        return false;
     }
 
 }
