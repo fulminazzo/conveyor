@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.dependency;
 
+import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.ArtifactLike;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -8,6 +9,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Represents a raw {@link Dependency},
@@ -33,5 +36,26 @@ public final class RawDependency extends ArtifactLike implements DependencyLike 
     private final @NotNull String optional = String.valueOf(Boolean.FALSE);
 
     private final @NotNull Exclusions exclusions = new Exclusions();
+
+    /**
+     * Parses the properties of the current raw dependency
+     * and returns a fully parsed {@link Dependency}.
+     *
+     * @param properties the properties
+     * @return the dependency
+     */
+    public @NotNull Dependency parseProperties(final @NotNull Properties properties) {
+        final String classifier = getClassifier();
+        return Dependency.builder()
+                .groupId(properties.apply(getGroupId()))
+                .artifactId(properties.apply(getArtifactId()))
+                .classifier(classifier != null ? properties.apply(classifier) : null)
+                .version(properties.apply(Objects.requireNonNull(getVersion(), "version is marked non-null but is null")))
+                .type(getType())
+                .scope(Scope.of(getScope()))
+                .optional(Boolean.parseBoolean(getScope()))
+                .exclusions(getExclusions())
+                .build();
+    }
 
 }
