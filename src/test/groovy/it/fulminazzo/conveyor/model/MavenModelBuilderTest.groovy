@@ -3,8 +3,7 @@ package it.fulminazzo.conveyor.model
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
-import it.fulminazzo.conveyor.model.repository.Repository
-import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy
+import it.fulminazzo.conveyor.model.repository.RawRepository
 import spock.lang.Specification
 
 class MavenModelBuilderTest extends Specification {
@@ -61,9 +60,9 @@ class MavenModelBuilderTest extends Specification {
 
         and:
         def expected = [
-                Repository.builder().id('first').url('first.com').build(),
-                Repository.builder().id('second').url('second.net').build(),
-                Repository.builder().id('third').url('third.it').build()
+                RawRepository.builder().id('first').url('first.com').build(),
+                RawRepository.builder().id('second').url('second.net').build(),
+                RawRepository.builder().id('third').url('third.it').build()
         ]
 
         when:
@@ -107,19 +106,19 @@ class MavenModelBuilderTest extends Specification {
         XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
-        def expected = Repository.builder()
+        def expected = RawRepository.builder()
                 .id('id')
                 .name('name')
                 .url('url')
-                .releases(Repository.Policy.builder()
-                        .enabled(true)
-                        .updatePolicy(UpdatePolicy.of('daily'))
-                        .checksumPolicy(ChecksumPolicy.WARN)
+                .releases(RawRepository.Policy.builder()
+                        .enabled('true')
+                        .updatePolicy('daily')
+                        .checksumPolicy(ChecksumPolicy.WARN.value())
                         .build())
-                .snapshots(Repository.Policy.builder()
-                        .enabled(true)
-                        .updatePolicy(UpdatePolicy.of('always'))
-                        .checksumPolicy(ChecksumPolicy.FAIL)
+                .snapshots(RawRepository.Policy.builder()
+                        .enabled('true')
+                        .updatePolicy('always')
+                        .checksumPolicy(ChecksumPolicy.FAIL.value())
                         .build())
                 .build()
 

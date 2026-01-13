@@ -6,8 +6,7 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
-import it.fulminazzo.conveyor.model.repository.Repository
-import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy
+import it.fulminazzo.conveyor.model.repository.RawRepository
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
@@ -80,36 +79,36 @@ class PomBuilderTest extends Specification {
                         'junit.version'               : '5.9.2'
                 ],
                 [
-                        Repository.builder()
+                        RawRepository.builder()
                                 .id('central')
                                 .name('Central Repository')
                                 .url('https://repo.maven.apache.org/maven2')
-                                .snapshots(Repository.Policy.builder().enabled(false).build())
+                                .snapshots(RawRepository.Policy.builder().enabled('false').build())
                                 .build(),
-                        Repository.builder()
+                        RawRepository.builder()
                                 .id('internal-repo')
                                 .name('Internal Company Repository')
                                 .url('https://repo.example.com/releases')
                                 .releases(
-                                        Repository.Policy.builder()
-                                                .enabled(true)
-                                                .updatePolicy(UpdatePolicy.of('always'))
-                                                .checksumPolicy(ChecksumPolicy.WARN)
+                                        RawRepository.Policy.builder()
+                                                .enabled('true')
+                                                .updatePolicy('always')
+                                                .checksumPolicy(ChecksumPolicy.WARN.value())
                                                 .build()
                                 )
-                                .snapshots(Repository.Policy.builder().enabled(false).build())
+                                .snapshots(RawRepository.Policy.builder().enabled('false').build())
                                 .build(),
-                        Repository.builder()
+                        RawRepository.builder()
                                 .id('internal-snapshots')
                                 .name('Internal Company Snapshots')
                                 .url('https://repo.example.com/snapshots')
                                 .releases(
-                                        Repository.Policy.builder().enabled(false).build()
+                                        RawRepository.Policy.builder().enabled('false').build()
                                 )
                                 .snapshots(
-                                        Repository.Policy.builder()
-                                                .enabled(true)
-                                                .updatePolicy(UpdatePolicy.of('daily'))
+                                        RawRepository.Policy.builder()
+                                                .enabled('true')
+                                                .updatePolicy('daily')
                                                 .build()
                                 )
                                 .build()

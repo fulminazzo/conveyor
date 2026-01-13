@@ -3,7 +3,7 @@ package it.fulminazzo.conveyor.model.profile
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.activation.Activation
-import it.fulminazzo.conveyor.model.repository.Repository
+import it.fulminazzo.conveyor.model.repository.RawRepository
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
@@ -45,11 +45,11 @@ class ProfileBuilderTest extends Specification {
                         'config.api.url' : 'https://api.project.it'
                 ],
                 [
-                        Repository.builder()
+                        RawRepository.builder()
                                 .id('enterprise-repo')
                                 .url('https://nexus.company.it/repository/maven-public/')
-                                .releases(Repository.Policy.builder().enabled(true).build())
-                                .snapshots(Repository.Policy.builder().enabled(false).build())
+                                .releases(RawRepository.Policy.builder().enabled('true').build())
+                                .snapshots(RawRepository.Policy.builder().enabled('false').build())
                                 .build()
                 ],
                 [
