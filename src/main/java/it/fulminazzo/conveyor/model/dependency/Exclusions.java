@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.dependency;
 
+import it.fulminazzo.conveyor.model.Properties;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,20 @@ public final class Exclusions {
     private static final @NotNull String separator = ":";
 
     private final @NotNull Set<String> exclusions = new HashSet<>();
+
+    /**
+     * For each of the current {@link #exclusions},
+     * replaces the properties with their values.
+     *
+     * @param properties the properties
+     * @return the new exclusions object with the parsed properties
+     */
+    public @NotNull Exclusions parseProperties(final @NotNull Properties properties) {
+        Exclusions exclusions = new Exclusions();
+        for (String exclusion : this.exclusions)
+            exclusions.exclusions.add(properties.apply(exclusion));
+        return exclusions;
+    }
 
     /**
      * Checks if the given coordinates are excluded from the exclusions list.
