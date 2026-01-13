@@ -133,22 +133,24 @@ class MavenModelBuilderTest extends Specification {
         given:
         def builder = MockMavenModelBuilder.newBuilder("""
             <dependencyManagement>
-                <dependency>
-                    <groupId>it.fulminazzo</groupId>
-                    <artifactId>dep1</artifactId>
-                    <version>1.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>it.fulminazzo</groupId>
-                    <artifactId>dep2</artifactId>
-                    <version>1.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>it.fulminazzo</groupId>
-                    <artifactId>dep3</artifactId>
-                    <version>1.0</version>
-                </dependency>
-                <something>wrong</something>
+                <dependencies>
+                    <dependency>
+                        <groupId>it.fulminazzo</groupId>
+                        <artifactId>dep1</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>it.fulminazzo</groupId>
+                        <artifactId>dep2</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>it.fulminazzo</groupId>
+                        <artifactId>dep3</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                    <something>wrong</something>
+                </dependencies>
             </dependencyManagement>
         """)
         XmlObjectBuilderUtils.getParser(builder).next()
