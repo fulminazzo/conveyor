@@ -37,6 +37,9 @@ class XmlParserImplTest extends Specification {
 
         and:
         !parser.hasNext()
+
+        cleanup:
+        parser.close()
     }
 
     def 'test that getCurrentContent does not throw on ended data'() {
@@ -54,6 +57,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         thrown(XmlParserException)
+
+        cleanup:
+        parser.close()
     }
 
     def 'test that next does not throw after currentContent ended data'() {
@@ -71,6 +77,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         thrown(XmlParserException)
+
+        cleanup:
+        parser.close()
     }
 
     def 'test hasNext and next methods return correct values'() {
@@ -124,6 +133,9 @@ class XmlParserImplTest extends Specification {
 
         and:
         !parser.hasNext()
+
+        cleanup:
+        parser.close()
     }
 
     def 'test hasNext throws XmlParserException on XMLStreamException'() {
@@ -135,6 +147,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         thrown(XmlParserException)
+
+        cleanup:
+        parser.close()
     }
 
     def 'test children returns all the children'() {
@@ -163,6 +178,9 @@ class XmlParserImplTest extends Specification {
 
         and:
         parser.hasNext()
+
+        cleanup:
+        parser.close()
     }
 
     def 'test children iterator throws RuntimeXmlParserException on XmlParserException'() {
@@ -197,6 +215,9 @@ class XmlParserImplTest extends Specification {
         then:
         cause != null
         cause.class == XmlParserException
+
+        cleanup:
+        parser.close()
     }
 
     def 'test getCurrentTag returns correct value'() {
@@ -211,6 +232,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         tag == 'first'
+
+        cleanup:
+        parser.close()
     }
 
     def 'test getCurrentTag throws on not present'() {
@@ -222,6 +246,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         thrown(XmlParserException)
+
+        cleanup:
+        parser.close()
     }
 
     def 'test getCurrentContent returns correct value'() {
@@ -242,6 +269,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         content == 'Hello, world!'
+
+        cleanup:
+        parser.close()
     }
 
     def 'test getCurrentContent throws on non-text content'() {
@@ -256,6 +286,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         thrown(XmlParserException)
+
+        cleanup:
+        parser.close()
     }
 
     def 'test getCurrentContent throws on not present'() {
@@ -267,6 +300,9 @@ class XmlParserImplTest extends Specification {
 
         then:
         thrown(XmlParserException)
+
+        cleanup:
+        parser.close()
     }
 
     private XmlParserImpl newParser(final String rawData) {
