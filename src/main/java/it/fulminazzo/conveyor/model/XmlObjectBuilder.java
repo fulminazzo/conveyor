@@ -1,12 +1,11 @@
 package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.function.ConsumerException;
+import it.fulminazzo.conveyor.function.SupplierException;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import it.fulminazzo.conveyor.xml.XmlParserException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 /**
  * A special type of builder that uses <b>XML</b> documents to create objects.
@@ -35,11 +34,11 @@ public abstract class XmlObjectBuilder<O> {
      * @throws BuilderException in case of building errors
      */
     protected <T> @NotNull T buildObject(final @NotNull String name,
-                                         final @NotNull Supplier<T> buildFunction
+                                         final @NotNull SupplierException<T, Exception> buildFunction
     ) throws BuilderException {
         try {
             return buildFunction.get();
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             throw new BuilderException(String.format("Could not build %s", name), e);
         }
     }
