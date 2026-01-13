@@ -14,7 +14,7 @@ import java.util.*;
  *
  * @param <O> the type of the built object
  */
-abstract class MavenModelBuilder<O> extends XmlObjectBuilder<O> {
+public abstract class MavenModelBuilder<O> extends XmlObjectBuilder<O> {
     protected final @NotNull Map<String, String> properties = new HashMap<>();
     protected final @NotNull Set<Repository> repositories = new HashSet<>();
     protected final @NotNull Set<Dependency> dependencyManagement = new HashSet<>();
