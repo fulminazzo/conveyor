@@ -2,6 +2,8 @@ package it.fulminazzo.conveyor.xml;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.InputStream;
+
 /**
  * A cursor-based parser to read <b>XML</b> documents.
  */
@@ -33,9 +35,7 @@ public interface XmlParser extends AutoCloseable {
      * Gets all the children of the current element.
      *
      * @return the children
-     * @throws RuntimeXmlParserException if there were errors in the internal {@link java.util.Iterator}.
-     *                                   The actual {@link XmlParserException} that caused the error will be available in
-     *                                   {@link RuntimeXmlParserException#getCause()}.
+     * @throws RuntimeXmlParserException if there were errors in the internal {@link java.util.Iterator}.                                   The actual {@link XmlParserException} that caused the error will be available in                                   {@link RuntimeXmlParserException#getCause()}.
      */
     @NotNull Iterable<String> children() throws RuntimeXmlParserException;
 
@@ -61,5 +61,16 @@ public interface XmlParser extends AutoCloseable {
      */
     @Override
     void close();
+
+    /**
+     * Instantiates a new XML parser.
+     *
+     * @param inputStream the stream containing the XML document
+     * @return the XML parser
+     * @throws XmlParserException in case of initialization errors
+     */
+    static @NotNull XmlParser newParser(final @NotNull InputStream inputStream) throws XmlParserException {
+        return new XmlParserImpl(inputStream);
+    }
 
 }
