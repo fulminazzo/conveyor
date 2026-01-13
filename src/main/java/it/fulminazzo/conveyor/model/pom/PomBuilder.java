@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.pom;
 
 import it.fulminazzo.conveyor.model.BuilderException;
+import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.xml.XmlParser;
@@ -13,7 +14,7 @@ import java.io.InputStream;
 /**
  * Responsible for creating a {@link Pom} object.
  */
-final class PomBuilder extends MavenModelBuilder<Object> {
+final class PomBuilder extends MavenModelBuilder<MavenModel> {
     private @Nullable String packaging;
     private @Nullable Artifact parent;
     
@@ -22,7 +23,7 @@ final class PomBuilder extends MavenModelBuilder<Object> {
     }
 
     @Override
-    public Object build() {
+    public MavenModel build() {
         throw new UnsupportedOperationException();
     }
 

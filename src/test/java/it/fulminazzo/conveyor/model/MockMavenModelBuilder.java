@@ -8,14 +8,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-final class MockMavenModelBuilder extends MavenModelBuilder<Object> {
+final class MockMavenModelBuilder extends MavenModelBuilder<MavenModel> {
 
     public MockMavenModelBuilder(final @NotNull XmlParser parser) {
         super(parser);
     }
 
     @Override
-    public Object build() {
+    public MavenModel build() {
         throw new UnsupportedOperationException();
     }
 
