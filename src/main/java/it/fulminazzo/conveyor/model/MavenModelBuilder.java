@@ -16,7 +16,7 @@ import java.util.*;
  */
 public abstract class MavenModelBuilder<O> extends XmlObjectBuilder<O> {
     protected final @NotNull Map<String, String> properties = new HashMap<>();
-    protected final @NotNull Set<Repository> repositories = new HashSet<>();
+    protected final @NotNull Map<String, Repository> repositories = new LinkedHashMap<>();
     protected final @NotNull Map<String, Dependency> dependencyManagement = new LinkedHashMap<>();
     protected final @NotNull Map<String, Dependency> dependencies = new LinkedHashMap<>();
 
@@ -45,8 +45,11 @@ public abstract class MavenModelBuilder<O> extends XmlObjectBuilder<O> {
      */
     protected void parseRepositories() throws BuilderException {
         onChildElements(t -> {
-            if (t.equals("repository"))
-                this.repositories.add(parseRepository());
+            if (t.equals("repository")) {
+                Repository repository = parseRepository();
+                String key = repository.getId();
+                this.repositories.put(key, repository);
+            }
         });
     }
 
