@@ -20,8 +20,18 @@ public final class ActivationBuilder extends XmlObjectBuilder<Activation> {
     }
 
     @Override
-    public Activation build() {
-        throw new UnsupportedOperationException();
+    public @NotNull Activation build() throws BuilderException {
+        AndActivation activation = new AndActivation();
+        onChildElements(t -> {
+            switch (t) {
+                case "activeByDefault" -> activation.addActivation(t, parseActiveByDefault());
+                case "jdk" -> activation.addActivation(t, parseJdk());
+                case "os" -> activation.addActivation(t, parseOs());
+                case "property" -> activation.addActivation(t, parseProperty());
+                case "file" -> activation.addActivation(t, parseFile());
+            }
+        });
+        return activation;
     }
 
     /**
