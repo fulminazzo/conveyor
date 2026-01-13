@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model.profile
 
-import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.activation.Activation
 import it.fulminazzo.conveyor.model.repository.Repository
@@ -53,16 +53,16 @@ class ProfileBuilderTest extends Specification {
                                 .build()
                 ],
                 [
-                        Dependency.builder()
+                        RawDependency.builder()
                                 .groupId('org.springframework.cloud')
                                 .artifactId('spring-cloud-dependencies')
                                 .version('2021.0.3')
                                 .type('pom')
-                                .scope(Scope.IMPORT)
+                                .scope(Scope.IMPORT.value())
                                 .build()
                 ],
                 [
-                        Dependency.builder()
+                        RawDependency.builder()
                                 .groupId('org.postgresql')
                                 .artifactId('postgresql')
                                 .version('42.5.0')

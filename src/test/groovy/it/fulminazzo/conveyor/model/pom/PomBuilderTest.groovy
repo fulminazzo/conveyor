@@ -2,7 +2,7 @@ package it.fulminazzo.conveyor.model.pom
 
 import it.fulminazzo.conveyor.model.XmlObjectBuilderUtils
 import it.fulminazzo.conveyor.model.artifact.Artifact
-import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
@@ -115,29 +115,29 @@ class PomBuilderTest extends Specification {
                                 .build()
                 ],
                 [
-                        Dependency.builder()
+                        RawDependency.builder()
                                 .groupId('org.springframework')
                                 .artifactId('spring-core')
                                 .version('${spring.version}')
                                 .build()
                 ],
                 [
-                        Dependency.builder()
+                        RawDependency.builder()
                                 .groupId('org.springframework')
                                 .artifactId('spring-context')
                                 .version('${spring.version}')
                                 .build(),
-                        Dependency.builder()
+                        RawDependency.builder()
                                 .groupId('org.junit.jupiter')
                                 .artifactId('junit-jupiter-api')
                                 .version('${junit.version}')
-                                .scope(Scope.TEST)
+                                .scope(Scope.TEST.value())
                                 .build(),
-                        Dependency.builder()
+                        RawDependency.builder()
                                 .groupId('javax.servlet')
                                 .artifactId('javax.servlet-api')
                                 .version('4.0.1')
-                                .scope(Scope.PROVIDED)
+                                .scope(Scope.PROVIDED.value())
                                 .build(),
                 ]
         )

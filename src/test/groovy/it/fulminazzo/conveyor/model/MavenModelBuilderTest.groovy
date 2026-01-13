@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model
 
-import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.Repository
@@ -158,9 +158,9 @@ class MavenModelBuilderTest extends Specification {
 
         and:
         def expected = [
-                Dependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(),
-                Dependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(),
-                Dependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('1.0').build()
+                RawDependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(),
+                RawDependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(),
+                RawDependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('1.0').build()
         ]
 
         when:
@@ -201,9 +201,9 @@ class MavenModelBuilderTest extends Specification {
 
         and:
         def expected = [
-                Dependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(),
-                Dependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(),
-                Dependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('1.0').build()
+                RawDependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(),
+                RawDependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(),
+                RawDependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('1.0').build()
         ]
 
         when:
@@ -251,14 +251,14 @@ class MavenModelBuilderTest extends Specification {
         XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
-        def expected = Dependency.builder()
+        def expected = RawDependency.builder()
                 .groupId('it.fulminazzo')
                 .artifactId('conveyor')
                 .version('1.0')
                 .type('war')
                 .classifier('sources')
-                .scope(Scope.PROVIDED)
-                .optional(true)
+                .scope(Scope.PROVIDED.value())
+                .optional(true.toString())
                 .build()
         expected.exclusions.add('org.projectlombok', 'lombok')
 
