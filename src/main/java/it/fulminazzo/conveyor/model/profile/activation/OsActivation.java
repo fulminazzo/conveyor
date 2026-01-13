@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.profile.activation;
 
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,7 @@ import java.util.Map;
  * @param arch    the architecture
  * @param version the version (can be specified as "regex: &lt;regex&gt;")
  */
+@Builder
 record OsActivation(
         @Nullable String name,
         @Nullable String family,
