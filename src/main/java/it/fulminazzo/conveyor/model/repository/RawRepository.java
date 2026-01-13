@@ -1,5 +1,8 @@
 package it.fulminazzo.conveyor.model.repository;
 
+import it.fulminazzo.conveyor.model.Properties;
+import it.fulminazzo.conveyor.model.RawObject;
+import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy;
 import lombok.Builder;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -26,13 +29,22 @@ public class RawRepository implements RepositoryLike {
      */
     @Value
     @Builder
-    public static class Policy {
+    public static class Policy implements RawObject<Repository.Policy> {
         @Builder.Default
         String enabled = String.valueOf(Boolean.FALSE);
         @Builder.Default
         @NotNull String updatePolicy = "daily";
         @Builder.Default
         @NotNull String checksumPolicy = ChecksumPolicy.WARN.value();
+
+        @Override
+        public @NotNull Repository.Policy applyProperties(final @NotNull Properties properties) {
+            return Repository.Policy.builder()
+                    .enabled(Boolean.parseBoolean(properties.apply(getEnabled())))
+                    .updatePolicy(UpdatePolicy.of(properties.apply(getUpdatePolicy())))
+                    .checksumPolicy(ChecksumPolicy.of(properties.apply(getChecksumPolicy())))
+                    .build();
+        }
 
     }
 
