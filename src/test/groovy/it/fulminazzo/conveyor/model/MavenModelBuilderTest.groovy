@@ -1,4 +1,5 @@
-package it.fulminazzo.conveyor.pom
+package it.fulminazzo.conveyor.model
+
 
 import it.fulminazzo.conveyor.pom.dependency.Dependency
 import it.fulminazzo.conveyor.pom.repository.ChecksumPolicy
@@ -18,7 +19,7 @@ class MavenModelBuilderTest extends Specification {
                 <name>\${dependency.name}</name>
             </properties>
         """)
-        builder.reader.next()
+        builder.parser.next()
 
         when:
         builder.parseProperties()
@@ -56,7 +57,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </repositories>
         """)
-        builder.reader.next()
+        builder.parser.next()
 
         and:
         def expected = [
@@ -103,7 +104,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </repository>
         """)
-        builder.reader.next()
+        builder.parser.next()
 
         and:
         def expected = Repository.builder()
@@ -151,7 +152,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </dependencyManagement>
         """)
-        builder.reader.next()
+        builder.parser.next()
 
         and:
         def expected = [
@@ -194,7 +195,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </dependencies>
         """)
-        builder.reader.next()
+        builder.parser.next()
 
         and:
         def expected = [
@@ -245,7 +246,7 @@ class MavenModelBuilderTest extends Specification {
                 <something>wrong</something>
             </dependency>
         """)
-        builder.reader.next()
+        builder.parser.next()
 
         and:
         def expected = Dependency.builder()
@@ -264,42 +265,6 @@ class MavenModelBuilderTest extends Specification {
 
         then:
         dependency == expected
-    }
-
-    def 'test that buildObject throws ParserException on XMLStreamException'() {
-        given:
-        def builder = MockMavenModelBuilder.newBuilder('<repository></repository>')
-        builder.reader.next()
-
-        when:
-        builder.parseRepository()
-
-        then:
-        thrown(ParserException)
-    }
-
-    def 'test that parseGeneric throws ParserException on XMLStreamException'() {
-        given:
-        def builder = MockMavenModelBuilder.newBuilder('<project>')
-        builder.reader.next()
-
-        when:
-        builder.parseProperties()
-
-        then:
-        thrown(ParserException)
-    }
-
-    def 'test that getElementText throws ParserException on XMLStreamException'() {
-        given:
-        def builder = MockMavenModelBuilder.newBuilder('<properties><first><second></second></first></properties>')
-        builder.reader.next()
-
-        when:
-        builder.parseProperties()
-
-        then:
-        thrown(ParserException)
     }
 
 }
