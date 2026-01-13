@@ -55,7 +55,30 @@ public final class Dependency extends Artifact implements DependencyLike {
         /**
          * The dependency will be used to import other attributes.
          */
-        IMPORT
+        IMPORT;
+
+        /**
+         * Gets the <b>XML</b> value of this scope.
+         *
+         * @return the value
+         */
+        public @NotNull String value() {
+            return name().toLowerCase();
+        }
+
+        /**
+         * Gets the scope whose {@link #value()} equals to the given one.
+         *
+         * @param value the value
+         * @return the scope
+         */
+        public static @NotNull Scope of(final @NotNull String value) {
+            for (Scope scope : values())
+                if (scope.value().equals(value))
+                    return scope;
+            throw new IllegalArgumentException(String.format("Could not find scope of '%s'", value));
+        }
+
     }
 
 }
