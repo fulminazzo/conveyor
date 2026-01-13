@@ -16,16 +16,26 @@ class RawDependencyTest extends Specification {
                 .scope('${scope}')
                 .optional('${optional}')
                 .build()
+        rawDependency.exclusions
+                .add('${first.excluded.groupId}', '${first.excluded.artifactId}')
+                .add('${second.excluded.groupId}', '${second.excluded.artifactId}')
+                .add('${third.excluded.groupId}', '${third.excluded.artifactId}')
 
         and:
         def properties = new Properties([
-                'groupId'   : 'it.fulminazzo',
-                'artifactId': 'conveyor',
-                'classifier': 'sources',
-                'version'   : '1.0',
-                'type'      : 'war',
-                'scope'     : 'test',
-                'optional'  : 'true',
+                'groupId'                   : 'it.fulminazzo',
+                'artifactId'                : 'conveyor',
+                'classifier'                : 'sources',
+                'version'                   : '1.0',
+                'type'                      : 'war',
+                'scope'                     : 'test',
+                'optional'                  : 'true',
+                'first.excluded.groupId'    : 'org.projectlombok',
+                'first.excluded.artifactId' : 'lombok',
+                'second.excluded.groupId'   : 'org.jetbrains',
+                'second.excluded.artifactId': 'annotations',
+                'third.excluded.groupId'    : 'org.spockframework',
+                'third.excluded.artifactId' : 'spock-core',
         ])
 
         and:
@@ -37,7 +47,11 @@ class RawDependencyTest extends Specification {
                 .type('war')
                 .scope(Scope.TEST)
                 .optional(true)
-                .exclusions(new Exclusions())
+                .exclusions(new Exclusions()
+                        .add('org.projectlombok', 'lombok')
+                        .add('org.jetbrains', 'annotations')
+                        .add('org.spockframework', 'spock-core')
+                )
                 .build()
 
         when:
