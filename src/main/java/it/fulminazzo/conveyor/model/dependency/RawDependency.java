@@ -51,9 +51,9 @@ public final class RawDependency extends ArtifactLike implements DependencyLike 
                 .artifactId(properties.apply(getArtifactId()))
                 .classifier(classifier != null ? properties.apply(classifier) : null)
                 .version(properties.apply(Objects.requireNonNull(getVersion(), "version is marked non-null but is null")))
-                .type(getType())
-                .scope(Scope.of(getScope()))
-                .optional(Boolean.parseBoolean(getScope()))
+                .type(properties.apply(getType()))
+                .scope(Scope.of(properties.apply(getScope())))
+                .optional(Boolean.parseBoolean(properties.apply(getOptional())))
                 .exclusions(getExclusions())
                 .build();
     }
