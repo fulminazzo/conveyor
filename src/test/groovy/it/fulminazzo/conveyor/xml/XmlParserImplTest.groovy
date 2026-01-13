@@ -4,6 +4,30 @@ import spock.lang.Specification
 
 class XmlParserImplTest extends Specification {
 
+    def 'test that children does not return grand children'() {
+        given:
+        def parser = newParser("""
+        <project>
+            <first>
+                <first_grand></first_grand>
+                <second_grand></second_grand>
+                <third_grand></third_grand>
+            </first>
+            <second>Hello, world!</second>
+            <third></third>
+            <fourth/>
+        </project>""")
+
+        when:
+        parser.next()
+
+        and:
+        def children = parser.children().toList()
+
+        then:
+        children == ['first', 'second', 'third', 'fourth']
+    }
+
     def 'test that invalid getCurrentContent does not prevent reading of next element'() {
         given:
         def parser = newParser('<project><first>Hello, world</first></project>')
