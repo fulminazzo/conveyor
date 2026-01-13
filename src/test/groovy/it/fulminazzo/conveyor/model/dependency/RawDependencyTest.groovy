@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class RawDependencyTest extends Specification {
 
-    def 'test that parseProperties correctly parses all properties'() {
+    def 'test that applyProperties correctly parses all properties'() {
         given:
         def rawDependency = RawDependency.builder()
                 .groupId('${groupId}')
@@ -55,7 +55,7 @@ class RawDependencyTest extends Specification {
                 .build()
 
         when:
-        def actual = rawDependency.parseProperties(properties)
+        def actual = rawDependency.applyProperties(properties)
 
         then:
         actual == expected
