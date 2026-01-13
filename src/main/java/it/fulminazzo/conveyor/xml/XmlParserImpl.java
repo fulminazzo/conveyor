@@ -61,14 +61,19 @@ final class XmlParserImpl implements XmlParser {
 
     @Override
     public @NotNull Iterable<String> children() throws RuntimeXmlParserException {
-        int current = this.scopes.size();
+        int childrenDepth = this.scopes.size() + 1;
         return () -> new Iterator<>() {
             @Override
             public boolean hasNext() {
                 try {
-                    if (XmlParserImpl.this.hasNext()) return true;
-                    if (XmlParserImpl.this.scopes.size() < current) return false;
-                    else return XmlParserImpl.this.hasNext();
+                    while (XmlParserImpl.this.hasNext()) {
+                        int scopes = XmlParserImpl.this.scopes.size();
+                        int currentDepth = scopes + (XmlParserImpl.this.nextTag == null ? 0 : 1);
+                        if (scopes < childrenDepth - 1) return false;
+                        if (currentDepth == childrenDepth) return true;
+                        XmlParserImpl.this.next();
+                    }
+                    return false;
                 } catch (XmlParserException e) {
                     throw new RuntimeXmlParserException(e);
                 }
