@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.function.ConsumerException;
 import it.fulminazzo.conveyor.xml.XmlParser;
+import it.fulminazzo.conveyor.xml.XmlParserException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,6 +54,34 @@ public abstract class XmlObjectBuilder<O> {
     protected void onChildElements(final @NotNull ConsumerException<String, BuilderException> then) throws BuilderException {
         for (String element : this.parser.children()) {
             then.accept(element);
+        }
+    }
+
+    /**
+     * Gets the latest tag read from the parser.
+     *
+     * @return the current tag
+     * @throws BuilderException in case of any errors
+     */
+    protected @NotNull String getCurrentTag() throws BuilderException {
+        try {
+            return this.parser.getCurrentTag();
+        } catch (XmlParserException e) {
+            throw new BuilderException(e);
+        }
+    }
+
+    /**
+     * Gets the latest text content read from the parser.
+     *
+     * @return the current text content
+     * @throws BuilderException in case of any errors
+     */
+    protected @NotNull String getCurrentTextContent() throws BuilderException {
+        try {
+            return this.parser.getCurrentContent();
+        } catch (XmlParserException e) {
+            throw new BuilderException(e);
         }
     }
 
