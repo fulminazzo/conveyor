@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model;
 
+import it.fulminazzo.conveyor.function.ConsumerException;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,19 @@ public abstract class XmlObjectBuilder<O> {
             return buildFunction.get();
         } catch (RuntimeException e) {
             throw new BuilderException(String.format("Could not build %s", name), e);
+        }
+    }
+
+    /**
+     * Assuming the parser has just entered the tags of an XML element,
+     * will call the given function for all the children elements.
+     *
+     * @param then the function to execute (provides the tag of the child as argument)
+     * @throws BuilderException in case of any errors
+     */
+    protected void onChildElements(final @NotNull ConsumerException<String, BuilderException> then) throws BuilderException {
+        for (String element : this.parser.children()) {
+            then.accept(element);
         }
     }
 
