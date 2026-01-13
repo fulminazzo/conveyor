@@ -27,7 +27,7 @@ class PomBuilderTest extends Specification {
                         .version('1.0.0-SNAPSHOT')
                         .build(),
                 [
-                        newProfile("""
+                        newRawProfile("""
                             <profile>
                                 <id>development</id>
                                 <activation>
@@ -41,7 +41,7 @@ class PomBuilderTest extends Specification {
                                     <db.url>jdbc:mysql://localhost:3306/dev_db</db.url>
                                 </properties>
                             </profile>"""),
-                        newProfile("""
+                        newRawProfile("""
                             <profile>
                                 <id>production</id>
                                 <activation>
@@ -217,7 +217,10 @@ class PomBuilderTest extends Specification {
     }
 
     private static Profile newProfile(final String id) {
-        def data = "<profile><id>$id</id><activation></activation></profile>"
+        return newRawProfile("<profile><id>$id</id><activation></activation></profile>")
+    }
+
+    private static Profile newRawProfile(final String data) {
         def parser = newParser(data)
         parser.next()
         return Profile.builder(parser).build()
