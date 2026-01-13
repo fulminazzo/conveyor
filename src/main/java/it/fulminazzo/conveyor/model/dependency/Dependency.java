@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true)
 @SuperBuilder
 public final class Dependency extends ArtifactLike {
+    private static final @NotNull String separator = ":";
+
     @Builder.Default
     private final @Nullable String version = null;
 
@@ -27,6 +29,19 @@ public final class Dependency extends ArtifactLike {
     private final boolean optional = false;
 
     private final @NotNull Exclusions exclusions = new Exclusions();
+
+    /**
+     * Gets the coordinates of the current dependency.
+     *
+     * @return the coordinates
+     */
+    public @NotNull String getCoordinates() {
+        String classifier = getClassifier();
+        return getGroupId() + separator +
+                getArtifactId() + separator +
+                getType() + separator +
+                (classifier == null ? "" : classifier);
+    }
 
     /**
      * Defines the scope of this dependency.
