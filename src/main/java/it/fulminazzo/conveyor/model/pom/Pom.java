@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.pom;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a Maven project.
@@ -24,6 +26,7 @@ public final class Pom extends MavenModel {
     private final @NotNull Artifact project;
     private final @NotNull String packaging;
     private final @Nullable Artifact parent;
+    private final @NotNull Set<Profile> profiles;
 
     /**
      * Instantiates a new Pom.
@@ -31,6 +34,7 @@ public final class Pom extends MavenModel {
      * @param project              the project
      * @param packaging            the packaging
      * @param parent               the parent
+     * @param profiles             the profiles
      * @param properties           the properties
      * @param repositories         the repositories
      * @param dependencyManagement the dependency management
@@ -39,6 +43,7 @@ public final class Pom extends MavenModel {
     Pom(final @NotNull Artifact project,
         final @NotNull String packaging,
         final @Nullable Artifact parent,
+        final @NotNull Collection<Profile> profiles,
         final @NotNull Map<String, String> properties,
         final @NotNull Collection<Repository> repositories,
         final @NotNull Collection<Dependency> dependencyManagement,
@@ -48,6 +53,7 @@ public final class Pom extends MavenModel {
         this.project = project;
         this.packaging = packaging;
         this.parent = parent;
+        this.profiles = Set.copyOf(profiles);
     }
 
     /**
