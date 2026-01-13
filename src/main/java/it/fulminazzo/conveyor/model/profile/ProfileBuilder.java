@@ -7,6 +7,8 @@ import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * A builder for creating {@link Profile} objects from <b>XML</b>.
  */
@@ -24,8 +26,16 @@ public final class ProfileBuilder extends MavenModelBuilder<Profile> {
     }
 
     @Override
-    public Profile build() throws BuilderException {
-        throw new UnsupportedOperationException();
+    public @NotNull Profile build() throws BuilderException {
+        parseDocument();
+        return buildObject("profile", () -> new Profile(
+                Objects.requireNonNull(this.id, "id is marked non-null but is null"),
+                this.activation == null ? Activation.alwaysFalse() : this.activation,
+                this.properties,
+                this.repositories.values(),
+                this.dependencyManagement.values(),
+                this.dependencies.values()
+        ));
     }
 
     @Override
