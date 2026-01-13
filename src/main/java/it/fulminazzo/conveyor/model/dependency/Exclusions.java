@@ -38,10 +38,12 @@ public final class Exclusions {
      *
      * @param groupId    the group id
      * @param artifactId the artifact id
+     * @return this object for method chaining
      */
-    public void add(final @NotNull String groupId,
-                    final @NotNull String artifactId) {
+    public @NotNull Exclusions add(final @NotNull String groupId,
+                                   final @NotNull String artifactId) {
         this.exclusions.add(getIdentifier(groupId, artifactId));
+        return this;
     }
 
     private @NotNull String getIdentifier(final @NotNull String groupId, final @NotNull String artifactId) {
