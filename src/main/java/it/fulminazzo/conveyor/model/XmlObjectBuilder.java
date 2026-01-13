@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @RequiredArgsConstructor
 public abstract class XmlObjectBuilder<O> {
-    protected final @NotNull XmlParser parser;
+    private final @NotNull XmlParser parser;
 
     /**
      * Builds the object.
