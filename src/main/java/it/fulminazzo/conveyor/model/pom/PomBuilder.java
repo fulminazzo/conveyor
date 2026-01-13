@@ -15,6 +15,7 @@ import java.io.InputStream;
  * Responsible for creating a {@link Pom} object.
  */
 final class PomBuilder extends MavenModelBuilder<MavenModel> {
+    private final @NotNull Artifact.ArtifactBuilder<?, ?> projectBuilder = Artifact.builder();
     private @Nullable String packaging;
     private @Nullable Artifact parent;
     
@@ -30,17 +31,15 @@ final class PomBuilder extends MavenModelBuilder<MavenModel> {
     /**
      * Parses the given document trying to populate all the above fields.
      *
-     * @return the project artifact
-     * @throws BuilderException in case of reading or parsing errors
+     * @throws BuilderException in case of any errors
      */
     protected void parseDocument() throws BuilderException {
-        Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
         onChildElements(t -> {
             switch (t) {
-                case "groupId" -> builder.groupId(getCurrentTextContent());
-                case "artifactId" -> builder.artifactId(getCurrentTextContent());
-                case "version" -> builder.version(getCurrentTextContent());
-                case "classifier" -> builder.classifier(getCurrentTextContent());
+                case "groupId" -> this.projectBuilder.groupId(getCurrentTextContent());
+                case "artifactId" -> this.projectBuilder.artifactId(getCurrentTextContent());
+                case "version" -> this.projectBuilder.version(getCurrentTextContent());
+                case "classifier" -> this.projectBuilder.classifier(getCurrentTextContent());
                 case "packaging" -> this.packaging = getCurrentTextContent();
                 case "parent" -> this.parent = parseParent();
                 case "properties" -> parseProperties();
@@ -49,7 +48,6 @@ final class PomBuilder extends MavenModelBuilder<MavenModel> {
                 case "dependencies" -> parseDependencies();
             }
         });
-//        return buildObject("project", builder::build);
     }
 
     /**
