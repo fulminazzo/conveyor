@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.profile.activation;
 
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,7 @@ import java.io.File;
  * @param missing if present, will check for the existence of the file.
  *               If found, it will not enable.
  */
+@Builder
 record FileActivation(@Nullable String exists, @Nullable String missing) implements Activation {
 
     @Override
