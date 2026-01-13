@@ -32,6 +32,7 @@ class ProfileBuilderTest extends Specification {
         given:
         def inputStream = new ByteArrayInputStream(ACTIVATION.bytes)
         def parser = XmlParser.newParser(inputStream)
+        parser.next()
         def expectedActivation = Activation.builder(parser).build()
 
         and:
