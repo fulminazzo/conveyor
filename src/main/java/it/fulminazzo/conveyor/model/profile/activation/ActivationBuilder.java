@@ -44,4 +44,23 @@ public final class ActivationBuilder extends XmlObjectBuilder<Activation> {
         return new JdkActivation(getCurrentTextContent());
     }
 
+    /**
+     * Attempts to retrieve a {@link OsActivation} from the parser.
+     *
+     * @return the os activation
+     * @throws BuilderException in case of any errors
+     */
+    @NotNull OsActivation parseOs() throws BuilderException {
+        OsActivation.OsActivationBuilder builder = OsActivation.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "name" -> builder.name(getCurrentTextContent());
+                case "family" -> builder.family(getCurrentTextContent());
+                case "arch" -> builder.arch(getCurrentTextContent());
+                case "version" -> builder.version(getCurrentTextContent());
+            }
+        });
+        return buildObject("os activation", builder::build);
+    }
+
 }
