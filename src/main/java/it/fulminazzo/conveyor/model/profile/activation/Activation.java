@@ -19,6 +19,15 @@ public interface Activation {
     boolean isEnabled(final @NotNull ActivationContext context);
 
     /**
+     * Creates a new {@link Activation} that never enables.
+     *
+     * @return the activation
+     */
+    static @NotNull Activation alwaysFalse() {
+        return new BooleanActivation(false);
+    }
+
+    /**
      * Instantiates a new builder to create a {@link Activation} object.
      *
      * @param xmlParser the XML parser
