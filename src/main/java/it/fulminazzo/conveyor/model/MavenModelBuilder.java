@@ -1,7 +1,7 @@
 package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.model.dependency.Dependency;
-import it.fulminazzo.conveyor.model.dependency.Scope;
+import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy;
@@ -139,8 +139,8 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
      * @return the dependency
      * @throws BuilderException in case of any errors
      */
-    protected @NotNull Dependency parseDependency() throws BuilderException {
-        final Dependency.DependencyBuilder<?, ?> builder = Dependency.builder();
+    protected @NotNull RawDependency parseDependency() throws BuilderException {
+        final RawDependency.RawDependencyBuilder<?, ?> builder = RawDependency.builder();
         List<String[]> exclusions = new ArrayList<>();
         onChildElements(t -> {
             switch (t) {
@@ -149,8 +149,8 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
                 case "version" -> builder.version(getCurrentTextContent());
                 case "type" -> builder.type(getCurrentTextContent());
                 case "classifier" -> builder.classifier(getCurrentTextContent());
-                case "scope" -> builder.scope(Scope.valueOf(getCurrentTextContent().toUpperCase()));
-                case "optional" -> builder.optional(Boolean.parseBoolean(getCurrentTextContent()));
+                case "scope" -> builder.scope(getCurrentTextContent());
+                case "optional" -> builder.optional(getCurrentTextContent());
                 case "exclusions" -> onChildElements(l -> {
                     if (l.equals("exclusion")) {
                         String[] exclusionData = new String[2];
@@ -165,7 +165,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
                 });
             }
         });
-        Dependency dependency = buildObject("dependency", builder::build);
+        RawDependency dependency = buildObject("dependency", builder::build);
         exclusions.forEach(a -> dependency.getExclusions().add(a[0], a[1]));
         return dependency;
     }
