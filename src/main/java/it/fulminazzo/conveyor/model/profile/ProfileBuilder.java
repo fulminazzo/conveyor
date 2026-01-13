@@ -33,4 +33,22 @@ public final class ProfileBuilder extends MavenModelBuilder<Profile> {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Handles the <b>&lt;id&gt;</b> tag in the document.
+     *
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    void parseId() throws BuilderException {
+        this.id = getCurrentTextContent();
+    }
+
+    /**
+     * Handles the <b>&lt;activation&gt;</b> tag in the document.
+     *
+     * @throws BuilderException in case of any errors
+     */
+    void parseActivation() throws BuilderException {
+        this.activation = Activation.builder(getParser()).build();
+    }
+
 }
