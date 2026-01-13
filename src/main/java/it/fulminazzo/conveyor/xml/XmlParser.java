@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A cursor-based parser to read <b>XML</b> documents.
  */
-public interface XmlParser {
+public interface XmlParser extends AutoCloseable {
 
     /**
      * Checks if another <b>XML</b> element is present.
@@ -59,6 +59,7 @@ public interface XmlParser {
     /**
      * Closes the current parser.
      */
+    @Override
     void close();
 
 }
