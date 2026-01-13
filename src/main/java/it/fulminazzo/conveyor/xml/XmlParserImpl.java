@@ -7,6 +7,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Stack;
@@ -17,6 +18,7 @@ import java.util.Stack;
 final class XmlParserImpl implements XmlParser {
     private final @NotNull Stack<String> scopes = new Stack<>();
 
+    private final @NotNull InputStream inputStream;
     private @Nullable XMLStreamReader reader;
 
     private @Nullable String nextTag;
@@ -33,7 +35,8 @@ final class XmlParserImpl implements XmlParser {
     public XmlParserImpl(final @NotNull InputStream inputStream) throws XmlParserException {
         try {
             XMLInputFactory factory = XMLInputFactory.newInstance();
-            this.reader = factory.createXMLStreamReader(inputStream);
+            this.inputStream = inputStream;
+            this.reader = factory.createXMLStreamReader(this.inputStream);
         } catch (XMLStreamException e) {
             throw XmlParserException.of("Could not create XmlParser", e);
         }
@@ -102,10 +105,11 @@ final class XmlParserImpl implements XmlParser {
     @Override
     public void close() {
         try {
+            this.inputStream.close();
             if (this.reader != null) this.reader.close();
+        } catch (XMLStreamException | IOException ignored) {
+        } finally {
             this.reader = null;
-        } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
         }
     }
 
