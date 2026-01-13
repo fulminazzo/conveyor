@@ -1,9 +1,5 @@
 package it.fulminazzo.conveyor.model.repository.update;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -11,11 +7,7 @@ import java.time.ZoneId;
 /**
  * Represents the <code>interval</code> update policy.
  */
-@ToString
-@EqualsAndHashCode
-@RequiredArgsConstructor
-final class IntervalUpdatePolicy implements UpdatePolicy {
-    private final long interval;
+record IntervalUpdatePolicy(long interval) implements UpdatePolicy {
 
     @Override
     public boolean shouldUpdate(final long lastUpdate) {
