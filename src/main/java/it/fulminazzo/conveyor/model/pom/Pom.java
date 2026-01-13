@@ -2,7 +2,7 @@ package it.fulminazzo.conveyor.model.pom;
 
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
-import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.xml.XmlParser;
@@ -46,8 +46,8 @@ public final class Pom extends MavenModel {
         final @NotNull Collection<Profile> profiles,
         final @NotNull Map<String, String> properties,
         final @NotNull Collection<Repository> repositories,
-        final @NotNull Collection<Dependency> dependencyManagement,
-        final @NotNull Collection<Dependency> dependencies
+        final @NotNull Collection<RawDependency> dependencyManagement,
+        final @NotNull Collection<RawDependency> dependencies
     ) {
         super(properties, repositories, dependencyManagement, dependencies);
         this.project = project;

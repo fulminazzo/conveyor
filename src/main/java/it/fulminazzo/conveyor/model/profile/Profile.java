@@ -1,7 +1,7 @@
 package it.fulminazzo.conveyor.model.profile;
 
 import it.fulminazzo.conveyor.model.MavenModel;
-import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.xml.XmlParser;
@@ -37,8 +37,8 @@ public final class Profile extends MavenModel {
             final @NotNull Activation activation,
             final @NotNull Map<String, String> properties,
             final @NotNull Collection<Repository> repositories,
-            final @NotNull Collection<Dependency> dependencyManagement,
-            final @NotNull Collection<Dependency> dependencies
+            final @NotNull Collection<RawDependency> dependencyManagement,
+            final @NotNull Collection<RawDependency> dependencies
     ) {
         super(properties, repositories, dependencyManagement, dependencies);
         this.id = id;

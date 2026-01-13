@@ -1,6 +1,5 @@
 package it.fulminazzo.conveyor.model;
 
-import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy;
 import it.fulminazzo.conveyor.model.repository.Repository;
@@ -18,8 +17,8 @@ import java.util.*;
 public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectBuilder<O> {
     protected final @NotNull Map<String, String> properties = new HashMap<>();
     protected final @NotNull Map<String, Repository> repositories = new LinkedHashMap<>();
-    protected final @NotNull Map<String, Dependency> dependencyManagement = new LinkedHashMap<>();
-    protected final @NotNull Map<String, Dependency> dependencies = new LinkedHashMap<>();
+    protected final @NotNull Map<String, RawDependency> dependencyManagement = new LinkedHashMap<>();
+    protected final @NotNull Map<String, RawDependency> dependencies = new LinkedHashMap<>();
 
     /**
      * Instantiates a new Maven model builder.
@@ -110,7 +109,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
             if (t.equals("dependencies"))
                 onChildElements(t2 -> {
                     if (t2.equals("dependency")) {
-                        Dependency dependency = parseDependency();
+                        RawDependency dependency = parseDependency();
                         String key = dependency.getCoordinates();
                         this.dependencyManagement.put(key, dependency);
                     }
@@ -126,7 +125,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     protected void parseDependencies() throws BuilderException {
         onChildElements(t -> {
             if (t.equals("dependency")) {
-                Dependency dependency = parseDependency();
+                RawDependency dependency = parseDependency();
                 String key = dependency.getCoordinates();
                 this.dependencies.put(key, dependency);
             }

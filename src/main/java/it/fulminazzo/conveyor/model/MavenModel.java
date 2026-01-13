@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model;
 
-import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,8 +20,8 @@ import java.util.Set;
 public abstract class MavenModel {
     private final @NotNull Map<String, String> properties;
     private final @NotNull Set<Repository> repositories;
-    private final @NotNull Set<Dependency> dependencyManagement;
-    private final @NotNull List<Dependency> dependencies;
+    private final @NotNull Set<RawDependency> dependencyManagement;
+    private final @NotNull List<RawDependency> dependencies;
 
     /**
      * Instantiates a new Maven model.
@@ -33,8 +33,8 @@ public abstract class MavenModel {
      */
     protected MavenModel(final @NotNull Map<String, String> properties,
                          final @NotNull Collection<Repository> repositories,
-                         final @NotNull Collection<Dependency> dependencyManagement,
-                         final @NotNull Collection<Dependency> dependencies) {
+                         final @NotNull Collection<RawDependency> dependencyManagement,
+                         final @NotNull Collection<RawDependency> dependencies) {
         this.properties = Map.copyOf(properties);
         this.repositories = Set.copyOf(repositories);
         this.dependencyManagement = Set.copyOf(dependencyManagement);
