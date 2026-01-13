@@ -164,7 +164,6 @@ final class XmlParserImpl implements XmlParser {
             this.scopes.pop();
             updateTag(null);
             this.nextTag = null;
-            return true;
         }
         return false;
     }
