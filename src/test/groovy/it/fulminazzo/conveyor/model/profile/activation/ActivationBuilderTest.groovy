@@ -6,6 +6,29 @@ import spock.lang.Specification
 
 class ActivationBuilderTest extends Specification {
 
+    def 'test parseOs of #data returns #expected'() {
+        given:
+        def builder = newBuilder(data)
+        XmlObjectBuilderUtils.getParser(builder).next()
+
+        when:
+        def actual = builder.parseOs()
+
+        then:
+        actual == expected
+
+        where:
+        expected                                          || data
+        OsActivation.builder().build()                    || '<os></os>'
+        OsActivation.builder().name('name').build()       || '<os><name>name</name></os>'
+        OsActivation.builder().family('family').build()   || '<os><family>family</family></os>'
+        OsActivation.builder().arch('arch').build()       || '<os><arch>arch</arch></os>'
+        OsActivation.builder().version('version').build() || '<os><version>version</version></os>'
+        OsActivation.builder().name('name').family('family')
+                .arch('arch').version('version').build()  ||
+                '<os><name>name</name><family>family</family><arch>arch</arch><version>version</version></os>'
+    }
+
     def 'test parseProperty of #data returns #expected'() {
         given:
         def builder = newBuilder(data)
