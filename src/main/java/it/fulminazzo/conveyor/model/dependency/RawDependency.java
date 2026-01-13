@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.dependency;
 
 import it.fulminazzo.conveyor.model.Properties;
+import it.fulminazzo.conveyor.model.RawObject;
 import it.fulminazzo.conveyor.model.artifact.ArtifactLike;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,7 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public final class RawDependency extends ArtifactLike implements DependencyLike {
+public final class RawDependency extends ArtifactLike implements DependencyLike, RawObject<Dependency> {
 
     @Builder.Default
     private final @Nullable String version = null;
@@ -37,14 +38,8 @@ public final class RawDependency extends ArtifactLike implements DependencyLike 
 
     private final @NotNull Exclusions exclusions = new Exclusions();
 
-    /**
-     * Parses the properties of the current raw dependency
-     * and returns a fully parsed {@link Dependency}.
-     *
-     * @param properties the properties
-     * @return the dependency
-     */
-    public @NotNull Dependency parseProperties(final @NotNull Properties properties) {
+    @Override
+    public @NotNull Dependency applyProperties(final @NotNull Properties properties) {
         final String classifier = getClassifier();
         return Dependency.builder()
                 .groupId(properties.apply(getGroupId()))
@@ -54,7 +49,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike 
                 .type(properties.apply(getType()))
                 .scope(Scope.of(properties.apply(getScope())))
                 .optional(Boolean.parseBoolean(properties.apply(getOptional())))
-                .exclusions(getExclusions().parseProperties(properties))
+                .exclusions(getExclusions().applyProperties(properties))
                 .build();
     }
 
