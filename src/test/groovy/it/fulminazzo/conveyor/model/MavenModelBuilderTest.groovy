@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model
 
 import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.Repository
 import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy
@@ -256,7 +257,7 @@ class MavenModelBuilderTest extends Specification {
                 .version('1.0')
                 .type('war')
                 .classifier('sources')
-                .scope(Dependency.Scope.PROVIDED)
+                .scope(Scope.PROVIDED)
                 .optional(true)
                 .build()
         expected.exclusions.add('org.projectlombok', 'lombok')

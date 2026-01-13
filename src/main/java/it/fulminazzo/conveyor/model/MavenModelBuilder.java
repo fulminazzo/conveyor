@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy;
@@ -148,7 +149,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
                 case "version" -> builder.version(getCurrentTextContent());
                 case "type" -> builder.type(getCurrentTextContent());
                 case "classifier" -> builder.classifier(getCurrentTextContent());
-                case "scope" -> builder.scope(Dependency.Scope.valueOf(getCurrentTextContent().toUpperCase()));
+                case "scope" -> builder.scope(Scope.valueOf(getCurrentTextContent().toUpperCase()));
                 case "optional" -> builder.optional(Boolean.parseBoolean(getCurrentTextContent()));
                 case "exclusions" -> onChildElements(l -> {
                     if (l.equals("exclusion")) {

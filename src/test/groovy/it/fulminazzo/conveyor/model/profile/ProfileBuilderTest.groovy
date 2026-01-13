@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.profile
 
 import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.activation.Activation
 import it.fulminazzo.conveyor.model.repository.Repository
 import it.fulminazzo.conveyor.xml.XmlParser
@@ -57,7 +58,7 @@ class ProfileBuilderTest extends Specification {
                                 .artifactId('spring-cloud-dependencies')
                                 .version('2021.0.3')
                                 .type('pom')
-                                .scope(Dependency.Scope.IMPORT)
+                                .scope(Scope.IMPORT)
                                 .build()
                 ],
                 [

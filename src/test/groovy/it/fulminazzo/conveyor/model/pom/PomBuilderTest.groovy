@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.pom
 import it.fulminazzo.conveyor.model.XmlObjectBuilderUtils
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.Repository
@@ -130,13 +131,13 @@ class PomBuilderTest extends Specification {
                                 .groupId('org.junit.jupiter')
                                 .artifactId('junit-jupiter-api')
                                 .version('${junit.version}')
-                                .scope(Dependency.Scope.TEST)
+                                .scope(Scope.TEST)
                                 .build(),
                         Dependency.builder()
                                 .groupId('javax.servlet')
                                 .artifactId('javax.servlet-api')
                                 .version('4.0.1')
-                                .scope(Dependency.Scope.PROVIDED)
+                                .scope(Scope.PROVIDED)
                                 .build(),
                 ]
         )

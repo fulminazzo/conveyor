@@ -27,7 +27,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike 
     private final @NotNull String type = "jar";
 
     @Builder.Default
-    private final @NotNull String scope = Dependency.Scope.COMPILE.value();
+    private final @NotNull String scope = Scope.COMPILE.value();
 
     @Builder.Default
     private final @NotNull String optional = String.valueOf(Boolean.FALSE);
