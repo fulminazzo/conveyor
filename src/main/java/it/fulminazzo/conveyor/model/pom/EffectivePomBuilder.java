@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.pom;
 
+import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
@@ -20,6 +21,7 @@ final class EffectivePomBuilder {
     private final @NotNull ActivationContext context;
 
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();
+    private final @NotNull Properties properties = new Properties();
 
     private @Nullable EffectivePomBuilder parentEffectivePomBuilder;
 
@@ -32,7 +34,32 @@ final class EffectivePomBuilder {
      */
     @NotNull EffectivePomBuilder buildIncomplete() {
         return populateActiveProfiles()
-                .resolveParentEffectivePom();
+                .resolveParentEffectivePom()
+                .populateProperties();
+    }
+
+    /**
+     * Loads all the properties of the final pom.
+     * <br>
+     * The loading order is the following (from lowest to highest priority):
+     * <ol>
+     *     <li><b>parent</b> properties;</li>
+     *     <li><b>active profiles</b> of the <b>parent</b> properties;</li>
+     *     <li><b>starting pom</b> properties;</li>
+     *     <li><b>active profiles</b> of the <b>starting pom</b> properties.</li>
+     * </ol>
+     *
+     * @return this builder
+     */
+    @NotNull EffectivePomBuilder populateProperties() {
+        this.properties.clear();
+        if (this.parentEffectivePomBuilder != null)
+            this.properties.putAll(this.parentEffectivePomBuilder.properties);
+        this.properties.putAll(this.startingPom.getProperties());
+        this.activeProfiles.forEach(p ->
+                this.properties.putAll(p.getProperties())
+        );
+        return this;
     }
 
     /**
@@ -67,7 +94,7 @@ final class EffectivePomBuilder {
         return this;
     }
 
-    private @NotNull EffectivePomBuilder newBuilder(final Pom pom) {
+    private @NotNull EffectivePomBuilder newBuilder(final @NotNull Pom pom) {
         return new EffectivePomBuilder(pom, this.pomResolver, this.context);
     }
 
