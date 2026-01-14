@@ -721,10 +721,11 @@ class EffectivePomBuilderTest extends Specification {
 
         and:
         def parentPom = Mock(Pom)
-        parentPom.profiles >> []
+        parentPom.properties >> [:]
+        parentPom.repositories >> []
         parentPom.dependencyManagement >> []
         parentPom.dependencies >> []
-        parentPom.properties >> [:]
+        parentPom.profiles >> []
 
         and:
         def resolver = Mock(PomResolver)
@@ -903,6 +904,7 @@ class EffectivePomBuilderTest extends Specification {
         def profile = Mock(Profile)
         profile.id >> "$artifact.artifactId-profile"
         profile.properties >> [:]
+        profile.repositories >> []
         profile.dependencyManagement >> profileDependencyManagement
         profile.activation >> {
             def activation = Mock(Activation)
@@ -913,6 +915,7 @@ class EffectivePomBuilderTest extends Specification {
         def pom = Mock(Pom)
         pom.project >> artifact
         pom.properties >> [:]
+        pom.repositories >> []
         pom.dependencyManagement >> dependencyManagement
         pom.profiles >> [profile]
 
