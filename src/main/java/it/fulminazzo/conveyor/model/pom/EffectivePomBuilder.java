@@ -147,8 +147,7 @@ public final class EffectivePomBuilder {
     private void populateRepositories(final @NotNull Collection<RawRepository> repositories) {
         this.pomResolver.addRepositories(repositories.stream()
                 .map(r -> r.applyProperties(this.properties))
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList()));
     }
 
     /**
