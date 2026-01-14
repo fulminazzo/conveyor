@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.model.pom
 
 import it.fulminazzo.conveyor.model.Properties
 import it.fulminazzo.conveyor.model.artifact.Artifact
+import it.fulminazzo.conveyor.model.dependency.Dependency
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
@@ -503,6 +504,90 @@ class EffectivePomBuilderTest extends Specification {
 
         then:
         builder.activeProfiles.sort() == activeProfiles
+    }
+
+    def 'test that getDependency of #rawDependency returns #expected'() {
+        given:
+        def builder = new EffectivePomBuilder(Mock(Pom), (p) -> { }, Mock(ActivationContext))
+        getProperties(builder).putAll([
+                'groupId'           : 'it.fulminazzo',
+                'artifactId'        : 'dependency',
+                'dependency.version': '0.0.1',
+                'version'           : '1.0'
+        ])
+        builder.dependencyManagement.put('it.fulminazzo:dependency2:jar:', '0.0.1')
+        builder.dependencyManagement.put('it.fulminazzo:dependency:jar:', '0.0.1')
+
+        when:
+        def actual = builder.getDependency(rawDependency)
+
+        then:
+        actual == expected
+
+        where:
+        rawDependency                             || expected
+        RawDependency.builder()
+                .groupId('${groupId}')
+                .artifactId('${artifactId}')
+                .version('${version}')
+                .build()                          || Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()
+        RawDependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency2')
+                .version('${dependency.version}')
+                .build()                          || Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency2')
+                .version('0.0.1')
+                .build()
+        RawDependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .build()                          || Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('0.0.1')
+                .build()
+        RawDependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('${version}')
+                .build()                          || Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()
+        RawDependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('${artifactId}')
+                .version('1.0')
+                .build()                          || Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()
+        RawDependency.builder()
+                .groupId('${groupId}')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()                          || Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()
+        RawDependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()                          || Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()
     }
 
     private Pom newPom(final Artifact artifact,
