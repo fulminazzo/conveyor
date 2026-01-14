@@ -7,12 +7,14 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import it.fulminazzo.conveyor.model.repository.RawRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Responsible for creating a {@link EffectivePom} object.
@@ -127,6 +129,25 @@ public final class EffectivePomBuilder {
             dependencies.put(dependency.getCoordinates(), dependency.getVersion());
         }
         this.dependencyManagement.putAll(dependencies);
+    }
+
+    /**
+     * Loads all the properties in the {@link #pomResolver}.
+     *
+     * @return this builder
+     */
+    @NotNull EffectivePomBuilder populateRepositories() {
+        if (this.parentEffectivePomBuilder != null)
+            populateRepositories(this.parentEffectivePomBuilder.startingPom.getRepositories());
+        populateRepositories(this.startingPom.getRepositories());
+        return this;
+    }
+
+    private void populateRepositories(final @NotNull Collection<RawRepository> repositories) {
+        this.pomResolver.addRepositories(repositories.stream()
+                .map(r -> r.applyProperties(this.properties))
+                .collect(Collectors.toList())
+        );
     }
 
     /**
