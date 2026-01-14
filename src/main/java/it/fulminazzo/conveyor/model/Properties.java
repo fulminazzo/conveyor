@@ -56,13 +56,12 @@ public final class Properties implements Map<String, String> {
 
     @Override
     public @Nullable String put(String s, String s2) {
-        if (!containsKey(s)) return this.delegate.put(s, s2);
-        else return get(s);
+        return this.delegate.put(s, s2);
     }
 
     @Override
     public void putAll(@NotNull Map<? extends String, ? extends String> map) {
-        map.forEach(this::put);
+        this.delegate.putAll(map);
     }
 
     @Override
