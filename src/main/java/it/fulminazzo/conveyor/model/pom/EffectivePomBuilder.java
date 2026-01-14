@@ -2,13 +2,17 @@ package it.fulminazzo.conveyor.model.pom;
 
 import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,6 +26,7 @@ final class EffectivePomBuilder {
 
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();
     private final @NotNull Properties properties = new Properties();
+    private final @NotNull Map<String, String> dependencyManagement = new HashMap<>();
 
     private @Nullable EffectivePomBuilder parentEffectivePomBuilder;
 
@@ -36,6 +41,39 @@ final class EffectivePomBuilder {
         return populateActiveProfiles()
                 .resolveParentEffectivePom()
                 .populateProperties();
+    }
+
+    /**
+     * Loads all the dependencies for the dependency management of the final pom.
+     * <br>
+     * The loading order is the following (from lowest to highest priority):
+     * <ol>
+     *     <li><b>parent</b> dependency management;</li>
+     *     <li><b>active profiles</b> of the <b>parent</b> dependency management;</li>
+     *     <li><b>starting pom</b> dependency management;</li>
+     *     <li><b>active profiles</b> of the <b>starting pom</b> dependency management.</li>
+     * </ol>
+     *
+     * @return this builder
+     */
+    @NotNull EffectivePomBuilder populateDependencyManagement() {
+        this.dependencyManagement.clear();
+
+        if (this.parentEffectivePomBuilder != null)
+            this.dependencyManagement.putAll(this.parentEffectivePomBuilder.dependencyManagement);
+
+        populateDependencyManagementSingle(this.startingPom.getDependencyManagement());
+        for (Profile profile : this.activeProfiles)
+            populateDependencyManagementSingle(profile.getDependencyManagement());
+
+        return this;
+    }
+
+    private void populateDependencyManagementSingle(final @NotNull Set<RawDependency> dependencyManagement) {
+        for (RawDependency raw : dependencyManagement) {
+            Dependency dependency = raw.applyProperties(this.properties);
+            this.dependencyManagement.put(dependency.getCoordinates(), dependency.getVersion());
+        }
     }
 
     /**
