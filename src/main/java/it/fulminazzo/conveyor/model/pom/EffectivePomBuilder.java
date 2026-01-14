@@ -24,6 +24,18 @@ final class EffectivePomBuilder {
     private @Nullable EffectivePomBuilder parentEffectivePomBuilder;
 
     /**
+     * Populates some of the fields of this builder.
+     * Used by the builder itself to fetch information
+     * from other artifacts.
+     *
+     * @return this builder
+     */
+    @NotNull EffectivePomBuilder buildIncomplete() {
+        return populateActiveProfiles()
+                .resolveParentEffectivePom();
+    }
+
+    /**
      * If the {@link #startingPom} contains a parent {@link Artifact},
      * populates the {@link #parentEffectivePomBuilder} with a new builder
      * with incomplete information (but enough to complete the building
