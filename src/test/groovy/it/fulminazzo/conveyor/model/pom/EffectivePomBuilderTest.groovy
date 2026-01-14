@@ -12,6 +12,221 @@ import spock.lang.Specification
 
 class EffectivePomBuilderTest extends Specification {
 
+    def 'test that populateDependencies adds parent and active profiles dependencies'() {
+        given:
+        def parent = newArtifact('parent')
+
+        and:
+        def parentPom = newPomWithDependencies(
+                parent,
+                [
+                        RawDependency.builder()
+                                .groupId('${groupId}')
+                                .artifactId('${artifactId}')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-dependency2')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-dependency3')
+                                .version('1.0')
+                                .build()
+                ],
+                [
+                        RawDependency.builder()
+                                .groupId('${groupId}')
+                                .artifactId('${profile-artifactId}')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-profile-dependency2')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-profile-dependency3')
+                                .version('1.0')
+                                .build()
+                ]
+        )
+
+        and:
+        def artifact = newArtifact('artifact')
+
+        and:
+        def pom = newPomWithDependencies(
+                artifact,
+                [
+                        RawDependency.builder()
+                                .groupId('${groupId}')
+                                .artifactId('${artifactId}')
+                                .version('2.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency2')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency3')
+                                .version('2.0')
+                                .build()
+                ],
+                [
+                        RawDependency.builder()
+                                .groupId('${groupId}')
+                                .artifactId('${profile-artifactId}')
+                                .version('2.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency2')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency3')
+                                .version('2.0')
+                                .build()
+                ]
+        )
+
+        and:
+        def parentBuilder = new EffectivePomBuilder(parentPom, (p) -> { }, Mock(ActivationContext))
+        getProperties(parentBuilder).putAll([
+                'groupId'           : 'it.fulminazzo',
+                'artifactId'        : 'parent-dependency1',
+                'profile-artifactId': 'parent-profile-dependency1'
+        ])
+        parentBuilder.activeProfiles.add(parentPom.profiles[0])
+        parentBuilder.dependencyManagement.putAll([
+                'it.fulminazzo:parent-dependency2:jar:'        : '1.0',
+                'it.fulminazzo:parent-profile-dependency2:jar:': '1.0'
+        ])
+
+        when:
+        parentBuilder.populateDependencies()
+
+        then:
+        parentBuilder.dependencies.sort() == [
+                'it.fulminazzo:parent-dependency1:jar:'        : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-dependency1')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-dependency2:jar:'        : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-dependency2')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-dependency3:jar:'        : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-dependency3')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-profile-dependency1:jar:': Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-profile-dependency1')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-profile-dependency2:jar:': Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-profile-dependency2')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-profile-dependency3:jar:': Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-profile-dependency3')
+                        .version('1.0')
+                        .build()
+        ].sort()
+
+        when:
+        def builder = new EffectivePomBuilder(pom, (p) -> { }, Mock(ActivationContext))
+        getProperties(builder).putAll([
+                'groupId'           : 'it.fulminazzo',
+                'artifactId'        : 'dependency1',
+                'profile-artifactId': 'profile-dependency1'
+        ])
+        builder.activeProfiles.add(pom.profiles[0])
+        builder.parentEffectivePomBuilder = parentBuilder
+        builder.dependencyManagement.putAll([
+                'it.fulminazzo:parent-dependency2:jar:'        : '2.0',
+                'it.fulminazzo:parent-profile-dependency2:jar:': '2.0',
+                'it.fulminazzo:dependency2:jar:'               : '2.0',
+                'it.fulminazzo:profile-dependency2:jar:'       : '2.0'
+        ])
+
+        and:
+        builder.populateDependencies()
+
+        then:
+        builder.dependencies.sort() == [
+                'it.fulminazzo:parent-dependency1:jar:'        : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-dependency1')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-dependency2:jar:'        : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-dependency2')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-dependency3:jar:'        : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-dependency3')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:dependency1:jar:'               : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('dependency1')
+                        .version('2.0')
+                        .build(),
+                'it.fulminazzo:dependency2:jar:'               : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('dependency2')
+                        .version('2.0')
+                        .build(),
+                'it.fulminazzo:dependency3:jar:'               : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('dependency3')
+                        .version('2.0')
+                        .build(),
+                'it.fulminazzo:parent-profile-dependency1:jar:': Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-profile-dependency1')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-profile-dependency2:jar:': Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-profile-dependency2')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:parent-profile-dependency3:jar:': Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('parent-profile-dependency3')
+                        .version('1.0')
+                        .build(),
+                'it.fulminazzo:profile-dependency1:jar:'       : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('profile-dependency1')
+                        .version('2.0')
+                        .build(),
+                'it.fulminazzo:profile-dependency2:jar:'       : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('profile-dependency2')
+                        .version('2.0')
+                        .build(),
+                'it.fulminazzo:profile-dependency3:jar:'       : Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('profile-dependency3')
+                        .version('2.0')
+                        .build()
+        ].sort()
+    }
+
     def 'test that populateDependencyManagement adds parent, active profiles and imported dependencies dependency management'() {
         given:
         def parentDependency = newArtifact('parent-dependency2', '1.0')
@@ -607,6 +822,21 @@ class EffectivePomBuilderTest extends Specification {
         pom.project >> artifact
         pom.properties >> [:]
         pom.dependencyManagement >> dependencyManagement
+        pom.profiles >> [profile]
+
+        return pom
+    }
+
+    private Pom newPomWithDependencies(final Artifact artifact,
+                                       final Collection<RawDependency> dependencies,
+                                       final Collection<RawDependency> profileDependencies) {
+        def profile = Mock(Profile)
+        profile.id >> "$artifact.artifactId-profile"
+        profile.dependencies >> profileDependencies
+
+        def pom = Mock(Pom)
+        pom.project >> artifact
+        pom.dependencies >> dependencies
         pom.profiles >> [profile]
 
         return pom
