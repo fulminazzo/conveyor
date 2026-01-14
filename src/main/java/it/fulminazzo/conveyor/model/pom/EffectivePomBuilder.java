@@ -41,7 +41,8 @@ final class EffectivePomBuilder {
     @NotNull EffectivePomBuilder buildIncomplete() {
         return populateActiveProfiles()
                 .resolveParentEffectivePom()
-                .populateProperties();
+                .populateProperties()
+                .populateDependencyManagement();
     }
 
     /**
