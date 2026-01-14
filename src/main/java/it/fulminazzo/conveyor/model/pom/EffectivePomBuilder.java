@@ -8,6 +8,7 @@ import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
+import it.fulminazzo.conveyor.model.repository.Repository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -139,15 +140,23 @@ public final class EffectivePomBuilder {
      */
     @NotNull EffectivePomBuilder populateRepositories() {
         if (this.parentEffectivePomBuilder != null)
-            populateRepositories(this.parentEffectivePomBuilder.startingPom.getRepositories());
-        populateRepositories(this.startingPom.getRepositories());
+            this.pomResolver.addRepositories(this.parentEffectivePomBuilder.getRepositories());
+        this.pomResolver.addRepositories(getRepositories());
         return this;
     }
 
-    private void populateRepositories(final @NotNull Collection<RawRepository> repositories) {
-        this.pomResolver.addRepositories(repositories.stream()
+    private @NotNull Collection<Repository> getRepositories() {
+        Map<String, Repository> repositories = new HashMap<>();
+        getRepositories(this.startingPom.getRepositories()).forEach(r -> repositories.put(r.getId(), r));
+        for (Profile profile : this.activeProfiles)
+            getRepositories(profile.getRepositories()).forEach(r -> repositories.put(r.getId(), r));
+        return repositories.values();
+    }
+
+    private @NotNull Collection<Repository> getRepositories(final @NotNull Collection<RawRepository> repositories) {
+        return repositories.stream()
                 .map(r -> r.applyProperties(this.properties))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toSet());
     }
 
     /**
