@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.pom
 
+import it.fulminazzo.conveyor.model.Properties
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.profile.activation.Activation
@@ -8,17 +9,54 @@ import spock.lang.Specification
 
 class EffectivePomBuilderTest extends Specification {
 
+    def 'test that populateProperties adds parent and active profiles properties'() {
+        given:
+        def parent = newArtifact('parent')
+        def parentPom = newPom(
+                parent,
+                ['parent': '1', 'parent-profile': '1', 'pom': '1', 'profile': '1'],
+                ['parent-profile': '2', 'pom': '2', 'profile': '2']
+        )
+
+        and:
+        def parentBuilder = new EffectivePomBuilder(parentPom, (p) -> {}, Mock(ActivationContext))
+        parentBuilder.activeProfiles.addAll(parentPom.profiles)
+
+        when:
+        parentBuilder.populateProperties()
+
+        then:
+        getProperties(parentBuilder) == ['parent': '1', 'parent-profile': '2', 'pom': '2', 'profile': '2']
+
+        when:
+        def artifact = newArtifact('conveyor')
+        def pom = newPom(
+                artifact,
+                ['pom': '3', 'profile': '3'],
+                ['profile': '4']
+        )
+        pom.parent >> parent
+
+        and:
+        def builder = new EffectivePomBuilder(pom, (p) -> {}, Mock(ActivationContext))
+        builder.activeProfiles.addAll(pom.profiles)
+        builder.parentEffectivePomBuilder = parentBuilder
+
+        and:
+        builder.populateProperties()
+
+        then:
+        getProperties(builder) == ['parent': '1', 'parent-profile': '2', 'pom': '3', 'profile': '4']
+    }
+
     def 'test that resolveParentEffectivePom stores correct parent builder'() {
         given:
-        def parent = Artifact.builder()
-                .groupId('it.fulminazzo')
-                .artifactId('parent')
-                .version('1.0')
-                .build()
+        def parent = newArtifact('parent')
 
         and:
         def parentPom = Mock(Pom)
         parentPom.profiles >> []
+        parentPom.properties >> [:]
 
         and:
         PomResolver resolver = p -> parentPom
@@ -104,6 +142,21 @@ class EffectivePomBuilderTest extends Specification {
         builder.activeProfiles.sort() == activeProfiles
     }
 
+    private Pom newPom(final Artifact artifact,
+                       final Map<String, String> properties,
+                       final Map<String, String> profileProperties) {
+        def profile = Mock(Profile)
+        profile.id >> "$artifact.artifactId-profile"
+        profile.properties >> profileProperties
+
+        def pom = Mock(Pom)
+        pom.project >> artifact
+        pom.properties >> properties
+        pom.profiles >> [profile]
+
+        return pom
+    }
+
     private Pom newPom(final List<Profile> activeProfiles, final List<Profile> inactiveProfiles) {
         def pom = Mock(Pom)
         pom.profiles >> [*activeProfiles, *inactiveProfiles]
@@ -121,6 +174,20 @@ class EffectivePomBuilderTest extends Specification {
             }
             return profile
         }.sort()
+    }
+
+    private static Artifact newArtifact(final String id) {
+        return Artifact.builder()
+                .groupId('it.fulminazzo')
+                .artifactId(id)
+                .version('1.0')
+                .build()
+    }
+
+    private static Properties getProperties(final Object object) {
+        def field = object.class.getDeclaredField('properties')
+        field.accessible = true
+        return field.get(object)
     }
 
 }
