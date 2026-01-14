@@ -15,19 +15,18 @@ import java.util.Set;
 final class EffectivePomBuilder {
     private final @NotNull Pom startingPom;
     private final @NotNull PomResolver pomResolver;
+    private final @NotNull ActivationContext context;
 
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();
 
     /**
      * Loads all the profiles of the given {@link #startingPom}
      * whose conditions are met under the given context.
-     *
-     * @param context the context
      */
-    void populateActiveProfiles(final @NotNull ActivationContext context) {
+    void populateActiveProfiles() {
         this.activeProfiles.clear();
         this.startingPom.getProfiles().stream()
-                .filter(p -> p.getActivation().isEnabled(context))
+                .filter(p -> p.getActivation().isEnabled(this.context))
                 .forEach(this.activeProfiles::add);
     }
 
