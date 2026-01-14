@@ -2,12 +2,139 @@ package it.fulminazzo.conveyor.model.pom
 
 import it.fulminazzo.conveyor.model.Properties
 import it.fulminazzo.conveyor.model.artifact.Artifact
+import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.profile.activation.Activation
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import spock.lang.Specification
 
 class EffectivePomBuilderTest extends Specification {
+
+    def 'test that populateDependencyManagement adds parent, active profiles and imported dependencies dependency management'() {
+        given:
+        def parent = newArtifact('parent')
+        def parentPom = newPom(parent,
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-dependency1')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-dependency2')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency1')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency2')
+                                .version('1.0')
+                                .build()
+                ],
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-profile-dependency1')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('parent-profile-dependency2')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency1')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency2')
+                                .version('1.0')
+                                .build()
+                ]
+        )
+
+        and:
+        def artifact = newArtifact('conveyor')
+        def pom = newPom(artifact,
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency1')
+                                .version('2.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency2')
+                                .version('2.0')
+                                .build()
+                ],
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency1')
+                                .version('2.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency2')
+                                .version('2.0')
+                                .build()
+                ]
+        )
+
+        and:
+        PomResolver resolver = (a) -> {
+            if (a == artifact) return pom
+            else if (a == parent) return parentPom
+            else throw new IllegalArgumentException("Could not get pom of artifact: $a")
+        }
+
+        and:
+        def parentBuilder = new EffectivePomBuilder(parentPom, resolver, Mock(ActivationContext))
+        parentBuilder.activeProfiles.addAll(parentPom.profiles)
+
+        when:
+        parentBuilder.populateDependencyManagement()
+
+        then:
+        parentBuilder.dependencyManagement == [
+                'it.fulminazzo:parent-dependency1:jar:': '1.0',
+                'it.fulminazzo:parent-dependency2:jar:': '1.0',
+                'it.fulminazzo:parent-profile-dependency1:jar:': '1.0',
+                'it.fulminazzo:parent-profile-dependency2:jar:': '1.0',
+                'it.fulminazzo:dependency1:jar:': '1.0',
+                'it.fulminazzo:dependency2:jar:': '1.0',
+                'it.fulminazzo:profile-dependency1:jar:': '1.0',
+                'it.fulminazzo:profile-dependency2:jar:': '1.0'
+        ]
+
+        when:
+        def builder = new EffectivePomBuilder(pom, resolver, Mock(ActivationContext))
+        builder.activeProfiles.addAll(pom.profiles)
+        builder.parentEffectivePomBuilder = parentBuilder
+
+        and:
+        builder.populateDependencyManagement()
+
+        then:
+        builder.dependencyManagement == [
+                'it.fulminazzo:parent-dependency1:jar:': '1.0',
+                'it.fulminazzo:parent-dependency2:jar:': '1.0',
+                'it.fulminazzo:parent-profile-dependency1:jar:': '1.0',
+                'it.fulminazzo:parent-profile-dependency2:jar:': '1.0',
+                'it.fulminazzo:dependency1:jar:': '2.0',
+                'it.fulminazzo:dependency2:jar:': '2.0',
+                'it.fulminazzo:profile-dependency1:jar:': '2.0',
+                'it.fulminazzo:profile-dependency2:jar:': '2.0'
+        ]
+    }
 
     def 'test that populateProperties adds parent and active profiles properties'() {
         given:
@@ -19,7 +146,7 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
-        def parentBuilder = new EffectivePomBuilder(parentPom, (p) -> {}, Mock(ActivationContext))
+        def parentBuilder = new EffectivePomBuilder(parentPom, (p) -> { }, Mock(ActivationContext))
         parentBuilder.activeProfiles.addAll(parentPom.profiles)
 
         when:
@@ -38,7 +165,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.parent >> parent
 
         and:
-        def builder = new EffectivePomBuilder(pom, (p) -> {}, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, (p) -> { }, Mock(ActivationContext))
         builder.activeProfiles.addAll(pom.profiles)
         builder.parentEffectivePomBuilder = parentBuilder
 
@@ -56,6 +183,7 @@ class EffectivePomBuilderTest extends Specification {
         and:
         def parentPom = Mock(Pom)
         parentPom.profiles >> []
+        parentPom.dependencyManagement >> []
         parentPom.properties >> [:]
 
         and:
@@ -65,6 +193,7 @@ class EffectivePomBuilderTest extends Specification {
         def pom = Mock(Pom)
         pom.parent >> parent
         pom.profiles >> []
+        pom.dependencyManagement >> []
 
         and:
         def builder = new EffectivePomBuilder(pom, resolver, Mock(ActivationContext))
@@ -143,15 +272,32 @@ class EffectivePomBuilderTest extends Specification {
     }
 
     private Pom newPom(final Artifact artifact,
+                       final Collection<RawDependency> dependencyManagement,
+                       final Collection<RawDependency> profileDependencyManagement) {
+        def profile = Mock(Profile)
+        profile.id >> "$artifact.artifactId-profile"
+        profile.dependencyManagement >> profileDependencyManagement
+
+        def pom = Mock(Pom)
+        pom.project >> artifact
+        pom.dependencyManagement >> dependencyManagement
+        pom.profiles >> [profile]
+
+        return pom
+    }
+
+    private Pom newPom(final Artifact artifact,
                        final Map<String, String> properties,
                        final Map<String, String> profileProperties) {
         def profile = Mock(Profile)
         profile.id >> "$artifact.artifactId-profile"
         profile.properties >> profileProperties
+        profile.dependencyManagement >> []
 
         def pom = Mock(Pom)
         pom.project >> artifact
         pom.properties >> properties
+        pom.dependencyManagement >> []
         pom.profiles >> [profile]
 
         return pom
