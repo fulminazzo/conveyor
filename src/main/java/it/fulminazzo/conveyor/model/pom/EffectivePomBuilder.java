@@ -142,6 +142,30 @@ final class EffectivePomBuilder {
         return this;
     }
 
+    /**
+     * Converts the given {@link RawDependency} to a {@link Dependency},
+     * with applied {@link #properties} and version from {@link #dependencyManagement}
+     * if missing.
+     *
+     * @param dependency the raw dependency
+     * @return the dependency
+     */
+    @NotNull Dependency getDependency(final @NotNull RawDependency dependency) {
+        String version = dependency.getVersion();
+        if (version == null)
+            version = this.dependencyManagement.get(dependency.getCoordinates());
+        RawDependency copy = RawDependency.builder()
+                .groupId(dependency.getGroupId())
+                .artifactId(dependency.getArtifactId())
+                .classifier(dependency.getClassifier())
+                .version(version)
+                .scope(dependency.getScope())
+                .optional(dependency.getOptional())
+                .build();
+        copy.getExclusions().addAll(dependency.getExclusions());
+        return copy.applyProperties(this.properties);
+    }
+
     private @NotNull EffectivePomBuilder newBuilder(final @NotNull Pom pom) {
         return new EffectivePomBuilder(pom, this.pomResolver, this.context);
     }
