@@ -8,6 +8,8 @@ import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.profile.activation.Activation
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
+import it.fulminazzo.conveyor.model.repository.RawRepository
+import it.fulminazzo.conveyor.model.repository.Repository
 import spock.lang.Specification
 
 class EffectivePomBuilderTest extends Specification {
@@ -588,6 +590,91 @@ class EffectivePomBuilderTest extends Specification {
         ].sort()
     }
 
+    def 'test that populateRepositories adds parent and active profiles repositories'() {
+        given:
+        def repositories = []
+
+        and:
+        def pomResolver = Mock(PomResolver)
+        pomResolver.addRepositories(_) >> { a ->
+            repositories.addAll(a[0])
+        }
+
+        and:
+        def parent = newArtifact('parent')
+        def parentPom = newPomWithRepositories(
+                parent,
+                [
+                        RawRepository.builder().id('parent-repository1').url('https://url1.com').build(),
+                        RawRepository.builder().id('${parent.repository.id}').url('${parent.repository.url}').build()
+                ],
+                [
+                        RawRepository.builder().id('parent-profile-repository1').url('https://url3.com').build(),
+                        RawRepository.builder().id('${parent.profile.repository.id}').url('${parent.profile.repository.url}').build()
+                ]
+        )
+
+        and:
+        def artifact = newArtifact('artifact')
+        def pom = newPomWithRepositories(
+                artifact,
+                [
+                        RawRepository.builder().id('repository1').url('https://url5.com').build(),
+                        RawRepository.builder().id('${repository.id}').url('${repository.url}').build()
+                ],
+                [
+                        RawRepository.builder().id('profile-repository1').url('https://url7.com').build(),
+                        RawRepository.builder().id('${profile.repository.id}').url('${profile.repository.url}').build()
+                ]
+        )
+
+        and:
+        def parentBuilder = new EffectivePomBuilder(parentPom, pomResolver, Mock(ActivationContext))
+        getProperties(parentBuilder).putAll([
+                'parent.repository.id'         : 'parent-repository2',
+                'parent.repository.url'        : 'https://url2.com',
+                'parent.profile.repository.id' : 'parent-profile-repository2',
+                'parent.profile.repository.url': 'https://url4.com'
+        ])
+        parentBuilder.activeProfiles.add(parentPom.profiles[0])
+
+        when:
+        parentBuilder.populateRepositories()
+
+        then:
+        repositories == [
+                Repository.builder().id('parent-repository1').url('https://url1.com').build(),
+                Repository.builder().id('parent-repository2').url('https://url2.com').build(),
+                Repository.builder().id('parent-profile-repository1').url('https://url3.com').build(),
+                Repository.builder().id('parent-profile-repository2').url('https://url4.com').build()
+        ]
+
+        when:
+        def builder = new EffectivePomBuilder(pom, pomResolver, Mock(ActivationContext))
+        getProperties(builder).putAll([
+                'repository.id'         : 'repository2',
+                'repository.url'        : 'https://url6.com',
+                'profile.repository.id' : 'profile-repository2',
+                'profile.repository.url': 'https://url8.com'
+        ])
+        builder.activeProfiles.add(pom.profiles[0])
+
+        and:
+        builder.populateRepositories()
+
+        then:
+        repositories == [
+                Repository.builder().id('parent-repository1').url('https://url1.com').build(),
+                Repository.builder().id('parent-repository2').url('https://url2.com').build(),
+                Repository.builder().id('parent-profile-repository1').url('https://url3.com').build(),
+                Repository.builder().id('parent-profile-repository2').url('https://url4.com').build(),
+                Repository.builder().id('repository1').url('https://url5.com').build(),
+                Repository.builder().id('repository2').url('https://url6.com').build(),
+                Repository.builder().id('profile-repository1').url('https://url7.com').build(),
+                Repository.builder().id('profile-repository2').url('https://url8.com').build()
+        ]
+    }
+
     def 'test that populateProperties adds parent and active profiles properties'() {
         given:
         def parent = newArtifact('parent')
@@ -842,6 +929,21 @@ class EffectivePomBuilderTest extends Specification {
         def pom = Mock(Pom)
         pom.project >> artifact
         pom.dependencies >> dependencies
+        pom.profiles >> [profile]
+
+        return pom
+    }
+
+    private Pom newPomWithRepositories(final Artifact artifact,
+                                       final Collection<RawRepository> repositories,
+                                       final Collection<RawRepository> profileRepositories) {
+        def profile = Mock(Profile)
+        profile.id >> "$artifact.artifactId-profile"
+        profile.repositories >> profileRepositories
+
+        def pom = Mock(Pom)
+        pom.project >> artifact
+        pom.repositories >> repositories
         pom.profiles >> [profile]
 
         return pom
