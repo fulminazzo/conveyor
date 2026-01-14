@@ -7,6 +7,7 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,8 +17,8 @@ import java.util.*;
 /**
  * Responsible for creating a {@link EffectivePom} object.
  */
-@RequiredArgsConstructor
-final class EffectivePomBuilder {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+public final class EffectivePomBuilder {
     private final @NotNull Pom startingPom;
     private final @NotNull PomResolver pomResolver;
     private final @NotNull ActivationContext context;
