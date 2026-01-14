@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
+import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.RequiredArgsConstructor;
@@ -70,8 +71,16 @@ final class EffectivePomBuilder {
     }
 
     private void populateDependencyManagementSingle(final @NotNull Set<RawDependency> dependencyManagement) {
-        for (RawDependency raw : dependencyManagement) {
+        for (final RawDependency raw : dependencyManagement) {
             Dependency dependency = raw.applyProperties(this.properties);
+            if (dependency.getScope() == Scope.IMPORT) {
+                Pom dependencyPom = this.pomResolver.resolve(dependency);
+                EffectivePomBuilder dependencyPomBuilder = newBuilder(dependencyPom).buildIncomplete();
+                dependencyPomBuilder.dependencyManagement.forEach((c, v) -> {
+                    if (!this.dependencyManagement.containsKey(c))
+                        this.dependencyManagement.put(c, v);
+                });
+            }
             this.dependencyManagement.put(dependency.getCoordinates(), dependency.getVersion());
         }
     }
