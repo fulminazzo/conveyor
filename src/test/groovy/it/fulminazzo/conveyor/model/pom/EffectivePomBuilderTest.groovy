@@ -74,6 +74,11 @@ class EffectivePomBuilderTest extends Specification {
                                 .groupId('it.fulminazzo')
                                 .artifactId('dependency3')
                                 .version('3.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency4')
+                                .version('3.0')
                                 .build()
                 ],
                 [
@@ -86,6 +91,40 @@ class EffectivePomBuilderTest extends Specification {
                                 .groupId('it.fulminazzo')
                                 .artifactId('profile-dependency3')
                                 .version('3.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency4')
+                                .version('3.0')
+                                .build()
+                ]
+        )
+
+        and:
+        def profileDependency = newArtifact('profile-dependency2', '2.0')
+        def profileDependencyPom = newPom(profileDependency,
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency4')
+                                .version('4.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency5')
+                                .version('4.0')
+                                .build()
+                ],
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency4')
+                                .version('4.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency5')
+                                .version('4.0')
                                 .build()
                 ]
         )
@@ -116,6 +155,7 @@ class EffectivePomBuilderTest extends Specification {
                                 .groupId('it.fulminazzo')
                                 .artifactId('profile-dependency2')
                                 .version('2.0')
+                                .scope(Scope.IMPORT.value())
                                 .build()
                 ]
         )
@@ -131,6 +171,7 @@ class EffectivePomBuilderTest extends Specification {
             if (art == artifact) return pom
             else if (art == parent) return parentPom
             else if (art == dependency) return dependencyPom
+            else if (art == profileDependency) return profileDependencyPom
             else throw new IllegalArgumentException("Could not get pom of artifact: $a")
         }
 
@@ -162,7 +203,7 @@ class EffectivePomBuilderTest extends Specification {
         builder.populateDependencyManagement()
 
         then:
-        builder.dependencyManagement == [
+        builder.dependencyManagement.sort() == [
                 'it.fulminazzo:parent-dependency1:jar:'        : '1.0',
                 'it.fulminazzo:parent-dependency2:jar:'        : '1.0',
                 'it.fulminazzo:parent-profile-dependency1:jar:': '1.0',
@@ -170,10 +211,14 @@ class EffectivePomBuilderTest extends Specification {
                 'it.fulminazzo:dependency1:jar:'               : '2.0',
                 'it.fulminazzo:dependency2:jar:'               : '2.0',
                 'it.fulminazzo:dependency3:jar:'               : '3.0',
+                'it.fulminazzo:dependency4:jar:'               : '3.0',
+                'it.fulminazzo:dependency5:jar:'               : '4.0',
                 'it.fulminazzo:profile-dependency1:jar:'       : '2.0',
                 'it.fulminazzo:profile-dependency2:jar:'       : '2.0',
-                'it.fulminazzo:profile-dependency3:jar:'       : '3.0'
-        ]
+                'it.fulminazzo:profile-dependency3:jar:'       : '3.0',
+                'it.fulminazzo:profile-dependency4:jar:'       : '3.0',
+                'it.fulminazzo:profile-dependency5:jar:'       : '4.0'
+        ].sort()
     }
 
     def 'test that populateProperties adds parent and active profiles properties'() {
