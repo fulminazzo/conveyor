@@ -598,6 +598,7 @@ class EffectivePomBuilderTest extends Specification {
         def pomResolver = Mock(PomResolver)
         pomResolver.addRepositories(_) >> { a ->
             repositories.addAll(a[0])
+            return pomResolver
         }
 
         and:
