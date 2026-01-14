@@ -16,10 +16,10 @@ class EffectivePomBuilderTest extends Specification {
         def pom = newPom(activeProfiles, passiveProfiles)
 
         and:
-        def builder = new EffectivePomBuilder(pom, Mock(PomResolver))
+        def builder = new EffectivePomBuilder(pom, Mock(PomResolver), Mock(ActivationContext))
 
         when:
-        builder.populateActiveProfiles(Mock(ActivationContext))
+        builder.populateActiveProfiles()
 
         then:
         builder.activeProfiles.sort() == activeProfiles
@@ -37,10 +37,10 @@ class EffectivePomBuilderTest extends Specification {
         def passiveProfiles = createMockProfilesList(10..19, 'inactive', false)
 
         and:
-        def builder = new EffectivePomBuilder(pom, Mock(PomResolver))
+        def builder = new EffectivePomBuilder(pom, Mock(PomResolver), Mock(ActivationContext))
 
         when:
-        builder.populateActiveProfiles(Mock(ActivationContext))
+        builder.populateActiveProfiles()
 
         and:
         def newPom = newPom(activeProfiles, passiveProfiles)
@@ -49,7 +49,7 @@ class EffectivePomBuilderTest extends Specification {
         field.set(builder, newPom)
 
         and:
-        builder.populateActiveProfiles(Mock(ActivationContext))
+        builder.populateActiveProfiles()
 
         then:
         builder.activeProfiles.sort() == activeProfiles
