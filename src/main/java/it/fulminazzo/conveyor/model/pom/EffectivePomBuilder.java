@@ -31,8 +31,10 @@ final class EffectivePomBuilder {
 
     /**
      * Loads all the dependencies for the dependencies of the final pom.
+     *
+     * @return this builder
      */
-    void populateDependencies() {
+    @NotNull EffectivePomBuilder populateDependencies() {
         this.dependencies.clear();
 
         if (this.parentEffectivePomBuilder != null)
@@ -41,6 +43,8 @@ final class EffectivePomBuilder {
         populateDependenciesSingle(this.startingPom.getDependencies());
         for (Profile profile : this.activeProfiles)
             populateDependenciesSingle(profile.getDependencies());
+
+        return this;
     }
 
     private void populateDependenciesSingle(final @NotNull Collection<RawDependency> dependencies) {
@@ -145,7 +149,9 @@ final class EffectivePomBuilder {
         Artifact parent = this.startingPom.getParent();
         if (parent != null) {
             Pom parentPom = this.pomResolver.resolve(parent);
-            this.parentEffectivePomBuilder = newBuilder(parentPom).buildIncomplete();
+            this.parentEffectivePomBuilder = newBuilder(parentPom)
+                    .buildIncomplete()
+                    .populateDependencies();
         }
         return this;
     }
