@@ -84,6 +84,7 @@ public final class EffectivePomBuilder {
         return populateActiveProfiles()
                 .resolveParentEffectivePom()
                 .populateProperties()
+                .populateRepositories()
                 .populateDependencyManagement();
     }
 
