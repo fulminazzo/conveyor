@@ -56,6 +56,15 @@ public final class Exclusions implements RawObject<Exclusions> {
         return this;
     }
 
+    /**
+     * Adds all the exclusions to the current list.
+     *
+     * @param exclusions the exclusions
+     */
+    public void addAll(final @NotNull Exclusions exclusions) {
+        this.exclusions.addAll(exclusions.exclusions);
+    }
+
     private @NotNull String getIdentifier(final @NotNull String groupId, final @NotNull String artifactId) {
         return groupId + separator + artifactId;
     }
