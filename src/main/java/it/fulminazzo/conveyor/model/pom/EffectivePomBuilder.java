@@ -30,6 +30,22 @@ final class EffectivePomBuilder {
     private @Nullable EffectivePomBuilder parentEffectivePomBuilder;
 
     /**
+     * Builds the effective pom out of
+     * the given {@link #startingPom}.
+     *
+     * @return the effective pom
+     */
+    public @NotNull EffectivePom build() {
+        populateDependencies();
+        return new EffectivePom(
+                this.startingPom.getProject(),
+                this.startingPom.getPackaging(),
+                this.properties,
+                this.dependencies.values()
+        );
+    }
+
+    /**
      * Loads all the dependencies for the dependencies of the final pom.
      *
      * @return this builder
