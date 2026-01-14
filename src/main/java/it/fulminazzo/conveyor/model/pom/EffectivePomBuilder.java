@@ -28,25 +28,31 @@ final class EffectivePomBuilder {
      * populates the {@link #parentEffectivePomBuilder} with a new builder
      * with incomplete information (but enough to complete the building
      * of the current builder).
+     *
+     * @return this builder
      */
-    void resolveParentEffectivePom() {
+    @NotNull EffectivePomBuilder resolveParentEffectivePom() {
         this.parentEffectivePomBuilder = null;
         Artifact parent = this.startingPom.getParent();
         if (parent != null) {
             Pom parentPom = this.pomResolver.resolve(parent);
             this.parentEffectivePomBuilder = newBuilder(parentPom).buildIncomplete();
         }
+        return this;
     }
 
     /**
      * Loads all the profiles of the given {@link #startingPom}
      * whose conditions are met under the given context.
+     *
+     * @return this builder
      */
-    void populateActiveProfiles() {
+    @NotNull EffectivePomBuilder populateActiveProfiles() {
         this.activeProfiles.clear();
         this.startingPom.getProfiles().stream()
                 .filter(p -> p.getActivation().isEnabled(this.context))
                 .forEach(this.activeProfiles::add);
+        return this;
     }
 
     private @NotNull EffectivePomBuilder newBuilder(final Pom pom) {
