@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Responsible for creating a {@link EffectivePom} object.
@@ -76,18 +73,17 @@ final class EffectivePomBuilder {
     }
 
     private void populateDependencyManagementSingle(final @NotNull Set<RawDependency> dependencyManagement) {
+        final @NotNull Map<String, String> dependencies = new LinkedHashMap<>();
         for (final RawDependency raw : dependencyManagement) {
             Dependency dependency = raw.applyProperties(this.properties);
             if (dependency.getScope() == Scope.IMPORT) {
                 Pom dependencyPom = this.pomResolver.resolve(dependency);
                 EffectivePomBuilder dependencyPomBuilder = newBuilder(dependencyPom).buildIncomplete();
-                dependencyPomBuilder.dependencyManagement.forEach((c, v) -> {
-                    if (!this.dependencyManagement.containsKey(c))
-                        this.dependencyManagement.put(c, v);
-                });
+                this.dependencyManagement.putAll(dependencyPomBuilder.dependencyManagement);
             }
-            this.dependencyManagement.put(dependency.getCoordinates(), dependency.getVersion());
+            dependencies.put(dependency.getCoordinates(), dependency.getVersion());
         }
+        this.dependencyManagement.putAll(dependencies);
     }
 
     /**
