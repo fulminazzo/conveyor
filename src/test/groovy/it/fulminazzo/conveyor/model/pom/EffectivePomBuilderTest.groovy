@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.pom
 import it.fulminazzo.conveyor.model.Properties
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.RawDependency
+import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.profile.activation.Activation
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
@@ -61,6 +62,35 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
+        def dependency = newArtifact('dependency2', '2.0')
+        def dependencyPom = newPom(dependency,
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency2')
+                                .version('3.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dependency3')
+                                .version('3.0')
+                                .build()
+                ],
+                [
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency2')
+                                .version('3.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('profile-dependency3')
+                                .version('3.0')
+                                .build()
+                ]
+        )
+
+        and:
         def artifact = newArtifact('conveyor')
         def pom = newPom(artifact,
                 [
@@ -73,6 +103,7 @@ class EffectivePomBuilderTest extends Specification {
                                 .groupId('it.fulminazzo')
                                 .artifactId('dependency2')
                                 .version('2.0')
+                                .scope(Scope.IMPORT.value())
                                 .build()
                 ],
                 [
@@ -91,8 +122,15 @@ class EffectivePomBuilderTest extends Specification {
 
         and:
         PomResolver resolver = (a) -> {
-            if (a == artifact) return pom
-            else if (a == parent) return parentPom
+            def art = Artifact.builder()
+                    .groupId(a.groupId)
+                    .artifactId(a.artifactId)
+                    .classifier(a.classifier)
+                    .version(a.version)
+                    .build()
+            if (art == artifact) return pom
+            else if (art == parent) return parentPom
+            else if (art == dependency) return dependencyPom
             else throw new IllegalArgumentException("Could not get pom of artifact: $a")
         }
 
@@ -105,14 +143,14 @@ class EffectivePomBuilderTest extends Specification {
 
         then:
         parentBuilder.dependencyManagement == [
-                'it.fulminazzo:parent-dependency1:jar:': '1.0',
-                'it.fulminazzo:parent-dependency2:jar:': '1.0',
+                'it.fulminazzo:parent-dependency1:jar:'        : '1.0',
+                'it.fulminazzo:parent-dependency2:jar:'        : '1.0',
                 'it.fulminazzo:parent-profile-dependency1:jar:': '1.0',
                 'it.fulminazzo:parent-profile-dependency2:jar:': '1.0',
-                'it.fulminazzo:dependency1:jar:': '1.0',
-                'it.fulminazzo:dependency2:jar:': '1.0',
-                'it.fulminazzo:profile-dependency1:jar:': '1.0',
-                'it.fulminazzo:profile-dependency2:jar:': '1.0'
+                'it.fulminazzo:dependency1:jar:'               : '1.0',
+                'it.fulminazzo:dependency2:jar:'               : '1.0',
+                'it.fulminazzo:profile-dependency1:jar:'       : '1.0',
+                'it.fulminazzo:profile-dependency2:jar:'       : '1.0'
         ]
 
         when:
@@ -125,14 +163,16 @@ class EffectivePomBuilderTest extends Specification {
 
         then:
         builder.dependencyManagement == [
-                'it.fulminazzo:parent-dependency1:jar:': '1.0',
-                'it.fulminazzo:parent-dependency2:jar:': '1.0',
+                'it.fulminazzo:parent-dependency1:jar:'        : '1.0',
+                'it.fulminazzo:parent-dependency2:jar:'        : '1.0',
                 'it.fulminazzo:parent-profile-dependency1:jar:': '1.0',
                 'it.fulminazzo:parent-profile-dependency2:jar:': '1.0',
-                'it.fulminazzo:dependency1:jar:': '2.0',
-                'it.fulminazzo:dependency2:jar:': '2.0',
-                'it.fulminazzo:profile-dependency1:jar:': '2.0',
-                'it.fulminazzo:profile-dependency2:jar:': '2.0'
+                'it.fulminazzo:dependency1:jar:'               : '2.0',
+                'it.fulminazzo:dependency2:jar:'               : '2.0',
+                'it.fulminazzo:dependency3:jar:'               : '3.0',
+                'it.fulminazzo:profile-dependency1:jar:'       : '2.0',
+                'it.fulminazzo:profile-dependency2:jar:'       : '2.0',
+                'it.fulminazzo:profile-dependency3:jar:'       : '3.0'
         ]
     }
 
@@ -276,10 +316,17 @@ class EffectivePomBuilderTest extends Specification {
                        final Collection<RawDependency> profileDependencyManagement) {
         def profile = Mock(Profile)
         profile.id >> "$artifact.artifactId-profile"
+        profile.properties >> [:]
         profile.dependencyManagement >> profileDependencyManagement
+        profile.activation >> {
+            def activation = Mock(Activation)
+            activation.isEnabled(_) >> true
+            return activation
+        }
 
         def pom = Mock(Pom)
         pom.project >> artifact
+        pom.properties >> [:]
         pom.dependencyManagement >> dependencyManagement
         pom.profiles >> [profile]
 
@@ -323,10 +370,14 @@ class EffectivePomBuilderTest extends Specification {
     }
 
     private static Artifact newArtifact(final String id) {
+        return newArtifact(id, '1.0')
+    }
+
+    private static Artifact newArtifact(final String id, final String version) {
         return Artifact.builder()
                 .groupId('it.fulminazzo')
                 .artifactId(id)
-                .version('1.0')
+                .version(version)
                 .build()
     }
 
