@@ -22,7 +22,7 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public final class Pom extends MavenModel {
+public final class Pom extends MavenModel implements PomLike {
     private final @NotNull Artifact project;
     private final @NotNull String packaging;
     private final @Nullable Artifact parent;
