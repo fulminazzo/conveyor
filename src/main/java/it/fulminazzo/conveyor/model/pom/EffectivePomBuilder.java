@@ -50,8 +50,12 @@ final class EffectivePomBuilder {
      * <br>
      * The loading order is the following (from lowest to highest priority):
      * <ol>
+     *     <li>dependencies with scope {@link Scope#IMPORT} from the <b>parent</b> dependency management;</li>
+     *     <li>dependencies with scope {@link Scope#IMPORT} from the <b>active profiles</b> of the <b>parent</b> dependency management;</li>
      *     <li><b>parent</b> dependency management;</li>
      *     <li><b>active profiles</b> of the <b>parent</b> dependency management;</li>
+     *     <li>dependencies with scope {@link Scope#IMPORT} from the <b>starting pom</b> dependency management;</li>
+     *     <li>dependencies with scope {@link Scope#IMPORT} from the <b>active profiles</b> of the <b>starting pom</b> dependency management;</li>
      *     <li><b>starting pom</b> dependency management;</li>
      *     <li><b>active profiles</b> of the <b>starting pom</b> dependency management.</li>
      * </ol>

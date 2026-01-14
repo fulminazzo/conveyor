@@ -9,7 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A special {@link Map} that does not allow overriding of existing values.
+ * A special {@link Map} to represent properties.
+ * Provides an {@link #apply(String)} method.
  */
 @ToString(includeFieldNames = false)
 public final class Properties implements Map<String, String> {
