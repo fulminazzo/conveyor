@@ -321,15 +321,15 @@ class EffectivePomBuilderTest extends Specification {
 
         then:
         parentBuilder.dependencyManagement.sort() == [
-                'it.fulminazzo:parent-dependency1:jar:'        : '1.0',
+                'it.fulminazzo:parent-dependency1:jar:'        : '6.0',
                 'it.fulminazzo:parent-dependency2:jar:'        : '1.0',
                 'it.fulminazzo:parent-dependency3:jar:'        : '5.0',
-                'it.fulminazzo:parent-dependency4:jar:'        : '5.0',
+                'it.fulminazzo:parent-dependency4:jar:'        : '6.0',
                 'it.fulminazzo:parent-dependency5:jar:'        : '6.0',
                 'it.fulminazzo:parent-profile-dependency1:jar:': '1.0',
                 'it.fulminazzo:parent-profile-dependency2:jar:': '1.0',
                 'it.fulminazzo:parent-profile-dependency3:jar:': '5.0',
-                'it.fulminazzo:parent-profile-dependency4:jar:': '5.0',
+                'it.fulminazzo:parent-profile-dependency4:jar:': '6.0',
                 'it.fulminazzo:parent-profile-dependency5:jar:': '6.0',
                 'it.fulminazzo:dependency1:jar:'               : '1.0',
                 'it.fulminazzo:dependency2:jar:'               : '1.0',
@@ -347,25 +347,25 @@ class EffectivePomBuilderTest extends Specification {
 
         then:
         builder.dependencyManagement.sort() == [
-                'it.fulminazzo:parent-dependency1:jar:'        : '1.0',
+                'it.fulminazzo:parent-dependency1:jar:'        : '4.0',
                 'it.fulminazzo:parent-dependency2:jar:'        : '1.0',
                 'it.fulminazzo:parent-dependency3:jar:'        : '5.0',
-                'it.fulminazzo:parent-dependency4:jar:'        : '5.0',
+                'it.fulminazzo:parent-dependency4:jar:'        : '6.0',
                 'it.fulminazzo:parent-dependency5:jar:'        : '6.0',
-                'it.fulminazzo:parent-profile-dependency1:jar:': '1.0',
+                'it.fulminazzo:parent-profile-dependency1:jar:': '4.0',
                 'it.fulminazzo:parent-profile-dependency2:jar:': '1.0',
                 'it.fulminazzo:parent-profile-dependency3:jar:': '5.0',
-                'it.fulminazzo:parent-profile-dependency4:jar:': '5.0',
+                'it.fulminazzo:parent-profile-dependency4:jar:': '6.0',
                 'it.fulminazzo:parent-profile-dependency5:jar:': '6.0',
-                'it.fulminazzo:dependency1:jar:'               : '2.0',
+                'it.fulminazzo:dependency1:jar:'               : '4.0',
                 'it.fulminazzo:dependency2:jar:'               : '2.0',
                 'it.fulminazzo:dependency3:jar:'               : '3.0',
-                'it.fulminazzo:dependency4:jar:'               : '3.0',
+                'it.fulminazzo:dependency4:jar:'               : '4.0',
                 'it.fulminazzo:dependency5:jar:'               : '4.0',
                 'it.fulminazzo:profile-dependency1:jar:'       : '2.0',
                 'it.fulminazzo:profile-dependency2:jar:'       : '2.0',
                 'it.fulminazzo:profile-dependency3:jar:'       : '3.0',
-                'it.fulminazzo:profile-dependency4:jar:'       : '3.0',
+                'it.fulminazzo:profile-dependency4:jar:'       : '4.0',
                 'it.fulminazzo:profile-dependency5:jar:'       : '4.0'
         ].sort()
     }
