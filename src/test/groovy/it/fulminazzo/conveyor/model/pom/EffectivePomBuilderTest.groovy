@@ -643,12 +643,12 @@ class EffectivePomBuilderTest extends Specification {
         parentBuilder.populateRepositories()
 
         then:
-        repositories == [
+        repositories.sort() == [
                 Repository.builder().id('parent-repository1').url('https://url1.com').build(),
                 Repository.builder().id('parent-repository2').url('https://url2.com').build(),
                 Repository.builder().id('parent-profile-repository1').url('https://url3.com').build(),
                 Repository.builder().id('parent-profile-repository2').url('https://url4.com').build()
-        ]
+        ].sort()
 
         when:
         def builder = new EffectivePomBuilder(pom, pomResolver, Mock(ActivationContext))
@@ -658,13 +658,18 @@ class EffectivePomBuilderTest extends Specification {
                 'profile.repository.id' : 'profile-repository2',
                 'profile.repository.url': 'https://url8.com'
         ])
+        builder.parentEffectivePomBuilder = parentBuilder
         builder.activeProfiles.add(pom.profiles[0])
 
         and:
         builder.populateRepositories()
 
         then:
-        repositories == [
+        repositories.sort() == [
+                Repository.builder().id('parent-repository1').url('https://url1.com').build(),
+                Repository.builder().id('parent-repository2').url('https://url2.com').build(),
+                Repository.builder().id('parent-profile-repository1').url('https://url3.com').build(),
+                Repository.builder().id('parent-profile-repository2').url('https://url4.com').build(),
                 Repository.builder().id('parent-repository1').url('https://url1.com').build(),
                 Repository.builder().id('parent-repository2').url('https://url2.com').build(),
                 Repository.builder().id('parent-profile-repository1').url('https://url3.com').build(),
@@ -673,7 +678,7 @@ class EffectivePomBuilderTest extends Specification {
                 Repository.builder().id('repository2').url('https://url6.com').build(),
                 Repository.builder().id('profile-repository1').url('https://url7.com').build(),
                 Repository.builder().id('profile-repository2').url('https://url8.com').build()
-        ]
+        ].sort()
     }
 
     def 'test that populateProperties adds parent and active profiles properties'() {
