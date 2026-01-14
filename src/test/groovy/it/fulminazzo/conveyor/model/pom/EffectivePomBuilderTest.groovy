@@ -94,7 +94,7 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
-        def parentBuilder = new EffectivePomBuilder(parentPom, (p) -> { }, Mock(ActivationContext))
+        def parentBuilder = new EffectivePomBuilder(parentPom, Mock(PomResolver), Mock(ActivationContext))
         getProperties(parentBuilder).putAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'parent-dependency1',
@@ -144,7 +144,7 @@ class EffectivePomBuilderTest extends Specification {
         ].sort()
 
         when:
-        def builder = new EffectivePomBuilder(pom, (p) -> { }, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(PomResolver), Mock(ActivationContext))
         getProperties(builder).putAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'dependency1',
@@ -512,12 +512,14 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
-        PomResolver resolver = (a) -> {
+        def resolver = Mock(PomResolver)
+        resolver.resolve(_) >> (a) -> {
+            def arg = a[0]
             def art = Artifact.builder()
-                    .groupId(a.groupId)
-                    .artifactId(a.artifactId)
-                    .classifier(a.classifier)
-                    .version(a.version)
+                    .groupId(arg.groupId)
+                    .artifactId(arg.artifactId)
+                    .classifier(arg.classifier)
+                    .version(arg.version)
                     .build()
             if (art == artifact) return pom
             else if (art == parentDependency) return parentDependencyPom
@@ -525,7 +527,7 @@ class EffectivePomBuilderTest extends Specification {
             else if (art == parent) return parentPom
             else if (art == dependency) return dependencyPom
             else if (art == profileDependency) return profileDependencyPom
-            else throw new IllegalArgumentException("Could not get pom of artifact: $a")
+            else throw new IllegalArgumentException("Could not get pom of artifact: $arg")
         }
 
         and:
@@ -596,7 +598,7 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
-        def parentBuilder = new EffectivePomBuilder(parentPom, (p) -> { }, Mock(ActivationContext))
+        def parentBuilder = new EffectivePomBuilder(parentPom, Mock(PomResolver), Mock(ActivationContext))
         parentBuilder.activeProfiles.addAll(parentPom.profiles)
 
         when:
@@ -615,7 +617,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.parent >> parent
 
         and:
-        def builder = new EffectivePomBuilder(pom, (p) -> { }, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(PomResolver), Mock(ActivationContext))
         builder.activeProfiles.addAll(pom.profiles)
         builder.parentEffectivePomBuilder = parentBuilder
 
@@ -638,7 +640,8 @@ class EffectivePomBuilderTest extends Specification {
         parentPom.properties >> [:]
 
         and:
-        PomResolver resolver = p -> parentPom
+        def resolver = Mock(PomResolver)
+        resolver.resolve(_) >> parentPom
 
         and:
         def pom = Mock(Pom)
@@ -666,7 +669,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.profiles >> []
 
         and:
-        def builder = new EffectivePomBuilder(pom, (p) -> null, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(PomResolver), Mock(ActivationContext))
 
         when:
         builder.resolveParentEffectivePom()
@@ -725,7 +728,7 @@ class EffectivePomBuilderTest extends Specification {
 
     def 'test that getDependency of #rawDependency returns #expected'() {
         given:
-        def builder = new EffectivePomBuilder(Mock(Pom), (p) -> { }, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(Mock(Pom), Mock(PomResolver), Mock(ActivationContext))
         getProperties(builder).putAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'dependency',
