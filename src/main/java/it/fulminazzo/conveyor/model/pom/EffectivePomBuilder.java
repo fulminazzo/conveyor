@@ -25,8 +25,30 @@ final class EffectivePomBuilder {
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();
     private final @NotNull Properties properties = new Properties();
     private final @NotNull Map<String, String> dependencyManagement = new HashMap<>();
+    private final @NotNull Map<String, Dependency> dependencies = new LinkedHashMap<>();
 
     private @Nullable EffectivePomBuilder parentEffectivePomBuilder;
+
+    /**
+     * Loads all the dependencies for the dependencies of the final pom.
+     */
+    void populateDependencies() {
+        this.dependencies.clear();
+
+        if (this.parentEffectivePomBuilder != null)
+            this.dependencies.putAll(this.parentEffectivePomBuilder.dependencies);
+
+        populateDependenciesSingle(this.startingPom.getDependencies());
+        for (Profile profile : this.activeProfiles)
+            populateDependenciesSingle(profile.getDependencies());
+    }
+
+    private void populateDependenciesSingle(final @NotNull Collection<RawDependency> dependencies) {
+        for (final RawDependency raw : dependencies) {
+            Dependency dependency = getDependency(raw);
+            this.dependencies.put(dependency.getCoordinates(), dependency);
+        }
+    }
 
     /**
      * Populates some of the fields of this builder.
@@ -72,7 +94,7 @@ final class EffectivePomBuilder {
         return this;
     }
 
-    private void populateDependencyManagementSingle(final @NotNull Set<RawDependency> dependencyManagement) {
+    private void populateDependencyManagementSingle(final @NotNull Collection<RawDependency> dependencyManagement) {
         final @NotNull Map<String, String> dependencies = new LinkedHashMap<>();
         for (final RawDependency raw : dependencyManagement) {
             Dependency dependency = raw.applyProperties(this.properties);
