@@ -634,6 +634,7 @@ class EffectivePomBuilderTest extends Specification {
         def parentPom = Mock(Pom)
         parentPom.profiles >> []
         parentPom.dependencyManagement >> []
+        parentPom.dependencies >> []
         parentPom.properties >> [:]
 
         and:
@@ -644,6 +645,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.parent >> parent
         pom.profiles >> []
         pom.dependencyManagement >> []
+        pom.dependencies >> []
 
         and:
         def builder = new EffectivePomBuilder(pom, resolver, Mock(ActivationContext))
