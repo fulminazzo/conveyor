@@ -48,6 +48,7 @@ public final class DependencyTreeBuilder {
 
         Pom pom = this.resolver.resolve(dependency);
         addPomDependenciesToCheckList(pom, depth + 1);
+        this.dependencyTree.put(coordinates, node);
     }
 
     /**
