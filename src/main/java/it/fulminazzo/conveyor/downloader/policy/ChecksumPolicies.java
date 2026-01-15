@@ -18,7 +18,7 @@ public enum ChecksumPolicies implements ChecksumPolicy {
         public boolean handleFailure(final @NotNull String resourcePath,
                                      final @NotNull Throwable cause,
                                      final @NotNull Logger logger) {
-            logger.warn("Could not validate checksum for resource '{}'", resourcePath, cause);
+            logger.warn("Could not validate checksum for resource '{}'", resourcePath);
             logger.warn("The local version of the resource will be used anyway");
             return true;
         }

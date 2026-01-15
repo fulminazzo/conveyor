@@ -47,7 +47,7 @@ class ChecksumDownloaderTest extends Specification {
         result
 
         and:
-        1 * log.warn(_ as String, _ as String, _ as Throwable)
+        1 * log.warn(_ as String, _ as String)
         1 * log.warn(_ as String)
     }
 
