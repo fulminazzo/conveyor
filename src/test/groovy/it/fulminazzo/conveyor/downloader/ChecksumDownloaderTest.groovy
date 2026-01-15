@@ -13,11 +13,50 @@ class ChecksumDownloaderTest extends Specification {
     private final Map<ChecksumAlgorithm, DownloadSource> downloadSources = ChecksumAlgorithm.values()
             .collectEntries { [(it): mockSource("${it.extension}.com", it)] }
 
+    private Downloader delegate
     private ChecksumDownloader downloader
 
     void setup() {
-        def delegate = new BaseDownloader(new File(TestUtils.BASE_DIR, 'checksum_downloader'))
+        this.delegate = new BaseDownloader(new File(TestUtils.BASE_DIR, 'checksum_downloader'))
         this.downloader = new ChecksumDownloader(delegate)
+    }
+
+    def 'test that verifyCachedResource with #algorithm returns true'() {
+        given:
+        def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate])
+
+        and:
+        downloader.computeChecksum(_, _) >> checksum[algorithm]
+        downloader.resolveChecksum(_, _) >> { a ->
+            ChecksumAlgorithm alg = a[1]
+            if (alg == algorithm) return new ChecksumDownloader.ChecksumResult(checksum[alg], downloadSources[alg])
+            else throw new DownloadException('Checksum not found')
+        }
+
+        when:
+        def result = downloader.verifyCachedResource('path')
+
+        then:
+        result
+
+        where:
+        algorithm << ChecksumAlgorithm.values()
+    }
+
+    def 'test that verifyCachedResource returns false if no checksum could be resolved'() {
+        given:
+        def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate])
+
+        and:
+        downloader.resolveChecksum(_, _) >> { a ->
+            throw new DownloadException('Checksum not found')
+        }
+
+        when:
+        def result = downloader.verifyCachedResource('path')
+
+        then:
+        !result
     }
 
     def 'test that resolveChecksum with algorithm #algorithm returns expected'() {
