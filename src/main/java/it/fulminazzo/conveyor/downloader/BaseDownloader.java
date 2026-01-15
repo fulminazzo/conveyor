@@ -32,10 +32,10 @@ final class BaseDownloader implements Downloader {
             try {
                 return source.resolveResource(resourcePath);
             } catch (IOException e) {
-                this.logger.debug("Could not download resource '{}' from source '{}'", resourcePath, source.getUrl());
+                this.logger.debug("Could not resolve resource '{}' from source '{}'", resourcePath, source.getUrl());
                 latest = e;
             }
-        throw new DownloadException(String.format("Could not download resource '%s'", resourcePath), latest);
+        throw new DownloadException(String.format("Could not resolve resource '%s'", resourcePath), latest);
     }
 
     @Override
