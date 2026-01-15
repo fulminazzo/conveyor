@@ -1,14 +1,16 @@
 package it.fulminazzo.conveyor.downloader
 
+import groovy.util.logging.Slf4j
 import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
+@Slf4j
 class BaseDownloaderTest extends Specification {
     private static final File workingDir = new File(TestUtils.BASE_DIR, 'base_downloader')
 
     def 'test that resolve of #resourcePath does not throw'() {
         given:
-        def downloader = new BaseDownloader(workingDir)
+        def downloader = new BaseDownloader(workingDir, log)
                 .addDownloadSources(
                         new DownloadSource('fulminazzo.it'),
                         new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
@@ -32,7 +34,7 @@ class BaseDownloaderTest extends Specification {
 
     def 'test that resolve throws DownloadException on not found'() {
         given:
-        def downloader = new BaseDownloader(workingDir)
+        def downloader = new BaseDownloader(workingDir, log)
                 .addDownloadSources(new DownloadSource(TestUtils.MAVEN_CENTRAL_URL))
 
         when:
@@ -45,7 +47,7 @@ class BaseDownloaderTest extends Specification {
 
     def 'test that resolve throws DownloadException on no sources given'() {
         given:
-        def downloader = new BaseDownloader(workingDir)
+        def downloader = new BaseDownloader(workingDir, log)
 
         when:
         downloader.resolve('path')
