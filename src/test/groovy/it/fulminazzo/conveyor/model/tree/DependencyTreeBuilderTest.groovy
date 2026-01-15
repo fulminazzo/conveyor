@@ -90,15 +90,15 @@ class DependencyTreeBuilderTest extends Specification {
 
         and:
         for (Scope scope : Scope.values()) {
-            def node = dependencies.find { it.dependency().scope == scope }
+            def node = dependencies.find { it.dependency.scope == scope }
             println "Checking scope: $scope"
             assert node != null
-            assert node.dependency().artifactId == "dependency-${scope.value()}"
-            assert node.depth() == 3
+            assert node.dependency.artifactId == "dependency-${scope.value()}"
+            assert node.depth == 3
         }
 
         and:
-        this.builder.dependencyTree.get(dependencyNode.dependency().coordinates).depth() == 2
+        this.builder.dependencyTree.get(dependencyNode.dependency.coordinates).depth == 2
     }
 
     def 'test that populateTree does not add new dependencies if dependency already present in dependency tree'() {
@@ -118,8 +118,8 @@ class DependencyTreeBuilderTest extends Specification {
 
         and:
         this.builder.dependencyTree.put(
-                dependencyNode.dependency().coordinates,
-                new DependencyNode(dependencyNode.dependency(), 1)
+                dependencyNode.dependency.coordinates,
+                new DependencyNode(dependencyNode.dependency, 1)
         )
 
         and:
@@ -132,7 +132,7 @@ class DependencyTreeBuilderTest extends Specification {
         dependencies.size() == 0
 
         and:
-        this.builder.dependencyTree.get(dependencyNode.dependency().coordinates).depth() == 1
+        this.builder.dependencyTree.get(dependencyNode.dependency.coordinates).depth == 1
     }
 
     def 'test that addPomDependenciesToCheckList adds all dependencies'() {
@@ -150,11 +150,11 @@ class DependencyTreeBuilderTest extends Specification {
 
         and:
         for (Scope scope : Scope.values()) {
-            def node = dependencies.find { it.dependency().scope == scope }
+            def node = dependencies.find { it.dependency.scope == scope }
             println "Checking scope: $scope"
             assert node != null
-            assert node.dependency().artifactId == "dependency-${scope.value()}"
-            assert node.depth() == 1
+            assert node.dependency.artifactId == "dependency-${scope.value()}"
+            assert node.depth == 1
         }
     }
 
@@ -172,10 +172,10 @@ class DependencyTreeBuilderTest extends Specification {
         dependencies.size() == 1
 
         and:
-        def node = dependencies.find { it.dependency().scope == scope }
+        def node = dependencies.find { it.dependency.scope == scope }
         node != null
-        node.dependency().artifactId == "dependency-${scope.value()}"
-        node.depth() == 1
+        node.dependency.artifactId == "dependency-${scope.value()}"
+        node.depth == 1
 
         where:
         scope << Scope.values()

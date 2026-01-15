@@ -66,12 +66,12 @@ public final class DependencyTreeBuilder {
      * @param node the starting dependency node
      */
     void populateTree(final @NotNull DependencyNode node) {
-        final Dependency dependency = node.dependency();
-        final int depth = node.depth();
+        final Dependency dependency = node.getDependency();
+        final int depth = node.getDepth();
         final String coordinates = dependency.getCoordinates();
 
         final DependencyNode prevNode = this.dependencyTree.get(coordinates);
-        if (prevNode != null && prevNode.depth() <= depth) return;
+        if (prevNode != null && prevNode.getDepth() <= depth) return;
         this.dependencyTree.put(coordinates, node);
 
         Pom pom = this.resolver.resolve(dependency);
