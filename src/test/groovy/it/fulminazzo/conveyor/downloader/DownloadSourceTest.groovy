@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.downloader
 
+import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
 class DownloadSourceTest extends Specification {
@@ -27,6 +28,37 @@ class DownloadSourceTest extends Specification {
 
         then:
         thrown(MalformedURLException)
+    }
+
+    def 'test that resolveResource of #resourcePath does not throw'() {
+        given:
+        def source = new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
+
+        when:
+        def data = source.resolveResource(resourcePath)
+
+        then:
+        noExceptionThrown()
+
+        and:
+        data.available() > 0
+
+        cleanup:
+        data.close()
+
+        where:
+        resourcePath << [TestUtils.LOMBOK_PATH, "/$TestUtils.LOMBOK_PATH"]
+    }
+
+    def 'test that resolveResource throws IOException on not found'() {
+        given:
+        def source = new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
+
+        when:
+        source.resolveResource('path')
+
+        then:
+        thrown(IOException)
     }
 
 }
