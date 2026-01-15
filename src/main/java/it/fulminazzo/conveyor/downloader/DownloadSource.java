@@ -42,8 +42,7 @@ public final class DownloadSource {
      */
     public DownloadSource(final @NotNull String url) throws MalformedURLException {
         String modifiedUrl = url;
-        String https = "https://";
-        if (!modifiedUrl.startsWith(https) && !modifiedUrl.startsWith("http://")) modifiedUrl = https + modifiedUrl;
+        if (!modifiedUrl.matches("^[a-zA-Z][a-zA-Z0-9+.-]*://.*$")) modifiedUrl = "https://" + modifiedUrl;
         if (!modifiedUrl.endsWith("/")) modifiedUrl += "/";
         try {
             new URI(modifiedUrl);
