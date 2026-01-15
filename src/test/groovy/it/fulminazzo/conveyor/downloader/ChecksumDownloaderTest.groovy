@@ -1,8 +1,10 @@
 package it.fulminazzo.conveyor.downloader
 
+import groovy.util.logging.Slf4j
 import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
+@Slf4j
 class ChecksumDownloaderTest extends Specification {
     private static final Map<ChecksumAlgorithm, String> checksum = [
             (ChecksumAlgorithm.MD5)   : '6cd3556deb0da54bca060b4c39479839',
@@ -17,13 +19,13 @@ class ChecksumDownloaderTest extends Specification {
     private ChecksumDownloader downloader
 
     void setup() {
-        this.delegate = new BaseDownloader(new File(TestUtils.BASE_DIR, 'checksum_downloader'))
-        this.downloader = new ChecksumDownloader(delegate)
+        this.delegate = new BaseDownloader(new File(TestUtils.BASE_DIR, 'checksum_downloader'), log)
+        this.downloader = new ChecksumDownloader(delegate, log)
     }
 
     def 'test that verifyCachedResource with #algorithm returns true'() {
         given:
-        def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate])
+        def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
 
         and:
         downloader.computeChecksum(_, _) >> checksum[algorithm]
@@ -45,7 +47,7 @@ class ChecksumDownloaderTest extends Specification {
 
     def 'test that verifyCachedResource returns false if no checksum could be resolved'() {
         given:
-        def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate])
+        def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
 
         and:
         downloader.resolveChecksum(_, _) >> { a ->
