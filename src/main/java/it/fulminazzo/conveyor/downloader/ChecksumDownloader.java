@@ -31,6 +31,28 @@ final class ChecksumDownloader implements Downloader {
     private final @NotNull Logger logger;
 
     /**
+     * Looks in the current {@link #getWorkingDir()} for a file
+     * matching the resource path.
+     * <br>
+     * If found, it is verified using {@link ChecksumAlgorithm}s.
+     * <br>
+     * If not found, it is downloaded.
+     *
+     * @param resourcePath the resource path
+     * @return the file (whether already present or newly downloaded)
+     * @throws DownloadException in case of any errors
+     */
+    @Override
+    public @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
+        File resourceFile = getResourceFile(resourcePath);
+        if (resourceFile.exists()) {
+            if (verifyChecksum(resourcePath))
+                return resourceFile;
+        }
+        return this.delegate.resolveToFile(resourcePath);
+    }
+    
+    /**
      * Uses all the {@link ChecksumAlgorithm}s to verify if
      * the corresponding resource file is valid or not.
      * <br>
