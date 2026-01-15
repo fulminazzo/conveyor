@@ -175,13 +175,18 @@ class DependencyTreeBuilderTest extends Specification {
                         .artifactId('dep1')
                         .version('1.0')
                         .exclusions(new Exclusions().add('it.fulminazzo', 'dep3'))
-                        .build(), 1, new Exclusions().add('it.fulminazzo', 'dep1').add('it.fulminazzo', 'dep3')),
+                        .build(), 1, new Exclusions()
+                        .add('it.fulminazzo', 'dep3')
+                        .add('it.fulminazzo', 'dep4')
+                ),
                 new DependencyNode(Dependency.builder()
                         .groupId('it.fulminazzo')
                         .artifactId('dep2')
                         .version('1.0')
                         .exclusions(new Exclusions())
-                        .build(), 1, new Exclusions().add('it.fulminazzo', 'dep1'))
+                        .build(), 1, new Exclusions()
+                        .add('it.fulminazzo', 'dep4')
+                )
         ]
 
         and:
@@ -195,6 +200,11 @@ class DependencyTreeBuilderTest extends Specification {
                         .groupId('it.fulminazzo')
                         .artifactId('dep2')
                         .version('1.0')
+                        .build(),
+                RawDependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('dep4')
+                        .version('1.0')
                         .build()
         ])
 
@@ -202,7 +212,7 @@ class DependencyTreeBuilderTest extends Specification {
         def dependencies = this.builder.dependenciesToCheck
 
         and:
-        def exclusions = new Exclusions().add('it.fulminazzo', 'dep2')
+        def exclusions = new Exclusions().add('it.fulminazzo', 'dep4')
 
         when:
         this.builder.addPomDependenciesToCheckList(pom, 1, exclusions)
