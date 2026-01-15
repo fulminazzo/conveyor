@@ -47,7 +47,8 @@ class ChecksumDownloaderTest extends Specification {
         result
 
         and:
-        2 * log.warn(_)
+        1 * log.warn(_ as String, _ as String, _ as Throwable)
+        1 * log.warn(_ as String)
     }
 
     def 'test that verifyChecksum with failure and FAIL checksum policy throws DownloadException'() {
