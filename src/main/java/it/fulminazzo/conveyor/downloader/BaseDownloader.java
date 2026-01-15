@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.downloader;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ final class BaseDownloader implements Downloader {
     private final @NotNull Set<DownloadSource> downloadSources = new HashSet<>();
     @Getter
     private final @NotNull File workingDir;
+    private final @NotNull Logger logger;
 
     @Override
     public @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException {
@@ -30,6 +32,7 @@ final class BaseDownloader implements Downloader {
             try {
                 return source.resolveResource(resourcePath);
             } catch (IOException e) {
+                this.logger.debug("Could not download resource '{}' from source '{}'", resourcePath, source.getUrl());
                 latest = e;
             }
         throw new DownloadException(String.format("Could not download resource '%s'", resourcePath), latest);
