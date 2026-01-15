@@ -51,8 +51,10 @@ public final class DependencyTreeBuilder {
     }
 
     /**
-     * Adds all the given {@link Pom} dependencies
-     * to the {@link #dependenciesToCheck} list.
+     * Adds all the given {@link Pom} dependencies to the {@link #dependenciesToCheck} list.
+     * <br>
+     * If their {@link Scope} is not in {@link #scopes}, or the list is not empty,
+     * they are ignored.
      *
      * @param pom   the pom
      * @param depth the depth of the dependencies
@@ -61,6 +63,7 @@ public final class DependencyTreeBuilder {
         EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.context).build();
 
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
+            if (!this.scopes.isEmpty() && !this.scopes.contains(transitiveDep.getScope())) continue;
             DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth);
             this.dependenciesToCheck.offer(transitiveNode);
         }
