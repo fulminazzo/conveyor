@@ -44,10 +44,21 @@ public final class DependencyTreeBuilder {
         if (prevNode != null && prevNode.depth() <= depth) return;
 
         Pom pom = this.resolver.resolve(dependency);
+        addPomDependenciesToCheckList(pom, depth + 1);
+    }
+
+    /**
+     * Adds all the given {@link Pom} dependencies
+     * to the {@link #dependenciesToCheck} list.
+     *
+     * @param pom   the pom
+     * @param depth the depth of the dependencies
+     */
+    void addPomDependenciesToCheckList(final @NotNull Pom pom, final int depth) {
         EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.context).build();
 
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
-            DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth + 1);
+            DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth);
             this.dependenciesToCheck.offer(transitiveNode);
         }
     }
