@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
@@ -25,6 +26,32 @@ final class ChecksumDownloader implements Downloader {
     private static final int readingBufferSize = 8192;
 
     private final @NotNull Downloader delegate;
+
+    /**
+     * Attempts to obtain the given resource associated checksum.
+     * The checksum resource location is computed as
+     * "&lt;resource_path&gt;.&lt;algorithm_extension&gt;".
+     *
+     * @param resourcePath the resource path
+     * @param algorithm    the algorithm
+     * @return a tuple containing the checksum and the used {@link DownloadSource}
+     * @throws DownloadException in case it was not possible to download the checksum
+     *                           with the given algorithm
+     */
+    @NotNull ChecksumResult resolveChecksum(final @NotNull String resourcePath,
+                                            final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
+        String finalPath = resourcePath + "." + algorithm.getExtension();
+        for (DownloadSource downloadSource : getDownloadSources())
+            try (InputStream stream = downloadSource.resolveResource(finalPath)) {
+                String checksum = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+                if (checksum.endsWith("\n")) checksum = checksum.substring(0, checksum.length() - 1);
+                // remove the name of the file
+                checksum = checksum.split(" ")[0];
+                return new ChecksumResult(checksum, downloadSource);
+            } catch (IOException ignored) {
+            }
+        throw new DownloadException(String.format("Could not download checksum %s of resource '%s'", resourcePath, algorithm));
+    }
 
     /**
      * Computes the checksum for the given file.
@@ -69,6 +96,16 @@ final class ChecksumDownloader implements Downloader {
     @Override
     public @NotNull File getWorkingDir() {
         return this.delegate.getWorkingDir();
+    }
+
+    /**
+     * Represents the result of querying a {@link DownloadSource}
+     * for obtaining the checksum of a resource.
+     *
+     * @param checksum the checksum
+     * @param source   the used download source
+     */
+    record ChecksumResult(@NotNull String checksum, @NotNull DownloadSource source) {
     }
 
 }
