@@ -67,16 +67,16 @@ public final class DependencyTreeBuilder {
      * @param node the starting dependency node
      */
     void populateTree(final @NotNull DependencyNode node) {
-        final Dependency dependency = node.getDependency();
-        final int depth = node.getDepth();
+        final Dependency dependency = node.dependency();
+        final int depth = node.depth();
         final String coordinates = dependency.getCoordinates();
 
         final DependencyNode prevNode = this.dependencyTree.get(coordinates);
-        if (prevNode != null && prevNode.getDepth() <= depth) return;
+        if (prevNode != null && prevNode.depth() <= depth) return;
         this.dependencyTree.put(coordinates, node);
 
         Pom pom = this.resolver.resolve(dependency);
-        addPomDependenciesToCheckList(pom, depth + 1, node.getExclusions());
+        addPomDependenciesToCheckList(pom, depth + 1, node.exclusions());
     }
 
     /**
@@ -98,7 +98,7 @@ public final class DependencyTreeBuilder {
             if (exclusions.isExcluded(transitiveDep.getGroupId(), transitiveDep.getArtifactId())) continue;
             if (!this.scopes.isEmpty() && !this.scopes.contains(transitiveDep.getScope())) continue;
             DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth);
-            transitiveNode.getExclusions().addAll(exclusions).addAll(transitiveDep.getExclusions());
+            transitiveNode.exclusions().addAll(exclusions).addAll(transitiveDep.getExclusions());
             this.dependenciesToCheck.offer(transitiveNode);
         }
     }
