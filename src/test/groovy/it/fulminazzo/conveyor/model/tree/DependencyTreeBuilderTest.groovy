@@ -16,7 +16,11 @@ class DependencyTreeBuilderTest extends Specification {
     void setup() {
         this.resolver = Mock(PomResolver)
 
-        this.builder = new DependencyTreeBuilder(this.resolver, Mock(ActivationContext))
+        this.builder = new DependencyTreeBuilder(Artifact.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('main')
+                .version('1.0')
+                .build(), this.resolver, Mock(ActivationContext))
     }
 
     def 'test that populateTree correctly adds new dependencies'() {
