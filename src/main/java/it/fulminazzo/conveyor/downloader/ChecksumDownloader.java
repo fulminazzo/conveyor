@@ -28,6 +28,36 @@ final class ChecksumDownloader implements Downloader {
     private final @NotNull Downloader delegate;
 
     /**
+     * Uses all the {@link ChecksumAlgorithm}s to verify if
+     * the corresponding resource file is valid or not.
+     * <br>
+     * <b>WARNING</b>: will <b>NOT</b> check for the file existence.
+     *
+     * @param resourcePath the resource path
+     * @return true if it is
+     */
+    public boolean verifyCachedResource(final @NotNull String resourcePath) {
+        for (ChecksumAlgorithm algorithm : ChecksumAlgorithm.values()) {
+            final ChecksumResult result;
+            try {
+                result = resolveChecksum(resourcePath, algorithm);
+            } catch (DownloadException e) {
+                // could not find the checksum, continue to the next algorithm
+                continue;
+            }
+            try {
+                final String expected = result.checksum();
+                final String actual = computeChecksum(resourcePath, algorithm);
+                if (expected.equals(actual)) return true;
+                throw new InvalidChecksum();
+            } catch (IOException | InvalidChecksum e) {
+                //TODO: handle source policy
+            }
+        }
+        return false;
+    }
+
+    /**
      * Attempts to obtain the given resource associated checksum.
      * The checksum resource location is computed as
      * "&lt;resource_path&gt;.&lt;algorithm_extension&gt;".
@@ -112,5 +142,7 @@ final class ChecksumDownloader implements Downloader {
      */
     record ChecksumResult(@NotNull String checksum, @NotNull DownloadSource source) {
     }
+
+    private static final class InvalidChecksum extends Exception {}
 
 }
