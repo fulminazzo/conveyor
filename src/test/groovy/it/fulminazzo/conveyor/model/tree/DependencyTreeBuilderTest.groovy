@@ -10,17 +10,38 @@ import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import spock.lang.Specification
 
 class DependencyTreeBuilderTest extends Specification {
+    private static final Artifact artifact = Artifact.builder()
+            .groupId('it.fulminazzo')
+            .artifactId('main')
+            .version('1.0')
+            .build()
+
     private PomResolver resolver
     private DependencyTreeBuilder builder
 
     void setup() {
         this.resolver = Mock(PomResolver)
 
-        this.builder = new DependencyTreeBuilder(Artifact.builder()
-                .groupId('it.fulminazzo')
-                .artifactId('main')
-                .version('1.0')
-                .build(), this.resolver, Mock(ActivationContext))
+        this.builder = new DependencyTreeBuilder(artifact, this.resolver, Mock(ActivationContext))
+    }
+
+    def 'test that build returns the correct tree'() {
+        given:
+        def builder = new DependencyTreeBuilder(artifact, new MockResolver(), Mock(ActivationContext))
+
+        and:
+        def expected = [
+                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(), 1),
+                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(), 1),
+                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('2.0').build(), 2),
+                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep4').version('3.0').build(), 2)
+        ]
+
+        when:
+        def tree = builder.build()
+
+        then:
+        tree.toList() == expected
     }
 
     def 'test that populateTree correctly adds new dependencies'() {
