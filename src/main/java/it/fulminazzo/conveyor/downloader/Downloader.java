@@ -47,6 +47,13 @@ public interface Downloader {
     @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException;
 
     /**
+     * Gets the currently stored download sources.
+     *
+     * @return the download sources
+     */
+    @NotNull Collection<DownloadSource> getDownloadSources();
+
+    /**
      * Adds all the given {@link DownloadSource}s to the current downloader.
      *
      * @param sources the download sources

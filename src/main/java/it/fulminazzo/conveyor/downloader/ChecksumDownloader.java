@@ -88,6 +88,11 @@ final class ChecksumDownloader implements Downloader {
     }
 
     @Override
+    public @NotNull Collection<DownloadSource> getDownloadSources() {
+        return this.delegate.getDownloadSources();
+    }
+
+    @Override
     public @NotNull ChecksumDownloader addDownloadSources(final @NotNull Collection<DownloadSource> sources) {
         this.delegate.addDownloadSources(sources);
         return this;

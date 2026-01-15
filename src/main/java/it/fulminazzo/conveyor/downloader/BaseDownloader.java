@@ -16,16 +16,17 @@ import java.util.Set;
  */
 @RequiredArgsConstructor
 final class BaseDownloader implements Downloader {
-    private final @NotNull Set<DownloadSource> sources = new HashSet<>();
+    @Getter
+    private final @NotNull Set<DownloadSource> downloadSources = new HashSet<>();
     @Getter
     private final @NotNull File workingDir;
 
     @Override
     public @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException {
-        if (this.sources.isEmpty())
+        if (this.downloadSources.isEmpty())
             throw new DownloadException("No download source provided! Please, use addDownloadSources before calling this method");
         Throwable latest = null;
-        for (DownloadSource source : this.sources)
+        for (DownloadSource source : this.downloadSources)
             try {
                 return source.resolveResource(resourcePath);
             } catch (IOException e) {
@@ -36,7 +37,7 @@ final class BaseDownloader implements Downloader {
 
     @Override
     public @NotNull Downloader addDownloadSources(final @NotNull Collection<DownloadSource> sources) {
-        this.sources.addAll(sources);
+        this.downloadSources.addAll(sources);
         return this;
     }
 

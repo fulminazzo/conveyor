@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @RequiredArgsConstructor
 final class MockDownloader implements Downloader {
-    private final @NotNull Set<DownloadSource> sources = new HashSet<>();
+    private final @NotNull Set<DownloadSource> downloadSources = new HashSet<>();
     private final @NotNull File workingDir;
 
     @Override
@@ -24,7 +24,7 @@ final class MockDownloader implements Downloader {
 
     @Override
     public @NotNull Downloader addDownloadSources(final @NotNull Collection<DownloadSource> sources) {
-        this.sources.addAll(sources);
+        this.downloadSources.addAll(sources);
         return this;
     }
 
