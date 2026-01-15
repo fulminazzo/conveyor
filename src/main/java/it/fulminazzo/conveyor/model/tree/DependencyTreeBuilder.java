@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.tree;
 
+import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
@@ -21,6 +22,7 @@ public final class DependencyTreeBuilder {
 
     private final @NotNull Set<Scope> scopes = new HashSet<>();
 
+    private final @NotNull Artifact project;
     private final @NotNull PomResolver resolver;
     private final @NotNull ActivationContext context;
 
@@ -30,7 +32,22 @@ public final class DependencyTreeBuilder {
      * @return the tree
      */
     public @NotNull Collection<DependencyNode> build() {
+        populateTree();
         return this.dependencyTree.values();
+    }
+
+    /**
+     * Populates the {@link #dependencyTree} with the required dependencies.
+     */
+    void populateTree() {
+        this.dependencyTree.clear();
+        this.dependenciesToCheck.clear();
+
+        Pom projectPom = this.resolver.resolve(this.project);
+        addPomDependenciesToCheckList(projectPom, 1);
+
+        while (!this.dependenciesToCheck.isEmpty())
+            populateTree(this.dependenciesToCheck.poll());
     }
 
     /**
