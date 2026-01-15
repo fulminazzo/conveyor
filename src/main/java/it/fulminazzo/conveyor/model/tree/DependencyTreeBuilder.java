@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.tree;
 
 import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
 import it.fulminazzo.conveyor.model.pom.PomResolver;
@@ -17,6 +18,8 @@ import java.util.*;
 public final class DependencyTreeBuilder {
     private final @NotNull Map<String, DependencyNode> dependencyTree = new LinkedHashMap<>();
     private final @NotNull Queue<DependencyNode> dependenciesToCheck = new LinkedList<>();
+
+    private final @NotNull Set<Scope> scopes = new HashSet<>();
 
     private final @NotNull PomResolver resolver;
     private final @NotNull ActivationContext context;
@@ -61,6 +64,36 @@ public final class DependencyTreeBuilder {
             DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth);
             this.dependenciesToCheck.offer(transitiveNode);
         }
+    }
+
+    /**
+     * Updates the required {@link Scope}s of this builder.
+     * When the dependency tree will be built, it will be required
+     * to have one of the given scopes.
+     * <br>
+     * If none are given, then all the scopes are allowed.
+     *
+     * @param scopes the scopes
+     * @return this builder
+     */
+    public @NotNull DependencyTreeBuilder setRequiredScopes(final Scope @NotNull ... scopes) {
+        return setRequiredScopes(Arrays.asList(scopes));
+    }
+
+    /**
+     * Updates the required {@link Scope}s of this builder.
+     * When the dependency tree will be built, it will be required
+     * to have one of the given scopes.
+     * <br>
+     * If none are given, then all the scopes are allowed.
+     *
+     * @param scopes the scopes
+     * @return this builder
+     */
+    public @NotNull DependencyTreeBuilder setRequiredScopes(final @NotNull Collection<Scope> scopes) {
+        this.scopes.clear();
+        this.scopes.addAll(scopes);
+        return this;
     }
 
 }
