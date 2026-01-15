@@ -159,6 +159,58 @@ class DependencyTreeBuilderTest extends Specification {
         }
     }
 
+    def 'test that addPomDependenciesToCheckList adds all non-excluded dependencies'() {
+        given:
+        def dep = RawDependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dep1')
+                .version('1.0')
+                .exclusions(new Exclusions().add('it.fulminazzo', 'dep3'))
+                .build()
+
+        and:
+        def expected = [
+                new DependencyNode(Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('dep1')
+                        .version('1.0')
+                        .exclusions(new Exclusions().add('it.fulminazzo', 'dep3'))
+                        .build(), 1, new Exclusions().add('it.fulminazzo', 'dep1').add('it.fulminazzo', 'dep3')),
+                new DependencyNode(Dependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('dep2')
+                        .version('1.0')
+                        .exclusions(new Exclusions())
+                        .build(), 1, new Exclusions().add('it.fulminazzo', 'dep1'))
+        ]
+
+        and:
+        def pom = new Pom(Artifact.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('main')
+                .version('1.0')
+                .build(), 'packaging', null, [], [:], [], [], [
+                dep,
+                RawDependency.builder()
+                        .groupId('it.fulminazzo')
+                        .artifactId('dep2')
+                        .version('1.0')
+                        .build()
+        ])
+
+        and:
+        def dependencies = this.builder.dependenciesToCheck
+
+        and:
+        def exclusions = new Exclusions().add('it.fulminazzo', 'dep2')
+
+        when:
+        this.builder.addPomDependenciesToCheckList(pom, 1, exclusions)
+
+        then:
+        dependencies.toList() == expected
+    }
+
     def 'test that addPomDependenciesToCheckList adds all dependencies of scope #scope'() {
         given:
         def pom = createFullDependenciesPom('it.fulminazzo', 'main')
