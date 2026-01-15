@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.model.tree;
 
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.dependency.Exclusions;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
@@ -84,15 +85,20 @@ public final class DependencyTreeBuilder {
      * If their {@link Scope} is not in {@link #scopes}, or the list is not empty,
      * they are ignored.
      *
-     * @param pom   the pom
-     * @param depth the depth of the dependencies
+     * @param pom        the pom
+     * @param depth      the depth of the dependencies
+     * @param exclusions the exclusions of the dependency that generated the pom
      */
-    void addPomDependenciesToCheckList(final @NotNull Pom pom, final int depth) {
+    void addPomDependenciesToCheckList(final @NotNull Pom pom,
+                                       final int depth,
+                                       final @NotNull Exclusions exclusions) {
         EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.context).build();
 
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
+            if (exclusions.isExcluded(transitiveDep.getGroupId(), transitiveDep.getArtifactId())) continue;
             if (!this.scopes.isEmpty() && !this.scopes.contains(transitiveDep.getScope())) continue;
             DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth);
+            transitiveNode.getExclusions().addAll(exclusions).addAll(transitiveDep.getExclusions());
             this.dependenciesToCheck.offer(transitiveNode);
         }
     }
