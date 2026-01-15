@@ -46,7 +46,6 @@ public enum ChecksumPolicies implements ChecksumPolicy {
                                      final @NotNull Logger logger) {
             return true;
         }
-    },
-    ;
+    }
 
 }

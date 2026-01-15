@@ -32,7 +32,7 @@ public final class DownloadSource {
     /**
      * Checks if the given URL is valid, then instantiates a new DownloadSource.
      * <br>
-     * <b>WARNING</b>: only <i>base</i> urls should be passed.
+     * <b>WARNING</b>: only <i>base</i> URLs should be passed.
      * <br>
      * If the goal is to download a resource in "https://www.example.com/resource/path",
      * then here only "https://www.example.com/" should be provided.
