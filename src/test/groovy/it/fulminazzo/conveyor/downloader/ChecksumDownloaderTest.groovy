@@ -1,7 +1,9 @@
 package it.fulminazzo.conveyor.downloader
 
 import groovy.util.logging.Slf4j
+import it.fulminazzo.conveyor.downloader.policy.ChecksumPolicies
 import it.fulminazzo.conveyor.util.TestUtils
+import org.slf4j.Logger
 import spock.lang.Specification
 
 @Slf4j
@@ -21,6 +23,88 @@ class ChecksumDownloaderTest extends Specification {
     void setup() {
         this.delegate = new BaseDownloader(new File(TestUtils.BASE_DIR, 'checksum_downloader'), log)
         this.downloader = new ChecksumDownloader(delegate, log)
+    }
+
+    def 'test that verifyCachedResource with failure and WARN checksum policy returns true'() {
+        given:
+        def log = Mock(Logger)
+
+        and:
+        def downloadSource = new DownloadSource('fulminazzo.it').withCapability(ChecksumPolicies.WARN)
+
+        and:
+        def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
+                .addDownloadSources(downloadSource)
+
+        and:
+        downloader.computeChecksum(_, _) >> 'compute'
+        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+
+        when:
+        def result = downloader.verifyCachedResource('path')
+
+        then:
+        result
+
+        and:
+        2 * log.warn(_)
+    }
+
+    def 'test that verifyCachedResource with failure and FAIL checksum policy throws DownloadException'() {
+        given:
+        def downloadSource = new DownloadSource('fulminazzo.it').withCapability(ChecksumPolicies.FAIL)
+
+        and:
+        def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
+                .addDownloadSources(downloadSource)
+
+        and:
+        downloader.computeChecksum(_, _) >> 'compute'
+        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+
+        when:
+        downloader.verifyCachedResource('path')
+
+        then:
+        thrown(DownloadException)
+    }
+
+    def 'test that verifyCachedResource with failure and IGNORE checksum policy returns true'() {
+        given:
+        def downloadSource = new DownloadSource('fulminazzo.it').withCapability(ChecksumPolicies.IGNORE)
+
+        and:
+        def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
+                .addDownloadSources(downloadSource)
+
+        and:
+        downloader.computeChecksum(_, _) >> 'compute'
+        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+
+        when:
+        def result = downloader.verifyCachedResource('path')
+
+        then:
+        result
+    }
+
+    def 'test that verifyCachedResource with failure and no checksum policy returns false'() {
+        given:
+        def downloadSource = new DownloadSource('fulminazzo.it')
+
+        and:
+        def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
+                .addDownloadSources(downloadSource)
+
+        and:
+        downloader.computeChecksum(_, _) >> 'compute'
+        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+
+        when:
+        def result = downloader.verifyCachedResource('path')
+
+        then:
+        !result
     }
 
     def 'test that verifyCachedResource with #algorithm returns true'() {
