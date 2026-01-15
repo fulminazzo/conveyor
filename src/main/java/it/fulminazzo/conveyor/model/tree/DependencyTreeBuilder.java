@@ -62,10 +62,10 @@ public final class DependencyTreeBuilder {
 
         final DependencyNode prevNode = this.dependencyTree.get(coordinates);
         if (prevNode != null && prevNode.depth() <= depth) return;
+        this.dependencyTree.put(coordinates, node);
 
         Pom pom = this.resolver.resolve(dependency);
         addPomDependenciesToCheckList(pom, depth + 1);
-        this.dependencyTree.put(coordinates, node);
     }
 
     /**
