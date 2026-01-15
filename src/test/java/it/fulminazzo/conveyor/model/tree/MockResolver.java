@@ -33,6 +33,9 @@ class MockResolver implements PomResolver {
         poms.add(newPom("dep2", "1.0", newDependency("dep4", "3.0")));
         poms.add(newPom("dep3", "2.0"));
         poms.add(newPom("dep4", "3.0"));
+
+        poms.add(newPom("problematic1", "1.0", newDependency("problematic2", "1.0")));
+        poms.add(newPom("problematic2", "1.0", newDependency("problematic1", "1.0")));
     }
 
     @Override
