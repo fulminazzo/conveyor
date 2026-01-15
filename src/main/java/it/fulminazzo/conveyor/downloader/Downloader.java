@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.downloader;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,5 +88,32 @@ public interface Downloader {
      * @return the directory
      */
     @NotNull File getWorkingDir();
+
+    /**
+     * Instantiates a new downloader.
+     *
+     * @param workingDir the working dir
+     * @param logger     the logger
+     * @return the downloader
+     */
+    static @NotNull Downloader newDownloader(final @NotNull File workingDir,
+                                             final @NotNull Logger logger) {
+        return new BaseDownloader(workingDir, logger);
+    }
+
+    /**
+     * Instantiates a new checksum downloader.
+     *
+     * @param workingDir the working dir
+     * @param logger     the logger
+     * @return the downloader
+     */
+    static @NotNull Downloader newChecksumDownloader(final @NotNull File workingDir,
+                                                     final @NotNull Logger logger) {
+        return new ChecksumDownloader(
+                newDownloader(workingDir, logger),
+                logger
+        );
+    }
 
 }
