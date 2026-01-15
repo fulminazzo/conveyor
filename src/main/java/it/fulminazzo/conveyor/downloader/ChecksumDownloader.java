@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.downloader;
 
+import it.fulminazzo.conveyor.downloader.policy.ChecksumPolicy;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -37,8 +38,9 @@ final class ChecksumDownloader implements Downloader {
      *
      * @param resourcePath the resource path
      * @return true if it is
+     * @throws DownloadException in case of verification errors
      */
-    public boolean verifyCachedResource(final @NotNull String resourcePath) {
+    public boolean verifyCachedResource(final @NotNull String resourcePath) throws DownloadException {
         for (ChecksumAlgorithm algorithm : ChecksumAlgorithm.values()) {
             final ChecksumResult result;
             try {
@@ -53,7 +55,12 @@ final class ChecksumDownloader implements Downloader {
                 if (expected.equals(actual)) return true;
                 throw new InvalidChecksumException(algorithm, expected, actual);
             } catch (IOException | InvalidChecksumException e) {
-                //TODO: handle source policy
+                DownloadSource source = result.source();
+                ChecksumPolicy policy = source.getCapability(ChecksumPolicy.class).orElse(null);
+                this.logger.debug("Could not verify checksum with algorithm {} for resource '{}' from source '{}'",
+                        algorithm, resourcePath, source.getUrl(), e);
+                if (policy != null)
+                    return policy.handleFailure(e, this.logger);
             }
         }
         return false;
@@ -67,8 +74,7 @@ final class ChecksumDownloader implements Downloader {
      * @param resourcePath the resource path
      * @param algorithm    the algorithm
      * @return a tuple containing the checksum and the used {@link DownloadSource}
-     * @throws DownloadException in case it was not possible to download the checksum
-     *                           with the given algorithm
+     * @throws DownloadException in case it was not possible to download the checksum                           with the given algorithm
      */
     @NotNull ChecksumResult resolveChecksum(final @NotNull String resourcePath,
                                             final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
