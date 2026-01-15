@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.downloader;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +27,7 @@ final class ChecksumDownloader implements Downloader {
     private static final int readingBufferSize = 8192;
 
     private final @NotNull Downloader delegate;
+    private final @NotNull Logger logger;
 
     /**
      * Uses all the {@link ChecksumAlgorithm}s to verify if
@@ -42,7 +44,7 @@ final class ChecksumDownloader implements Downloader {
             try {
                 result = resolveChecksum(resourcePath, algorithm);
             } catch (DownloadException e) {
-                // could not find the checksum, continue to the next algorithm
+                this.logger.debug("Could not resolve checksum with algorithm '{}' for resource '{}'", algorithm, resourcePath);
                 continue;
             }
             try {
@@ -79,6 +81,7 @@ final class ChecksumDownloader implements Downloader {
                 checksum = checksum.split(" ")[0];
                 return new ChecksumResult(checksum, downloadSource);
             } catch (IOException ignored) {
+                this.logger.debug("Could not resolve '{}' from source '{}'", finalPath, downloadSource.getUrl());
             }
         throw new DownloadException(String.format("Could not download checksum %s of resource '%s'", resourcePath, algorithm));
     }
