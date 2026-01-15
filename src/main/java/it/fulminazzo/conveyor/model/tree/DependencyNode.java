@@ -2,19 +2,30 @@ package it.fulminazzo.conveyor.model.tree;
 
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.Exclusions;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a node of a {@link Dependency} tree.
  */
-@Data
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Value
+@AllArgsConstructor
 public class DependencyNode {
+
     @NotNull Dependency dependency;
+
     int depth;
-    @NotNull Exclusions exclusions = new Exclusions();
+
+    @NotNull Exclusions exclusions;
+
+    /**
+     * Instantiates a new Dependency node.
+     *
+     * @param dependency the dependency
+     * @param depth      the depth
+     */
+    public DependencyNode(final @NotNull Dependency dependency, final int depth) {
+        this(dependency, depth, new Exclusions());
+    }
 
 }
