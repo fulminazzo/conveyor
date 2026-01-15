@@ -45,9 +45,19 @@ public final class DependencyTreeBuilder {
 
         Pom projectPom = this.resolver.resolve(this.project);
         addPomDependenciesToCheckList(projectPom, 1);
+        Dependency projectDependency = Dependency.builder()
+                .groupId(this.project.getGroupId())
+                .artifactId(this.project.getArtifactId())
+                .classifier(this.project.getClassifier())
+                .version(this.project.getVersion())
+                .type(projectPom.getPackaging())
+                .build();
+        this.dependencyTree.put(projectDependency.getCoordinates(), new DependencyNode(projectDependency, 0));
 
         while (!this.dependenciesToCheck.isEmpty())
             populateTree(this.dependenciesToCheck.poll());
+
+        this.dependencyTree.remove(projectDependency.getCoordinates());
     }
 
     /**
