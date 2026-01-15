@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.downloader;
+package it.fulminazzo.conveyor.old;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

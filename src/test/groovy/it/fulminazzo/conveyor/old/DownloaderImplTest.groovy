@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.downloader
+package it.fulminazzo.conveyor.old
 
 import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
