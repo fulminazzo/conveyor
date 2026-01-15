@@ -93,6 +93,12 @@ public final class DownloadSource {
      */
     public <T> @NotNull Optional<T> getCapability(final @NotNull Class<T> type) {
         Object rawCapability = this.capabilities.get(type);
+        if (rawCapability == null)
+            for (Class<?> clazz : this.capabilities.keySet())
+                if (type.isAssignableFrom(clazz)) {
+                    rawCapability = this.capabilities.get(clazz);
+                    break;
+                }
         return Optional.ofNullable(type.cast(rawCapability));
     }
 
