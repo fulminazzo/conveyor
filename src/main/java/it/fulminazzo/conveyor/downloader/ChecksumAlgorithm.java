@@ -20,16 +20,4 @@ enum ChecksumAlgorithm {
         return name().toLowerCase();
     }
 
-    /**
-     * Gets the associated algorithm from the given extension.
-     *
-     * @param extension the extension
-     * @return the checksum algorithm
-     */
-    public static @NotNull ChecksumAlgorithm fromExtension(final @NotNull String extension) {
-        for (ChecksumAlgorithm algorithm : values())
-            if (algorithm.getExtension().equals(extension)) return algorithm;
-        throw new IllegalArgumentException(String.format("Could not find matching algorithm from extension '%s'", extension));
-    }
-
 }
