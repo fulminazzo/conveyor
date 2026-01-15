@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.model.tree
 
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.Dependency
+import it.fulminazzo.conveyor.model.dependency.Exclusions
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.pom.Pom
@@ -143,7 +144,7 @@ class DependencyTreeBuilderTest extends Specification {
         def dependencies = this.builder.dependenciesToCheck
 
         when:
-        this.builder.addPomDependenciesToCheckList(pom, 1)
+        this.builder.addPomDependenciesToCheckList(pom, 1, new Exclusions())
 
         then:
         dependencies.size() == pom.dependencies.size()
@@ -166,7 +167,7 @@ class DependencyTreeBuilderTest extends Specification {
         def dependencies = this.builder.dependenciesToCheck
 
         when:
-        this.builder.setRequiredScopes(scope).addPomDependenciesToCheckList(pom, 1)
+        this.builder.setRequiredScopes(scope).addPomDependenciesToCheckList(pom, 1, new Exclusions())
 
         then:
         dependencies.size() == 1

@@ -45,7 +45,7 @@ public final class DependencyTreeBuilder {
         this.dependenciesToCheck.clear();
 
         Pom projectPom = this.resolver.resolve(this.project);
-        addPomDependenciesToCheckList(projectPom, 1);
+        addPomDependenciesToCheckList(projectPom, 1, new Exclusions());
         Dependency projectDependency = Dependency.builder()
                 .groupId(this.project.getGroupId())
                 .artifactId(this.project.getArtifactId())
@@ -76,7 +76,7 @@ public final class DependencyTreeBuilder {
         this.dependencyTree.put(coordinates, node);
 
         Pom pom = this.resolver.resolve(dependency);
-        addPomDependenciesToCheckList(pom, depth + 1);
+        addPomDependenciesToCheckList(pom, depth + 1, node.getExclusions());
     }
 
     /**
