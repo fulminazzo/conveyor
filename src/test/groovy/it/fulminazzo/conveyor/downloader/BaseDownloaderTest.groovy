@@ -4,7 +4,7 @@ import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
 class BaseDownloaderTest extends Specification {
-    private static final File workingDir = new File('build/resources/test/base_downloader')
+    private static final File workingDir = new File(TestUtils.BASE_DIR, 'base_downloader')
 
     def 'test that resolve of #resourcePath does not throw'() {
         given:
