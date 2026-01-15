@@ -44,6 +44,26 @@ class DependencyTreeBuilderTest extends Specification {
         tree.toList() == expected
     }
 
+    def 'test that build does not throw stack overflow on circular dependency'() {
+        given:
+        def builder = new DependencyTreeBuilder(Artifact.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('problematic1')
+                .version('1.0')
+                .build(), new MockResolver(), Mock(ActivationContext))
+
+        and:
+        def expected = [
+                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('problematic2').version('1.0').build(), 1)
+        ]
+
+        when:
+        def tree = builder.build()
+
+        then:
+        tree.toList() == expected
+    }
+
     def 'test that populateTree correctly adds new dependencies'() {
         given:
         def pom = createFullDependenciesPom('it.fulminazzo', 'main')
