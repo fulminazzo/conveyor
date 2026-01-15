@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +18,11 @@ import java.util.Optional;
 @EqualsAndHashCode
 @ToString
 public final class DownloadSource {
+    /**
+     * The timeout for connection and reading operations.
+     */
+    static final int CONNECT_READ_TIMEOUT = 10000;
+
     @Getter
     private final @NotNull String url;
     @EqualsAndHashCode.Exclude
@@ -46,6 +51,25 @@ public final class DownloadSource {
             throw new MalformedURLException(String.format("Invalid URL '%s'", url));
         }
         this.url = modifiedUrl;
+    }
+
+    /**
+     * Attempts to fetch the given resource path at the current url.
+     *
+     * @param resourcePath the resource path
+     * @return the data
+     * @throws IOException in case of any errors (usually connection or not found)
+     */
+    public @NotNull InputStream resolveResource(@NotNull String resourcePath) throws IOException {
+        try {
+            if (resourcePath.startsWith("/")) resourcePath = resourcePath.substring(1);
+            URLConnection connection = new URL(this.url + resourcePath).openConnection();
+            connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
+            connection.setReadTimeout(CONNECT_READ_TIMEOUT);
+            return connection.getInputStream();
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("Unreachable code");
+        }
     }
 
     /**
