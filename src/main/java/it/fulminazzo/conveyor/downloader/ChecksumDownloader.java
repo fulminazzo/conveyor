@@ -51,7 +51,7 @@ final class ChecksumDownloader implements Downloader {
         }
         return this.delegate.resolveToFile(resourcePath);
     }
-    
+
     /**
      * Uses all the {@link ChecksumAlgorithm}s to verify if
      * the corresponding resource file is valid or not.
@@ -96,7 +96,8 @@ final class ChecksumDownloader implements Downloader {
      * @param resourcePath the resource path
      * @param algorithm    the algorithm
      * @return a tuple containing the checksum and the used {@link DownloadSource}
-     * @throws DownloadException in case it was not possible to download the checksum                           with the given algorithm
+     * @throws DownloadException in case it was not possible to download the checksum
+     *                           with the given algorithm
      */
     @NotNull ChecksumResult resolveChecksum(final @NotNull String resourcePath,
                                             final @NotNull ChecksumAlgorithm algorithm) throws DownloadException {
