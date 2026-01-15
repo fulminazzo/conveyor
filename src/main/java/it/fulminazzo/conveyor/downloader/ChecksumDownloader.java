@@ -51,8 +51,8 @@ final class ChecksumDownloader implements Downloader {
                 final String expected = result.checksum();
                 final String actual = computeChecksum(resourcePath, algorithm);
                 if (expected.equals(actual)) return true;
-                throw new InvalidChecksum();
-            } catch (IOException | InvalidChecksum e) {
+                throw new InvalidChecksumException(algorithm, expected, actual);
+            } catch (IOException | InvalidChecksumException e) {
                 //TODO: handle source policy
             }
         }
@@ -146,6 +146,22 @@ final class ChecksumDownloader implements Downloader {
     record ChecksumResult(@NotNull String checksum, @NotNull DownloadSource source) {
     }
 
-    private static final class InvalidChecksum extends Exception {}
+    private static final class InvalidChecksumException extends Exception {
+
+        /**
+         * Instantiates a new Invalid checksum exception.
+         *
+         * @param algorithm the algorithm
+         * @param expected  the expected
+         * @param actual    the actual
+         */
+        public InvalidChecksumException(final @NotNull ChecksumAlgorithm algorithm,
+                                        final @NotNull String expected,
+                                        final @NotNull String actual) {
+            super(String.format("Checksum '%s' of algorithm '%s' did not match expected '%s'",
+                    actual, algorithm, expected));
+        }
+
+    }
 
 }
