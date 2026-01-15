@@ -40,7 +40,7 @@ public final class EffectivePomBuilder {
      * @return the effective pom
      */
     public @NotNull EffectivePom build() {
-        populateDependencies();
+        buildIncomplete().populateDependencies();
         return new EffectivePom(
                 this.startingPom.getProject(),
                 this.startingPom.getPackaging(),
