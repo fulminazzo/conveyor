@@ -25,7 +25,7 @@ class ChecksumDownloaderTest extends Specification {
         this.downloader = new ChecksumDownloader(delegate, log)
     }
 
-    def 'test that verifyCachedResource with failure and WARN checksum policy returns true'() {
+    def 'test that verifyChecksum with failure and WARN checksum policy returns true'() {
         given:
         def log = Mock(Logger)
 
@@ -41,7 +41,7 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyCachedResource('path')
+        def result = downloader.verifyChecksum('path')
 
         then:
         result
@@ -50,7 +50,7 @@ class ChecksumDownloaderTest extends Specification {
         2 * log.warn(_)
     }
 
-    def 'test that verifyCachedResource with failure and FAIL checksum policy throws DownloadException'() {
+    def 'test that verifyChecksum with failure and FAIL checksum policy throws DownloadException'() {
         given:
         def downloadSource = new DownloadSource('fulminazzo.it').withCapability(ChecksumPolicies.FAIL)
 
@@ -63,13 +63,13 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        downloader.verifyCachedResource('path')
+        downloader.verifyChecksum('path')
 
         then:
         thrown(DownloadException)
     }
 
-    def 'test that verifyCachedResource with failure and IGNORE checksum policy returns true'() {
+    def 'test that verifyChecksum with failure and IGNORE checksum policy returns true'() {
         given:
         def downloadSource = new DownloadSource('fulminazzo.it').withCapability(ChecksumPolicies.IGNORE)
 
@@ -82,13 +82,13 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyCachedResource('path')
+        def result = downloader.verifyChecksum('path')
 
         then:
         result
     }
 
-    def 'test that verifyCachedResource with failure and no checksum policy returns false'() {
+    def 'test that verifyChecksum with failure and no checksum policy returns false'() {
         given:
         def downloadSource = new DownloadSource('fulminazzo.it')
 
@@ -101,13 +101,13 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyCachedResource('path')
+        def result = downloader.verifyChecksum('path')
 
         then:
         !result
     }
 
-    def 'test that verifyCachedResource with #algorithm returns true'() {
+    def 'test that verifyChecksum with #algorithm returns true'() {
         given:
         def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
 
@@ -120,7 +120,7 @@ class ChecksumDownloaderTest extends Specification {
         }
 
         when:
-        def result = downloader.verifyCachedResource('path')
+        def result = downloader.verifyChecksum('path')
 
         then:
         result
@@ -129,7 +129,7 @@ class ChecksumDownloaderTest extends Specification {
         algorithm << ChecksumAlgorithm.values()
     }
 
-    def 'test that verifyCachedResource returns false if no checksum could be resolved'() {
+    def 'test that verifyChecksum returns false if no checksum could be resolved'() {
         given:
         def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
 
@@ -139,7 +139,7 @@ class ChecksumDownloaderTest extends Specification {
         }
 
         when:
-        def result = downloader.verifyCachedResource('path')
+        def result = downloader.verifyChecksum('path')
 
         then:
         !result

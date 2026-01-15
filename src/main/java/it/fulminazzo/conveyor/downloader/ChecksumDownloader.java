@@ -40,7 +40,7 @@ final class ChecksumDownloader implements Downloader {
      * @return true if it is
      * @throws DownloadException in case of verification errors
      */
-    public boolean verifyCachedResource(final @NotNull String resourcePath) throws DownloadException {
+    public boolean verifyChecksum(final @NotNull String resourcePath) throws DownloadException {
         for (ChecksumAlgorithm algorithm : ChecksumAlgorithm.values()) {
             final ChecksumResult result;
             try {
