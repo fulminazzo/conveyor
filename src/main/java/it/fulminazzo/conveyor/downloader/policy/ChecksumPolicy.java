@@ -13,12 +13,14 @@ public interface ChecksumPolicy {
     /**
      * Checks on the given cause and returns an appropriate result.
      *
-     * @param cause  the cause
-     * @param logger the logger
+     * @param resourcePath the resource path
+     * @param cause        the cause
+     * @param logger       the logger
      * @return <code>true</code> to verify the resource anyway
      * @throws DownloadException in case the verification is failed
      */
-    boolean handleFailure(final @NotNull Throwable cause,
+    boolean handleFailure(final @NotNull String resourcePath,
+                          final @NotNull Throwable cause,
                           final @NotNull Logger logger) throws DownloadException;
 
 }

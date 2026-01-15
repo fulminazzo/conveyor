@@ -60,7 +60,7 @@ final class ChecksumDownloader implements Downloader {
                 this.logger.debug("Could not verify checksum with algorithm {} for resource '{}' from source '{}'",
                         algorithm, resourcePath, source.getUrl(), e);
                 if (policy != null)
-                    return policy.handleFailure(e, this.logger);
+                    return policy.handleFailure(resourcePath, e, this.logger);
             }
         }
         return false;
