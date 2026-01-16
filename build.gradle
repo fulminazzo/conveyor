@@ -15,10 +15,14 @@ dependencies {
     compileOnly libs.bundles.annotations
     annotationProcessor libs.lombok
 
+    api libs.slf4j
+
     testCompileOnly libs.bundles.annotations
     testAnnotationProcessor libs.lombok
 
     testImplementation libs.bundles.test.framework
+
+    testImplementation libs.bundles.log4j
 }
 
 test {
