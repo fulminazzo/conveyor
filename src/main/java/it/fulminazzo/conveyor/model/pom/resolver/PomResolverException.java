@@ -20,7 +20,7 @@ public final class PomResolverException extends Exception {
      */
     public PomResolverException(final @NotNull Artifact artifact,
                                 final @NotNull BuilderException cause) {
-        this(String.format("Resolving pom for artifact '%s' caused error: '%s'",
+        this(String.format("Resolving pom for artifact '%s' caused error: %s",
                 artifact.getCoordinates(), cause.getMessage()),
                 cause.getCause());
     }
@@ -32,7 +32,7 @@ public final class PomResolverException extends Exception {
      */
     public PomResolverException(final @NotNull Artifact artifact,
                                 final @NotNull XmlParserException cause) {
-        this(String.format("Resolving pom for artifact '%s' caused error: '%s'",
+        this(String.format("Resolving pom for artifact '%s' caused error: %s",
                 artifact.getCoordinates(), cause.getMessage()),
                 cause.getCause());
     }
@@ -44,7 +44,7 @@ public final class PomResolverException extends Exception {
      */
     public PomResolverException(final @NotNull Artifact artifact,
                                 final @NotNull DownloadException cause) {
-        this(String.format("Resolving pom for artifact '%s' caused error: '%s'",
+        this(String.format("Resolving pom for artifact '%s' caused error: %s",
                 artifact.getCoordinates(), cause.getMessage()),
                 cause.getCause());
     }
