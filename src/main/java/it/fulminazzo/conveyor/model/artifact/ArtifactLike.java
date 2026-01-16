@@ -20,6 +20,6 @@ public abstract class ArtifactLike {
     protected final @NotNull String artifactId;
 
     @Builder.Default
-    private final @Nullable String classifier = null;
+    protected final @Nullable String classifier = null;
 
 }
