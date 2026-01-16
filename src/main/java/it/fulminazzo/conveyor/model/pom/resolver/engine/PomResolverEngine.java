@@ -12,6 +12,13 @@ import java.util.Collection;
 public interface PomResolverEngine extends PomResolver  {
 
     /**
+     * Transfers the currently stored download sources to the given engine.
+     *
+     * @param other the other engine
+     */
+    void transferSources(final @NotNull PomResolverEngine other);
+
+    /**
      * Adds the download sources to the current engine.
      *
      * @param sources the download sources

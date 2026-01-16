@@ -48,6 +48,11 @@ abstract class DownloaderPomResolverEngine implements PomResolverEngine {
     protected abstract @NotNull InputStream resolve(final @NotNull String artifactPath) throws DownloadException;
 
     @Override
+    public void transferSources(final @NotNull PomResolverEngine other) {
+        other.addSources(this.downloader.getDownloadSources());
+    }
+
+    @Override
     public @NotNull PomResolverEngine addSources(final @NotNull Collection<DownloadSource> sources) {
         this.downloader.addDownloadSources(sources);
         return this;
