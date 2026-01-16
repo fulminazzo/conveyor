@@ -52,7 +52,7 @@ public final class Conveyor {
      * @param mode the mode
      * @return this conveyor
      */
-    @NotNull Conveyor setPomResolveMode(final @NotNull PomResolveEngineType mode) {
+    public @NotNull Conveyor setPomResolveMode(final @NotNull PomResolveEngineType mode) {
         this.resolver.setMode(mode);
         return this;
     }
