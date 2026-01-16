@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor;
 
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.resolver.ConveyorPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
@@ -41,7 +42,8 @@ public final class Conveyor {
         this.dependencyTreeBuilder = new DependencyTreeBuilder(this.resolver, this.context);
 
         setPomResolveMode(PomResolveEngineType.CHECKSUM)
-                .addRawRepositories(mavenCentralUrl);
+                .addRawRepositories(mavenCentralUrl)
+                .setScopesOfInterest(Scope.COMPILE, Scope.PROVIDED, Scope.RUNTIME);
     }
 
     /**
@@ -87,6 +89,17 @@ public final class Conveyor {
      */
     public @NotNull Conveyor setPomResolveMode(final @NotNull PomResolveEngineType mode) {
         this.resolver.setMode(mode);
+        return this;
+    }
+
+    /**
+     * Updates the scopes that should be downloaded from the dependencies tree.
+     *
+     * @param scopes the scopes
+     * @return this conveyor
+     */
+    public @NotNull Conveyor setScopesOfInterest(final Scope @NotNull ... scopes) {
+        this.dependencyTreeBuilder.setRequiredScopes(scopes);
         return this;
     }
 
