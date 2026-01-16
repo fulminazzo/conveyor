@@ -107,12 +107,10 @@ public interface ActivationContext {
      * Gets a new activation context with the current environment variables and properties.
      *
      * @param workingDir the working dir
-     * @param packaging  the packaging
      * @return the activation context
      */
-    static @NotNull ActivationContext current(final @NotNull File workingDir,
-                                              final @NotNull String packaging) {
-        return new CurrentActivationContext(workingDir, packaging);
+    static @NotNull ActivationContext current(final @NotNull File workingDir) {
+        return new CurrentActivationContext(workingDir);
     }
 
 }
