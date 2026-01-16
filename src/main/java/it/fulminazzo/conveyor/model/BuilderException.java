@@ -17,7 +17,7 @@ public final class BuilderException extends Exception {
      * @param cause the cause of the exception
      */
     public BuilderException(final @NotNull XmlParserException cause) {
-        this(cause.getMessage(), cause.getCause());
+        this("Xml exception during building: " + cause.getMessage(), cause.getCause());
     }
 
 }
