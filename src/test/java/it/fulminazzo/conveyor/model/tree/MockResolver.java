@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.pom.Pom;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.engine.PomResolveEngineType;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,6 +55,11 @@ class MockResolver implements RepositoryBasedPomResolver {
     @Override
     public @NotNull RepositoryBasedPomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
         return this;
+    }
+
+    @Override
+    public @NotNull RepositoryBasedPomResolver setMode(@NotNull PomResolveEngineType mode) {
+        throw new UnsupportedOperationException();
     }
 
     private static @NotNull Pom newPom(final @NotNull String artifactId,
