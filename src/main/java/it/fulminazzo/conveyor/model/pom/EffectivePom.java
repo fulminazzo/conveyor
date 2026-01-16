@@ -47,7 +47,9 @@ public class EffectivePom implements PomLike {
      * @param startingPom the {@link Pom} object to build the effective pom from.
      *                    All the dependencies will be parsed using properties and dependency management
      * @param pomResolver a function to resolve the pom of an artifact
-     * @param context     the context where the builder should operate (with operating system data and similar)
+     * @param context     the base context where the builder should operate (with operating system data and similar).
+     *                    A new {@link ActivationContext} will be instantiated for each pom request,
+     *                    with the update of the internal packaging.
      * @return the builder
      */
     public static @NotNull EffectivePomBuilder builder(final @NotNull Pom startingPom,
