@@ -6,12 +6,14 @@ import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.engine.PomResolveEngineType;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.model.tree.DependencyNode;
 import it.fulminazzo.conveyor.model.tree.DependencyTreeBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -44,6 +46,30 @@ public final class Conveyor {
      */
     @NotNull Collection<DependencyNode> buildDependencyTree(final @NotNull Artifact artifact) throws PomResolverException {
         return new DependencyTreeBuilder(artifact, this.resolver, this.context).build();
+    }
+
+    /**
+     * Adds the given repositories to the lookup list.
+     *
+     * @param urls the URLs of the repositories
+     * @return this conveyor
+     */
+    public @NotNull Conveyor addRawRepositories(final String @NotNull ... urls) {
+        return addRepositories(Arrays.stream(urls)
+                .map(u -> Repository.builder().id(u).url(u).build())
+                .toArray(Repository[]::new)
+        );
+    }
+
+    /**
+     * Adds the given repositories to the lookup list.
+     *
+     * @param repositories the repositories
+     * @return this conveyor
+     */
+    public @NotNull Conveyor addRepositories(final Repository @NotNull ... repositories) {
+        this.resolver.addRepositories(Arrays.asList(repositories));
+        return this;
     }
 
     /**
