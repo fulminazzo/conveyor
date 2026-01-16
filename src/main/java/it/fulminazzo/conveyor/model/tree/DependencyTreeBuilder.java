@@ -69,6 +69,7 @@ public final class DependencyTreeBuilder {
             populateTree(this.dependenciesToCheck.poll());
 
         this.dependencyTree.remove(projectDependency.getCoordinates());
+        this.project = null;
     }
 
     /**
@@ -127,6 +128,17 @@ public final class DependencyTreeBuilder {
      */
     public @NotNull DependencyTreeBuilder setRequiredScopes(final Scope @NotNull ... scopes) {
         return setRequiredScopes(Arrays.asList(scopes));
+    }
+
+    /**
+     * Sets the project of which to build the dependency tree.
+     *
+     * @param project the project
+     * @return this builder
+     */
+    public @NotNull DependencyTreeBuilder setProject(final @Nullable Artifact project) {
+        this.project = project;
+        return this;
     }
 
     /**
