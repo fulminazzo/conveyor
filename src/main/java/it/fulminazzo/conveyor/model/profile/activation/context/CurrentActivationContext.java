@@ -2,8 +2,6 @@ package it.fulminazzo.conveyor.model.profile.activation.context;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,6 +89,11 @@ final class CurrentActivationContext implements ActivationContext {
             return System.getenv(name);
         }
         return System.getProperty(name);
+    }
+
+    @Override
+    public @NotNull ActivationContext copy() {
+        return new CurrentActivationContext(this.currentDir).setPackaging(this.packaging);
     }
 
     @Override

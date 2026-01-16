@@ -82,6 +82,13 @@ public interface ActivationContext {
     @Nullable String getProperty(final @NotNull String name);
 
     /**
+     * Creates a copy of the current context.
+     *
+     * @return the copy
+     */
+    @NotNull ActivationContext copy();
+
+    /**
      * Sets the packaging defined in the associated <b>pom.xml</b> file.
      *
      * @param packaging the packaging
