@@ -27,8 +27,7 @@ final class CurrentActivationContext implements ActivationContext {
 
     @Getter
     private final @NotNull File currentDir;
-    @Getter
-    private @NotNull String packaging;
+    private @Nullable String packaging;
 
     /**
      * Gets the context JDK version.
@@ -98,6 +97,11 @@ final class CurrentActivationContext implements ActivationContext {
     public @NotNull ActivationContext setPackaging(final @NotNull String packaging) {
         this.packaging = packaging;
         return this;
+    }
+
+    @Override
+    public @NotNull String getPackaging() {
+        return Objects.requireNonNull(this.packaging, "packaging has not been set yet");
     }
 
 }
