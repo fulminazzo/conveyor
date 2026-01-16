@@ -19,7 +19,6 @@ import java.util.Collection;
  */
 public final class Conveyor {
     private final @NotNull RepositoryBasedPomResolver resolver;
-    @Deprecated
     private final @NotNull ActivationContext context;
 
     /**
@@ -44,8 +43,6 @@ public final class Conveyor {
      * @throws PomResolverException in case of any errors
      */
     @NotNull Collection<DependencyNode> buildDependencyTree(final @NotNull Artifact artifact) throws PomResolverException {
-        //TODO: activation context requires packaging,
-        //TODO: but packaging is resolved in pom!
         return new DependencyTreeBuilder(artifact, this.resolver, this.context).build();
     }
 
