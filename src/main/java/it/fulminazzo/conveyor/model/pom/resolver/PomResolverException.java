@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.model.pom.resolver;
 
 import it.fulminazzo.conveyor.downloader.DownloadException;
 import it.fulminazzo.conveyor.model.BuilderException;
+import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.xml.XmlParserException;
 import lombok.experimental.StandardException;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +18,11 @@ public final class PomResolverException extends Exception {
      *
      * @param cause the cause
      */
-    public PomResolverException(final @NotNull BuilderException cause) {
-        this(cause.getMessage(), cause.getCause());
+    public PomResolverException(final @NotNull Artifact artifact,
+                                final @NotNull BuilderException cause) {
+        this(String.format("Resolving pom for artifact '%s' caused error: '%s'",
+                artifact.getCoordinates(), cause.getMessage()),
+                cause.getCause());
     }
 
     /**
@@ -26,8 +30,11 @@ public final class PomResolverException extends Exception {
      *
      * @param cause the cause
      */
-    public PomResolverException(final @NotNull XmlParserException cause) {
-        this(cause.getMessage(), cause.getCause());
+    public PomResolverException(final @NotNull Artifact artifact,
+                                final @NotNull XmlParserException cause) {
+        this(String.format("Resolving pom for artifact '%s' caused error: '%s'",
+                artifact.getCoordinates(), cause.getMessage()),
+                cause.getCause());
     }
 
     /**
@@ -35,8 +42,11 @@ public final class PomResolverException extends Exception {
      *
      * @param cause the cause
      */
-    public PomResolverException(final @NotNull DownloadException cause) {
-        this(cause.getMessage(), cause.getCause());
+    public PomResolverException(final @NotNull Artifact artifact,
+                                final @NotNull DownloadException cause) {
+        this(String.format("Resolving pom for artifact '%s' caused error: '%s'",
+                artifact.getCoordinates(), cause.getMessage()),
+                cause.getCause());
     }
 
 }

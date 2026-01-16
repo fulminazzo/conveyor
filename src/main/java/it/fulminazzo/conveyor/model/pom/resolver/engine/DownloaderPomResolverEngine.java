@@ -30,11 +30,11 @@ abstract class DownloaderPomResolverEngine implements PomResolverEngine {
             XmlParser parser = XmlParser.newParser(pomData);
             return Pom.builder(parser).build();
         } catch (XmlParserException e) {
-            throw new PomResolverException(e);
+            throw new PomResolverException(artifact, e);
         } catch (BuilderException e) {
-            throw new PomResolverException(e);
+            throw new PomResolverException(artifact, e);
         } catch (DownloadException e) {
-            throw new PomResolverException(e);
+            throw new PomResolverException(artifact, e);
         }
     }
 
