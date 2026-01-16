@@ -74,6 +74,30 @@ class PomResolveEngineTypeTest extends Specification {
         0 * downloader.resolveToFile(_)
     }
 
+    def 'test that CHECKSUM only downloads once the requested pom'() {
+        given:
+        def workDir = new File(baseDir, 'checksum')
+
+        and:
+        def engine = PomResolveEngineType.CHECKSUM.create(workDir, log)
+                .addSources([new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)])
+
+        when:
+        def pom1 = engine.resolve(artifact)
+
+        then:
+        pom1 != null
+
+        and:
+        new File(workDir, artifact.getFullPath('pom')).exists()
+
+        when:
+        def pom2 = engine.resolve(artifact)
+
+        then:
+        pom2 != null
+    }
+
     def 'test that #type create does not throw'() {
         when:
         type.create(TestUtils.BASE_DIR, log)
