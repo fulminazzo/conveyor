@@ -17,12 +17,10 @@ import java.util.Collection;
 
 /**
  * A {@link Downloader} based {@link PomResolverEngine}.
- *
- * @param <D> the type of the used downloader
  */
 @RequiredArgsConstructor
-abstract class DownloaderPomResolverEngine<D extends Downloader> implements PomResolverEngine {
-    protected final @NotNull D downloader;
+abstract class DownloaderPomResolverEngine implements PomResolverEngine {
+    protected final @NotNull Downloader downloader;
 
     @Override
     public @NotNull Pom resolve(final @NotNull Artifact artifact) throws PomResolverException {

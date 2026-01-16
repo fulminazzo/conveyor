@@ -12,7 +12,7 @@ import java.io.InputStream;
  * An implementation of {@link DownloaderPomResolverEngine} that
  * downloads the requested pom for each request.
  */
-final class MemoryDownloaderPomResolverEngine extends DownloaderPomResolverEngine<Downloader> {
+final class MemoryDownloaderPomResolverEngine extends DownloaderPomResolverEngine {
 
     /**
      * Instantiates a new Memory downloader pom resolver engine.

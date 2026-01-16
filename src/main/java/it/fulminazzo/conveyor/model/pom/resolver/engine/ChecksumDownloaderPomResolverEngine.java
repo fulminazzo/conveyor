@@ -16,7 +16,7 @@ import java.io.InputStream;
  * to compute and verify its checksum, otherwise proceeds to
  * download the resource.
  */
-final class ChecksumDownloaderPomResolverEngine extends DownloaderPomResolverEngine<Downloader> {
+final class ChecksumDownloaderPomResolverEngine extends DownloaderPomResolverEngine {
 
     /**
      * Instantiates a new Checksum downloader pom resolver engine.

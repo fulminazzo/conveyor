@@ -15,7 +15,7 @@ import java.io.InputStream;
  * downloads the requested pom only if it is not already present
  * on disk (does not check for its validity).
  */
-final class DiskDownloaderPomResolverEngine extends DownloaderPomResolverEngine<Downloader> {
+final class DiskDownloaderPomResolverEngine extends DownloaderPomResolverEngine {
 
     /**
      * Instantiates a new Disk downloader pom resolver engine.
