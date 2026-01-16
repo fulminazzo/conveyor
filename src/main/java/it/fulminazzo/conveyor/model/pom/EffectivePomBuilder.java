@@ -5,7 +5,7 @@ import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.dependency.Scope;
-import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class EffectivePomBuilder {
     private final @NotNull Pom startingPom;
-    private final @NotNull PomResolver pomResolver;
+    private final @NotNull RepositoryBasedPomResolver pomResolver;
     private final @NotNull ActivationContext context;
 
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();

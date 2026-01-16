@@ -3,7 +3,7 @@ package it.fulminazzo.conveyor.model.tree;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.pom.Pom;
-import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ import java.util.*;
  * dep3:2.0 -> {}
  * dep4:3.0 -> {}
  */
-class MockResolver implements PomResolver {
+class MockResolver implements RepositoryBasedPomResolver {
     private static final @NotNull Collection<Pom> poms = new LinkedList<>();
 
     static {
@@ -52,7 +52,7 @@ class MockResolver implements PomResolver {
     }
 
     @Override
-    public @NotNull PomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
+    public @NotNull RepositoryBasedPomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
         return this;
     }
 

@@ -6,7 +6,7 @@ import it.fulminazzo.conveyor.model.dependency.Exclusions
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.pom.Pom
-import it.fulminazzo.conveyor.model.pom.resolver.PomResolver
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import spock.lang.Specification
 
@@ -17,11 +17,11 @@ class DependencyTreeBuilderTest extends Specification {
             .version('1.0')
             .build()
 
-    private PomResolver resolver
+    private RepositoryBasedPomResolver resolver
     private DependencyTreeBuilder builder
 
     void setup() {
-        this.resolver = Mock(PomResolver)
+        this.resolver = Mock(RepositoryBasedPomResolver)
 
         this.builder = new DependencyTreeBuilder(artifact, this.resolver, Mock(ActivationContext))
     }

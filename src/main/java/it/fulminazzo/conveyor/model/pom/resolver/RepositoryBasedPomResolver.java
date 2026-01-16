@@ -8,9 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 /**
- * A function to resolve a {@link Pom} object given its {@link Artifact} information.
+ * An object to resolve a {@link Pom} object given its {@link Artifact} information.
+ * <br>
+ * Uses repositories to query for the requested data.
  */
-public interface PomResolver {
+public interface RepositoryBasedPomResolver {
 
     /**
      * Resolves the pom.
@@ -26,6 +28,6 @@ public interface PomResolver {
      * @param repositories the repositories
      * @return this resolver
      */
-    @NotNull PomResolver addRepositories(final @NotNull Collection<Repository> repositories);
+    @NotNull RepositoryBasedPomResolver addRepositories(final @NotNull Collection<Repository> repositories);
 
 }
