@@ -6,6 +6,7 @@ import it.fulminazzo.conveyor.model.dependency.Exclusions;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.RequiredArgsConstructor;
@@ -31,16 +32,19 @@ public final class DependencyTreeBuilder {
      * Builds the dependency tree.
      *
      * @return the tree
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    public @NotNull Collection<DependencyNode> build() {
+    public @NotNull Collection<DependencyNode> build() throws PomResolverException {
         populateTree();
         return this.dependencyTree.values();
     }
 
     /**
      * Populates the {@link #dependencyTree} with the required dependencies.
+     *
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    void populateTree() {
+    void populateTree() throws PomResolverException {
         this.dependencyTree.clear();
         this.dependenciesToCheck.clear();
 
@@ -65,8 +69,9 @@ public final class DependencyTreeBuilder {
      * Support method to populate the final {@link #dependencyTree}.
      *
      * @param node the starting dependency node
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    void populateTree(final @NotNull DependencyNode node) {
+    void populateTree(final @NotNull DependencyNode node) throws PomResolverException {
         final Dependency dependency = node.dependency();
         final int depth = node.depth();
         final String coordinates = dependency.getCoordinates();
@@ -88,10 +93,11 @@ public final class DependencyTreeBuilder {
      * @param pom        the pom
      * @param depth      the depth of the dependencies
      * @param exclusions the exclusions of the dependency that generated the pom
+     * @throws PomResolverException in case of any errors during pom construction
      */
     void addPomDependenciesToCheckList(final @NotNull Pom pom,
                                        final int depth,
-                                       final @NotNull Exclusions exclusions) {
+                                       final @NotNull Exclusions exclusions) throws PomResolverException {
         EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.context).build();
 
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
