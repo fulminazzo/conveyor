@@ -98,7 +98,8 @@ public class Artifact extends ArtifactLike {
         String classifier = getClassifier();
         return getGroupId() + separator +
                 getArtifactId() + separator +
-                (classifier == null ? "" : classifier);
+                (classifier == null ? "" : (classifier + separator)) +
+                getVersion();
     }
 
 }
