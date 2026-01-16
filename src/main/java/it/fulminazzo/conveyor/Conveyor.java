@@ -27,23 +27,12 @@ public final class Conveyor {
     private final @NotNull RepositoryBasedPomResolver resolver;
     private final @NotNull DependencyTreeBuilder dependencyTreeBuilder;
 
-    /**
-     * Instantiates a new Conveyor.
-     *
-     * @param context    the activation context
-     * @param workingDir the directory where the repositories should be stored
-     * @param logger     the logger
-     */
-    public Conveyor(final @NotNull ActivationContext context,
-                    final @NotNull File workingDir,
-                    final @NotNull Logger logger) {
+    private Conveyor(final @NotNull ActivationContext context,
+                     final @NotNull File workingDir,
+                     final @NotNull Logger logger) {
         this.context = context;
         this.resolver = ConveyorPomResolver.newResolver(workingDir, logger);
         this.dependencyTreeBuilder = new DependencyTreeBuilder(this.resolver, this.context);
-
-        setPomResolveMode(PomResolveEngineType.CHECKSUM)
-                .addRawRepositories(mavenCentralUrl)
-                .setScopesOfInterest(Scope.COMPILE, Scope.PROVIDED, Scope.RUNTIME);
     }
 
     /**
@@ -101,6 +90,23 @@ public final class Conveyor {
     public @NotNull Conveyor setScopesOfInterest(final Scope @NotNull ... scopes) {
         this.dependencyTreeBuilder.setRequiredScopes(scopes);
         return this;
+    }
+
+    /**
+     * Instantiates a new Conveyor.
+     *
+     * @param context    the activation context
+     * @param workingDir the directory where the repositories should be stored
+     * @param logger     the logger
+     * @return the conveyor
+     */
+    public static @NotNull Conveyor newConveyor(final @NotNull ActivationContext context,
+                                                final @NotNull File workingDir,
+                                                final @NotNull Logger logger) {
+        return new Conveyor(context, workingDir, logger)
+                .setPomResolveMode(PomResolveEngineType.CHECKSUM)
+                .addRawRepositories(mavenCentralUrl)
+                .setScopesOfInterest(Scope.COMPILE, Scope.PROVIDED, Scope.RUNTIME);
     }
 
 }
