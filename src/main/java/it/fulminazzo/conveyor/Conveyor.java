@@ -20,6 +20,8 @@ import java.util.Collection;
  * Main access point of the library.
  */
 public final class Conveyor {
+    private static final @NotNull String mavenCentralUrl = "https://repo.maven.apache.org/maven2/";
+
     private final @NotNull RepositoryBasedPomResolver resolver;
     private final @NotNull ActivationContext context;
 
@@ -33,8 +35,10 @@ public final class Conveyor {
     public Conveyor(final @NotNull ActivationContext context,
                     final @NotNull File workingDir,
                     final @NotNull Logger logger) {
-        this.resolver = ConveyorPomResolver.newResolver(workingDir, logger).setMode(PomResolveEngineType.CHECKSUM);
+        this.resolver = ConveyorPomResolver.newResolver(workingDir, logger);
         this.context = context;
+        setPomResolveMode(PomResolveEngineType.CHECKSUM)
+                .addRawRepositories(mavenCentralUrl);
     }
 
     /**
