@@ -82,6 +82,14 @@ public interface ActivationContext {
     @Nullable String getProperty(final @NotNull String name);
 
     /**
+     * Sets the packaging defined in the associated <b>pom.xml</b> file.
+     *
+     * @param packaging the packaging
+     * @return this context
+     */
+    @NotNull ActivationContext setPackaging(final @NotNull String packaging);
+
+    /**
      * Gets the packaging defined in the associated <b>pom.xml</b> file.
      *
      * @return the packaging
