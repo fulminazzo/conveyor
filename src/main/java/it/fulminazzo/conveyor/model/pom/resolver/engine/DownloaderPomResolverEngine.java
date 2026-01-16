@@ -31,7 +31,11 @@ abstract class DownloaderPomResolverEngine<D extends Downloader> implements PomR
             InputStream pomData = resolve(artifactPath);
             XmlParser parser = XmlParser.newParser(pomData);
             return Pom.builder(parser).build();
-        } catch (XmlParserException | BuilderException | DownloadException e) {
+        } catch (XmlParserException e) {
+            throw new PomResolverException(e);
+        } catch (BuilderException e) {
+            throw new PomResolverException(e);
+        } catch (DownloadException e) {
             throw new PomResolverException(e);
         }
     }
