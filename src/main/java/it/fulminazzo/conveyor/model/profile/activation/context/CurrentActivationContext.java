@@ -94,7 +94,7 @@ final class CurrentActivationContext implements ActivationContext {
     }
 
     @Override
-    public @NotNull ActivationContext setPackaging(final @NotNull String packaging) {
+    public @NotNull ActivationContext setPackaging(final @Nullable String packaging) {
         this.packaging = packaging;
         return this;
     }
