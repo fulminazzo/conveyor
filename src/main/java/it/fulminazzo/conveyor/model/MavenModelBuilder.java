@@ -40,7 +40,15 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
      * @throws BuilderException in case of any errors
      */
     protected void parseProperties() throws BuilderException {
-        onChildElements(t -> this.properties.put(t, getCurrentTextContent()));
+        onChildElements(t -> {
+            String value;
+            try {
+                value = getCurrentTextContent();
+            } catch (BuilderException e) {
+                value = "";
+            }
+            this.properties.put(t, value);
+        });
     }
 
     /**
