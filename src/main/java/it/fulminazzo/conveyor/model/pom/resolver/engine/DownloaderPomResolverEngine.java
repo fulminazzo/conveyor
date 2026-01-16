@@ -1,10 +1,14 @@
 package it.fulminazzo.conveyor.model.pom.resolver.engine;
 
+import it.fulminazzo.conveyor.downloader.DownloadException;
 import it.fulminazzo.conveyor.downloader.DownloadSource;
 import it.fulminazzo.conveyor.downloader.Downloader;
+import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.pom.Pom;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.xml.XmlParser;
+import it.fulminazzo.conveyor.xml.XmlParserException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,11 +25,15 @@ abstract class DownloaderPomResolverEngine<D extends Downloader> implements PomR
     protected final @NotNull D downloader;
 
     @Override
-    public @NotNull Pom resolve(final @NotNull Artifact artifact) {
-        final String artifactPath = artifact.getFullPath("pom");
-        InputStream pomData = resolve(artifactPath);
-        XmlParser parser = XmlParser.newParser(pomData);
-        return Pom.builder(parser).build();
+    public @NotNull Pom resolve(final @NotNull Artifact artifact) throws PomResolverException {
+        try {
+            final String artifactPath = artifact.getFullPath("pom");
+            InputStream pomData = resolve(artifactPath);
+            XmlParser parser = XmlParser.newParser(pomData);
+            return Pom.builder(parser).build();
+        } catch (XmlParserException | BuilderException | DownloadException e) {
+            throw new PomResolverException(e);
+        }
     }
 
     /**
@@ -33,8 +41,9 @@ abstract class DownloaderPomResolverEngine<D extends Downloader> implements PomR
      *
      * @param artifactPath the artifact path
      * @return the raw data of the pom
+     * @throws DownloadException in case of download errors
      */
-    protected abstract @NotNull InputStream resolve(final @NotNull String artifactPath);
+    protected abstract @NotNull InputStream resolve(final @NotNull String artifactPath) throws DownloadException;
 
     @Override
     public @NotNull PomResolverEngine addSources(final @NotNull Collection<DownloadSource> sources) {
