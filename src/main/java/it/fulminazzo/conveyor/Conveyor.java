@@ -22,8 +22,9 @@ import java.util.Collection;
 public final class Conveyor {
     private static final @NotNull String mavenCentralUrl = "https://repo.maven.apache.org/maven2/";
 
-    private final @NotNull RepositoryBasedPomResolver resolver;
     private final @NotNull ActivationContext context;
+    private final @NotNull RepositoryBasedPomResolver resolver;
+    private final @NotNull DependencyTreeBuilder dependencyTreeBuilder;
 
     /**
      * Instantiates a new Conveyor.
@@ -35,8 +36,10 @@ public final class Conveyor {
     public Conveyor(final @NotNull ActivationContext context,
                     final @NotNull File workingDir,
                     final @NotNull Logger logger) {
-        this.resolver = ConveyorPomResolver.newResolver(workingDir, logger);
         this.context = context;
+        this.resolver = ConveyorPomResolver.newResolver(workingDir, logger);
+        this.dependencyTreeBuilder = new DependencyTreeBuilder(this.resolver, this.context);
+
         setPomResolveMode(PomResolveEngineType.CHECKSUM)
                 .addRawRepositories(mavenCentralUrl);
     }
@@ -49,7 +52,7 @@ public final class Conveyor {
      * @throws PomResolverException in case of any errors
      */
     @NotNull Collection<DependencyNode> buildDependencyTree(final @NotNull Artifact artifact) throws PomResolverException {
-        return new DependencyTreeBuilder(artifact, this.resolver, this.context).build();
+        return this.dependencyTreeBuilder.setProject(artifact).build();
     }
 
     /**
