@@ -1006,7 +1006,7 @@ class EffectivePomBuilderTest extends Specification {
     }
 
     private static Artifact newArtifact(final String id, final String version) {
-        return new Artifact("it.fulminazzo", id, version);
+        return new Artifact("it.fulminazzo", id, version)
     }
 
     private static Properties getProperties(final Object object) {

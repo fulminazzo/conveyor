@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Responsible for creating a {@link Pom} object.
@@ -52,9 +53,9 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
         }
         return buildObject("pom", () -> new Pom(
                 Artifact.builder()
-                        .groupId(this.groupId)
-                        .artifactId(this.artifactId)
-                        .version(this.version)
+                        .groupId(Objects.requireNonNull(this.groupId, "groupId is marked non-null but is null"))
+                        .artifactId(Objects.requireNonNull(this.artifactId, "artifactId is marked non-null but is null"))
+                        .version(Objects.requireNonNull(this.version, "version is marked non-null but is null"))
                         .classifier(this.classifier)
                         .build(),
                 this.packaging == null ? defaultPackaging : this.packaging,
