@@ -41,7 +41,7 @@ public enum PomResolveEngineType {
     public @NotNull PomResolverEngine create(final @NotNull File workingDir,
                                              final @NotNull Logger logger) {
         try {
-            Constructor<?> constructor = this.type.getDeclaredConstructor(workingDir.getClass(), logger.getClass());
+            Constructor<?> constructor = this.type.getDeclaredConstructor(File.class, Logger.class);
             constructor.setAccessible(true);
             return (PomResolverEngine) constructor.newInstance(workingDir, logger);
         } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
