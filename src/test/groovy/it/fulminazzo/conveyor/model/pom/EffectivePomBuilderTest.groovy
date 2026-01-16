@@ -97,7 +97,7 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
-        def parentBuilder = new EffectivePomBuilder(parentPom, Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def parentBuilder = new EffectivePomBuilder(parentPom, Mock(RepositoryBasedPomResolver), mockActivationContext())
         getProperties(parentBuilder).putAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'parent-dependency1',
@@ -147,7 +147,7 @@ class EffectivePomBuilderTest extends Specification {
         ].sort()
 
         when:
-        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), mockActivationContext())
         getProperties(builder).putAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'dependency1',
@@ -534,7 +534,7 @@ class EffectivePomBuilderTest extends Specification {
         }
 
         and:
-        def parentBuilder = new EffectivePomBuilder(parentPom, resolver, Mock(ActivationContext))
+        def parentBuilder = new EffectivePomBuilder(parentPom, resolver, mockActivationContext())
         parentBuilder.activeProfiles.addAll(parentPom.profiles)
 
         when:
@@ -559,7 +559,7 @@ class EffectivePomBuilderTest extends Specification {
         ].sort()
 
         when:
-        def builder = new EffectivePomBuilder(pom, resolver, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, resolver, mockActivationContext())
         builder.activeProfiles.addAll(pom.profiles)
         builder.parentEffectivePomBuilder = parentBuilder
 
@@ -631,7 +631,7 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
-        def parentBuilder = new EffectivePomBuilder(parentPom, pomResolver, Mock(ActivationContext))
+        def parentBuilder = new EffectivePomBuilder(parentPom, pomResolver, mockActivationContext())
         getProperties(parentBuilder).putAll([
                 'parent.repository.id'         : 'parent-repository2',
                 'parent.repository.url'        : 'https://url2.com',
@@ -652,7 +652,7 @@ class EffectivePomBuilderTest extends Specification {
         ].sort()
 
         when:
-        def builder = new EffectivePomBuilder(pom, pomResolver, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, pomResolver, mockActivationContext())
         getProperties(builder).putAll([
                 'repository.id'         : 'repository2',
                 'repository.url'        : 'https://url6.com',
@@ -692,7 +692,7 @@ class EffectivePomBuilderTest extends Specification {
         )
 
         and:
-        def parentBuilder = new EffectivePomBuilder(parentPom, Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def parentBuilder = new EffectivePomBuilder(parentPom, Mock(RepositoryBasedPomResolver), mockActivationContext())
         parentBuilder.activeProfiles.addAll(parentPom.profiles)
 
         when:
@@ -711,7 +711,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.parent >> parent
 
         and:
-        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), mockActivationContext())
         builder.activeProfiles.addAll(pom.profiles)
         builder.parentEffectivePomBuilder = parentBuilder
 
@@ -746,7 +746,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.dependencies >> []
 
         and:
-        def builder = new EffectivePomBuilder(pom, resolver, Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, resolver, mockActivationContext())
 
         when:
         builder.resolveParentEffectivePom()
@@ -764,7 +764,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.profiles >> []
 
         and:
-        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), mockActivationContext())
 
         when:
         builder.resolveParentEffectivePom()
@@ -782,7 +782,7 @@ class EffectivePomBuilderTest extends Specification {
         def pom = newPom(activeProfiles, passiveProfiles)
 
         and:
-        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), mockActivationContext())
 
         when:
         builder.populateActiveProfiles()
@@ -803,7 +803,7 @@ class EffectivePomBuilderTest extends Specification {
         def passiveProfiles = createMockProfilesList(10..19, 'inactive', false)
 
         and:
-        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(pom, Mock(RepositoryBasedPomResolver), mockActivationContext())
 
         when:
         builder.populateActiveProfiles()
@@ -823,7 +823,7 @@ class EffectivePomBuilderTest extends Specification {
 
     def 'test that getDependency of #rawDependency returns #expected'() {
         given:
-        def builder = new EffectivePomBuilder(Mock(Pom), Mock(RepositoryBasedPomResolver), Mock(ActivationContext))
+        def builder = new EffectivePomBuilder(Mock(Pom), Mock(RepositoryBasedPomResolver), mockActivationContext())
         getProperties(builder).putAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'dependency',
@@ -993,6 +993,12 @@ class EffectivePomBuilderTest extends Specification {
             }
             return profile
         }.sort()
+    }
+
+    private ActivationContext mockActivationContext() {
+        def context = Mock(ActivationContext)
+        context.setPackaging(_) >> context
+        return context
     }
 
     private static Artifact newArtifact(final String id) {

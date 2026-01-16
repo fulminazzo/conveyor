@@ -25,7 +25,7 @@ class DownloaderPomResolverEngineTest extends Specification {
 
         then:
         def e = thrown(PomResolverException)
-        e.message == expected.message
+        e.message == "Resolving pom for artifact 'it.fulminazzo:conveyor:1.0' caused error: $expected.message"
         e.cause == expected.cause
     }
 
