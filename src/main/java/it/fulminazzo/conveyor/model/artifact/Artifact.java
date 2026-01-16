@@ -88,4 +88,17 @@ public class Artifact extends ArtifactLike {
         return fileName + "." + extension;
     }
 
+    /**
+     * Gets the artifact coordinates.
+     *
+     * @return the coordinates
+     */
+    public @NotNull String getCoordinates() {
+        final String separator = ":";
+        String classifier = getClassifier();
+        return getGroupId() + separator +
+                getArtifactId() + separator +
+                (classifier == null ? "" : classifier);
+    }
+
 }
