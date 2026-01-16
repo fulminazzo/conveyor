@@ -15,14 +15,16 @@ class ConveyorTest extends Specification {
         if (workDir.exists()) workDir.deleteDir()
 
         and:
-        def conveyor = new Conveyor(
+        def conveyor = Conveyor.newConveyor(
                 ActivationContext.current(workDir),
                 workDir,
                 log
         )
 
         when:
-        conveyor.buildDependencyTree(new Artifact('org.springframework', 'spring-core', '7.0.3'))
+        conveyor.buildDependencyTree(
+                new Artifact('org.springframework', 'spring-core', '7.0.3')
+        )
 
         then:
         noExceptionThrown()
