@@ -12,7 +12,6 @@ class ConveyorTest extends Specification {
     def 'buildDependencyTree integration tests'() {
         given:
         def workDir = new File(TestUtils.BASE_DIR, 'conveyor')
-        if (workDir.exists()) workDir.deleteDir()
 
         and:
         def conveyor = Conveyor.newConveyor(
