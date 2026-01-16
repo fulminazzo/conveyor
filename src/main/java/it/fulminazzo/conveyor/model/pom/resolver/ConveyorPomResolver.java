@@ -50,8 +50,8 @@ public final class ConveyorPomResolver implements RepositoryBasedPomResolver {
      * @param logger     the logger
      * @return the repository based pom resolver
      */
-    public @NotNull RepositoryBasedPomResolver newResolver(final @NotNull File workingDir,
-                                                           final @NotNull Logger logger) {
+    public static @NotNull RepositoryBasedPomResolver newResolver(final @NotNull File workingDir,
+                                                                  final @NotNull Logger logger) {
         return new ConveyorPomResolver(workingDir, logger);
     }
 
