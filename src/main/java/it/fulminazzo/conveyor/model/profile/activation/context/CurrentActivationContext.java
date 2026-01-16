@@ -1,5 +1,8 @@
 package it.fulminazzo.conveyor.model.profile.activation.context;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,16 +17,18 @@ import java.util.regex.Pattern;
 /**
  * An implementation of {@link ActivationContext} that represents the current environment.
  */
-@Value
-class CurrentActivationContext implements ActivationContext {
+@RequiredArgsConstructor
+final class CurrentActivationContext implements ActivationContext {
     private static final Pattern propertiesRegex = Pattern.compile("\\$\\{([^}]+)}");
     private static final @NotNull String envPropertyPrefix = "env.";
     private static final @NotNull List<String> projectDirectoryPropertyNames = Arrays.asList(
             "basedir", "project.basedir", "maven.multiModuleProjectDirectory"
     );
 
-    @NotNull File currentDir;
-    @NotNull String packaging;
+    @Getter
+    private final @NotNull File currentDir;
+    @Getter
+    private @NotNull String packaging;
 
     /**
      * Gets the context JDK version.
@@ -87,6 +92,12 @@ class CurrentActivationContext implements ActivationContext {
             return System.getenv(name);
         }
         return System.getProperty(name);
+    }
+
+    @Override
+    public @NotNull ActivationContext setPackaging(final @NotNull String packaging) {
+        this.packaging = packaging;
+        return this;
     }
 
 }
