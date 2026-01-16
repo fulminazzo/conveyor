@@ -156,6 +156,28 @@ class PomBuilderTest extends Specification {
         actual == expected
     }
 
+    def 'test that build gets groupId and version from parent if missing'() {
+        given:
+        def builder = newBuilder("""
+            <project>
+                <parent>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>parent</artifactId>
+                    <version>1.0</version>
+                </parent>
+                <artifactId>conveyor</artifactId>
+            </project>
+        """)
+
+        when:
+        def project = builder.build().project
+
+        then:
+        project.groupId == 'it.fulminazzo'
+        project.artifactId == 'conveyor'
+        project.version == '1.0'
+    }
+
     def 'test that parseParent returns correct parent'() {
         given:
         def builder = newBuilder("""
