@@ -7,6 +7,7 @@ import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.RawRepository
+import it.fulminazzo.conveyor.util.TestUtils
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
@@ -214,6 +215,24 @@ class PomBuilderTest extends Specification {
 
         then:
         profiles.values().sort() == expected.sort()
+    }
+
+    /**
+     * INTEGRATION TESTS
+     */
+
+    def 'test that build does not throw on commons-parent-81.pom'() {
+        given:
+        def file = new File(TestUtils.BASE_DIR, 'commons-parent-81.pom')
+
+        and:
+        def builder = new PomBuilder(XmlParser.newParser(file.newInputStream()))
+
+        when:
+        builder.build()
+
+        then:
+        noExceptionThrown()
     }
 
     private static Profile newProfile(final String id) {
