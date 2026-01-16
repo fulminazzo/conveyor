@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.pom;
 import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;

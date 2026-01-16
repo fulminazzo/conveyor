@@ -3,7 +3,7 @@ package it.fulminazzo.conveyor.model.tree;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.pom.Pom;
-import it.fulminazzo.conveyor.model.pom.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 

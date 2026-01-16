@@ -5,6 +5,7 @@ import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.Dependency
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolver
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.profile.activation.Activation
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
