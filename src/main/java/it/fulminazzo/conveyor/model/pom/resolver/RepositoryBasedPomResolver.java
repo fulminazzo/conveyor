@@ -12,15 +12,7 @@ import java.util.Collection;
  * <br>
  * Uses repositories to query for the requested data.
  */
-public interface RepositoryBasedPomResolver {
-
-    /**
-     * Resolves the pom.
-     *
-     * @param artifact the artifact
-     * @return the pom
-     */
-    @NotNull Pom resolve(final @NotNull Artifact artifact);
+public interface RepositoryBasedPomResolver extends PomResolver {
 
     /**
      * Adds repositories to the current resolver.
