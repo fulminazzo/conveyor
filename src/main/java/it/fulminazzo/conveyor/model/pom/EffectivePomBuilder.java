@@ -11,8 +11,6 @@ import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.model.repository.Repository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +20,6 @@ import java.util.stream.Collectors;
 /**
  * Responsible for creating a {@link EffectivePom} object.
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class EffectivePomBuilder {
     private final @NotNull Pom startingPom;
     private final @NotNull RepositoryBasedPomResolver pomResolver;
@@ -34,6 +31,21 @@ public final class EffectivePomBuilder {
     private final @NotNull Map<String, Dependency> dependencies = new LinkedHashMap<>();
 
     private @Nullable EffectivePomBuilder parentEffectivePomBuilder;
+
+    /**
+     * Instantiates a new Effective pom builder.
+     *
+     * @param startingPom the starting pom
+     * @param pomResolver the pom resolver
+     * @param context     the context
+     */
+    EffectivePomBuilder(final @NotNull Pom startingPom,
+                        final @NotNull RepositoryBasedPomResolver pomResolver,
+                        final @NotNull ActivationContext context) {
+        this.startingPom = startingPom;
+        this.pomResolver = pomResolver;
+        this.context = context.setPackaging(startingPom.getPackaging());
+    }
 
     /**
      * Builds the effective pom out of
