@@ -272,7 +272,7 @@ class ActivationTest extends Specification {
     }
 
     private static ActivationContext newContext(final File currentDir) {
-        return ActivationContext.current(currentDir, 'jar')
+        return ActivationContext.current(currentDir).setPackaging('jar')
     }
 
 }
