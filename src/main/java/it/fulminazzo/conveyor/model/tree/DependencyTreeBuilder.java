@@ -9,8 +9,10 @@ import it.fulminazzo.conveyor.model.pom.Pom;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -18,13 +20,14 @@ import java.util.*;
  * A helper class to create a tree ({@link Map}) of {@link DependencyNode}.
  */
 @RequiredArgsConstructor
+@AllArgsConstructor
 public final class DependencyTreeBuilder {
     private final @NotNull Map<String, DependencyNode> dependencyTree = new LinkedHashMap<>();
     private final @NotNull Queue<DependencyNode> dependenciesToCheck = new LinkedList<>();
 
     private final @NotNull Set<Scope> scopes = new HashSet<>();
 
-    private final @NotNull Artifact project;
+    private @Nullable Artifact project;
     private final @NotNull RepositoryBasedPomResolver resolver;
     private final @NotNull ActivationContext context;
 
@@ -45,6 +48,9 @@ public final class DependencyTreeBuilder {
      * @throws PomResolverException in case of any errors during pom construction
      */
     void populateTree() throws PomResolverException {
+        if (this.project == null)
+            throw new IllegalStateException("project has not been initialized yet");
+
         this.dependencyTree.clear();
         this.dependenciesToCheck.clear();
 
