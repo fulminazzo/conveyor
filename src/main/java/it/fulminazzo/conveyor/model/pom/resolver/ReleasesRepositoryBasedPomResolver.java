@@ -3,11 +3,11 @@ package it.fulminazzo.conveyor.model.pom.resolver;
 import it.fulminazzo.conveyor.downloader.DownloadSource;
 import it.fulminazzo.conveyor.downloader.policy.ChecksumPolicies;
 import it.fulminazzo.conveyor.model.repository.Repository;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,19 +30,16 @@ final class ReleasesRepositoryBasedPomResolver extends BaseRepositoryBasedPomRes
         super(workingDir, logger);
     }
 
+    @SneakyThrows
     @Override
     public @NotNull RepositoryBasedPomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
         List<DownloadSource> sources = new ArrayList<>();
         for (Repository repository : repositories) {
             Repository.Policy releasesPolicy = repository.getReleases();
             if (releasesPolicy.isEnabled())
-                try {
-                    sources.add(new DownloadSource(repository.getUrl())
-                            .withCapability(ChecksumPolicies.valueOf(releasesPolicy.getChecksumPolicy().name()))
-                    );
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
-                }
+                sources.add(new DownloadSource(repository.getUrl())
+                        .withCapability(ChecksumPolicies.valueOf(releasesPolicy.getChecksumPolicy().name()))
+                );
         }
         getEngine().addSources(sources);
         return this;
