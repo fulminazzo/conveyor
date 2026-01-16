@@ -21,18 +21,10 @@ class ConveyorPomResolverTest extends Specification {
         def snapshots = tuple.item3
 
         and:
-        def first = Artifact.builder()
-                .groupId('it.fulminazzo')
-                .artifactId('conveyor')
-                .version('1.0')
-                .build()
+        def first = new Artifact('it.fulminazzo', 'conveyor', '1.0')
 
         and:
-        def second = Artifact.builder()
-                .groupId('it.fulminazzo')
-                .artifactId('conveyor')
-                .version('1.0-SNAPSHOT')
-                .build()
+        def second = new Artifact('it.fulminazzo', 'conveyor', '1.0-SNAPSHOT')
 
         when:
         resolver.resolve(first)

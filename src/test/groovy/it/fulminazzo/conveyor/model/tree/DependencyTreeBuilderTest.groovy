@@ -11,11 +11,7 @@ import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import spock.lang.Specification
 
 class DependencyTreeBuilderTest extends Specification {
-    private static final Artifact artifact = Artifact.builder()
-            .groupId('it.fulminazzo')
-            .artifactId('main')
-            .version('1.0')
-            .build()
+    private static final Artifact artifact = new Artifact('it.fulminazzo', 'main', '1.0')
 
     private RepositoryBasedPomResolver resolver
     private DependencyTreeBuilder builder
@@ -190,11 +186,7 @@ class DependencyTreeBuilderTest extends Specification {
         ]
 
         and:
-        def pom = new Pom(Artifact.builder()
-                .groupId('it.fulminazzo')
-                .artifactId('main')
-                .version('1.0')
-                .build(), 'packaging', null, [], [:], [], [], [
+        def pom = new Pom(artifact, 'packaging', null, [], [:], [], [], [
                 dep,
                 RawDependency.builder()
                         .groupId('it.fulminazzo')
@@ -245,11 +237,8 @@ class DependencyTreeBuilderTest extends Specification {
     }
 
     private static Pom createFullDependenciesPom(final String groupId, final String artifactId) {
-        return new Pom(Artifact.builder()
-                .groupId(groupId)
-                .artifactId(artifactId)
-                .version('1.0')
-                .build(), 'packaging', null, [], [:], [], [], Scope.values().collect {
+        return new Pom(new Artifact(groupId, artifactId, '1.0'),
+                'packaging', null, [], [:], [], [], Scope.values().collect {
             RawDependency.builder()
                     .groupId('it.fulminazzo')
                     .artifactId("dependency-${it.value()}")

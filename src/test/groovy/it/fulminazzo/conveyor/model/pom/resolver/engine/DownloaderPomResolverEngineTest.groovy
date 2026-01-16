@@ -21,11 +21,7 @@ class DownloaderPomResolverEngineTest extends Specification {
         }
 
         when:
-        resolver.resolve(Artifact.builder()
-                .groupId('it.fulminazzo')
-                .artifactId('conveyor')
-                .version('1.0')
-                .build())
+        resolver.resolve(new Artifact('it.fulminazzo', 'conveyor', '1.0'))
 
         then:
         def e = thrown(PomResolverException)

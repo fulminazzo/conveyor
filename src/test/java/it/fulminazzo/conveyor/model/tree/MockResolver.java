@@ -95,11 +95,7 @@ class MockResolver implements RepositoryBasedPomResolver {
 
     private static @NotNull Artifact newArtifact(final @NotNull String artifactId,
                                                  final @NotNull String version) {
-        return Artifact.builder()
-                .groupId("it.fulminazzo")
-                .artifactId(artifactId)
-                .version(version)
-                .build();
+        return new Artifact("it.fulminazzo", artifactId, version);
     }
 
 }

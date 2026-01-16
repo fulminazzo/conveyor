@@ -15,17 +15,17 @@ class PomBuilderTest extends Specification {
     def 'test that build returns correct profile'() {
         given:
         def expected = new Pom(
-                Artifact.builder()
-                        .groupId('com.example.superapp')
-                        .artifactId('super-app-core')
-                        .version('1.0.0-SNAPSHOT')
-                        .build(),
+                new Artifact(
+                        'com.example.superapp',
+                        'super-app-core',
+                        '1.0.0-SNAPSHOT',
+                ),
                 'war',
-                Artifact.builder()
-                        .groupId('com.example.superapp')
-                        .artifactId('super-app-parent')
-                        .version('1.0.0-SNAPSHOT')
-                        .build(),
+                new Artifact(
+                        'com.example.superapp',
+                        'super-app-parent',
+                        '1.0.0-SNAPSHOT',
+                ),
                 [
                         newRawProfile("""
                             <profile>

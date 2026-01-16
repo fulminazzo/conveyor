@@ -12,11 +12,7 @@ import spock.lang.Specification
 class PomResolveEngineTypeTest extends Specification {
     private static final File baseDir = new File(TestUtils.BASE_DIR, 'pom_resolver/engine')
 
-    private static final Artifact artifact = Artifact.builder()
-            .groupId('org.projectlombok')
-            .artifactId('lombok')
-            .version('1.18.42')
-            .build()
+    private static final Artifact artifact = new Artifact('org.projectlombok', 'lombok', '1.18.42')
 
     void setup() {
         if (baseDir.exists()) baseDir.deleteDir()
