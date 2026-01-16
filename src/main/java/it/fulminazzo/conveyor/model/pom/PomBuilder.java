@@ -19,7 +19,10 @@ import java.util.Map;
 public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     private static final String defaultPackaging = "jar";
 
-    private final @NotNull Artifact.ArtifactBuilder<?, ?> projectBuilder = Artifact.builder();
+    private @Nullable String groupId;
+    private @Nullable String artifactId;
+    private @Nullable String classifier;
+    private @Nullable String version;
     private @Nullable String packaging;
     private @Nullable Artifact parent;
 
@@ -43,8 +46,17 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
             throw new BuilderException(e);
         }
         parseDocument();
+        if (this.parent != null) {
+            if (this.groupId == null) this.groupId = this.parent.getGroupId();
+            if (this.version == null) this.version = this.parent.getVersion();
+        }
         return buildObject("pom", () -> new Pom(
-                this.projectBuilder.build(),
+                Artifact.builder()
+                        .groupId(this.groupId)
+                        .artifactId(this.artifactId)
+                        .version(this.version)
+                        .classifier(this.classifier)
+                        .build(),
                 this.packaging == null ? defaultPackaging : this.packaging,
                 this.parent,
                 this.profiles.values(),
@@ -63,10 +75,10 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     protected void parseDocument() throws BuilderException {
         onChildElements(t -> {
             switch (t) {
-                case "groupId" -> this.projectBuilder.groupId(getCurrentTextContent());
-                case "artifactId" -> this.projectBuilder.artifactId(getCurrentTextContent());
-                case "version" -> this.projectBuilder.version(getCurrentTextContent());
-                case "classifier" -> this.projectBuilder.classifier(getCurrentTextContent());
+                case "groupId" -> this.groupId = getCurrentTextContent();
+                case "artifactId" -> this.artifactId = getCurrentTextContent();
+                case "version" -> this.version = getCurrentTextContent();
+                case "classifier" -> this.classifier = getCurrentTextContent();
                 case "packaging" -> this.packaging = getCurrentTextContent();
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
