@@ -49,4 +49,15 @@ public final class Conveyor {
         return new DependencyTreeBuilder(artifact, this.resolver, this.context).build();
     }
 
+    /**
+     * Updates the mode of resolving the pom data for each artifact.
+     *
+     * @param mode the mode
+     * @return this conveyor
+     */
+    @NotNull Conveyor setPomResolveMode(final @NotNull PomResolveEngineType mode) {
+        this.resolver.setMode(mode);
+        return this;
+    }
+
 }
