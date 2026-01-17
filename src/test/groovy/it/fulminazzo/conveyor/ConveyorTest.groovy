@@ -35,6 +35,12 @@ class ConveyorTest extends Specification {
         }
 
         then:
+        files.size() > 1
+
+        and:
+        files.values().every { it.exists() }
+
+        and:
         key != null
         key.depth() == 0
 
