@@ -39,11 +39,13 @@ final class ChecksumDownloader implements Downloader {
      * If not found, it is downloaded.
      *
      * @param resourcePath the resource path
+     * @param downloadSources the download sources
      * @return the file (whether already present or newly downloaded)
      * @throws DownloadException in case of any errors
      */
     @Override
-    public @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
+    public @NotNull File resolveToFile(final @NotNull String resourcePath,
+                                       final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
         File resourceFile = getResourceFile(resourcePath);
         if (resourceFile.exists()) {
             if (verifyChecksum(resourcePath))
@@ -145,19 +147,9 @@ final class ChecksumDownloader implements Downloader {
     }
 
     @Override
-    public @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException {
-        return this.delegate.resolve(resourcePath);
-    }
-
-    @Override
-    public @NotNull Collection<DownloadSource> getDownloadSources() {
-        return this.delegate.getDownloadSources();
-    }
-
-    @Override
-    public @NotNull ChecksumDownloader addDownloadSources(final @NotNull Collection<DownloadSource> sources) {
-        this.delegate.addDownloadSources(sources);
-        return this;
+    public @NotNull InputStream resolve(final @NotNull String resourcePath,
+                                        final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
+        return this.delegate.resolve(resourcePath, downloadSources);
     }
 
     @Override
