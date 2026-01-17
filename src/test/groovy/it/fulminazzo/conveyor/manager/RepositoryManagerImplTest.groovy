@@ -1,11 +1,13 @@
 package it.fulminazzo.conveyor.manager
 
+import groovy.util.logging.Slf4j
 import it.fulminazzo.conveyor.downloader.DownloadSource
 import it.fulminazzo.conveyor.downloader.policy.ChecksumPolicies
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.Repository
 import spock.lang.Specification
 
+@Slf4j
 class RepositoryManagerImplTest extends Specification {
 
     def 'test that addRepositories correctly reroutes repositories'() {
@@ -36,7 +38,7 @@ class RepositoryManagerImplTest extends Specification {
         ]
 
         and:
-        def manager = new RepositoryManagerImpl()
+        def manager = new RepositoryManagerImpl(log)
 
         when:
         manager.addRepositories(repositories)
@@ -54,6 +56,17 @@ class RepositoryManagerImplTest extends Specification {
                     new DownloadSource("https://snapshots.$it")
                             .withCapability(it)
                 }.sort()
+    }
+
+    def 'test that addRepositories does not throw on invalid url'() {
+        given:
+        def manager = new RepositoryManagerImpl(log)
+
+        when:
+        manager.addRepositories(Repository.builder().id('invalid').url('invalid^com').build())
+
+        then:
+        noExceptionThrown()
     }
 
 }
