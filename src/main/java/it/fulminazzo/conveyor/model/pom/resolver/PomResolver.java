@@ -14,6 +14,7 @@ public interface PomResolver {
      *
      * @param artifact the artifact
      * @return the pom
+     * @throws PomResolverException in case of any errors
      */
     @NotNull Pom resolve(final @NotNull Artifact artifact) throws PomResolverException;
 
