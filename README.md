@@ -1,6 +1,7 @@
 <p align="center">
-  <a href="https://yagl.fulminazzo.it/coverage"><img src="https://fulminazzo.it/badge/coverage/Fulminazzo/conveyor/gradle.yml" alt="Tests coverage" /></a>
-  <img src="https://fulminazzo.it/badge/code/Fulminazzo/conveyor" alt="Lines of Code" />
+  <img src="https://fulminazzo.it/badge/code/Fulminazzo/conveyor?type=code" alt="Lines of Code" />
+  <img src="https://fulminazzo.it/badge/coverage/Fulminazzo/conveyor/gradle.yml" alt="Tests coverage" />
+  <img src="https://fulminazzo.it/badge/code/Fulminazzo/conveyor?type=test" alt="Lines of Code" />
 </p>
 
 <p align="center">
@@ -13,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href=""><img src="https://forthebadge.com/badges/contains-17-coffee-cups.svg" alt="" ></a>
+  <a href=""><img src="https://forthebadge.com/badges/contains-17-coffee-cups.svg" alt="" width="58%" ></a>
   <a href=""><img src="https://forthebadge.com/badges/no-ragrets.svg" alt="" ></a>
 </p>
 
