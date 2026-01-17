@@ -14,7 +14,7 @@ public final class DelegateDownloader implements Downloader {
     @Override
     public @NotNull InputStream resolve(@NotNull String resourcePath,
                                         final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
-        return this.delegate.resolve(resourcePath);
+        return this.delegate.resolve(resourcePath, downloadSources);
     }
 
     @Override
