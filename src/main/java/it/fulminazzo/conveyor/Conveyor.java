@@ -58,7 +58,7 @@ public final class Conveyor {
      * @throws PomResolverException      the pom resolver exception
      * @throws ArtifactResolverException the artifact resolver exception
      */
-    public @NotNull Map<DependencyNode, File> downloadLibrary(final @NotNull Artifact artifact) throws PomResolverException, ArtifactResolverException {
+    public @NotNull Map<DependencyNode, File> downloadArtifact(final @NotNull Artifact artifact) throws PomResolverException, ArtifactResolverException {
         final Map<DependencyNode, File> libraries = new LinkedHashMap<>();
 
         Collection<DependencyNode> dependenciesTree = buildDependenciesTree(artifact);
