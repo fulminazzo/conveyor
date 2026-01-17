@@ -15,7 +15,7 @@ import java.util.Collection;
 
 /**
  * An implementation of {@link BasePomResolver}  that
- * checks if the pom is already present, if it is it attempts
+ * checks if the pom is already present, if it is, it attempts
  * to compute and verify its checksum, otherwise proceeds to
  * download the resource.
  */

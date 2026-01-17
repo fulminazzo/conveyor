@@ -16,14 +16,12 @@ public enum PomResolverMode {
      * request will require a new download to be processed.
      */
     MEMORY {
-
         @Override
         public @NotNull PomResolver create(final @NotNull RepositoryManager repositoryManager,
                                            final @NotNull File workingDir,
                                            final @NotNull Logger logger) {
             return new MemoryDownloaderPomResolver(repositoryManager, workingDir, logger);
         }
-
     },
     /**
      * It will lookup the file on disk.
@@ -32,14 +30,12 @@ public enum PomResolverMode {
      * Subsequent requests will use the newly downloaded file.
      */
     DISK {
-
         @Override
         public @NotNull PomResolver create(final @NotNull RepositoryManager repositoryManager,
                                            final @NotNull File workingDir,
                                            final @NotNull Logger logger) {
             return new DiskDownloaderPomResolver(repositoryManager, workingDir, logger);
         }
-
     },
     /**
      * It will lookup the file on disk.
@@ -49,14 +45,12 @@ public enum PomResolverMode {
      * (failure, ignoring or re-downloading the resource).
      */
     CHECKSUM {
-
         @Override
         public @NotNull PomResolver create(final @NotNull RepositoryManager repositoryManager,
                                            final @NotNull File workingDir,
                                            final @NotNull Logger logger) {
             return new ChecksumDownloaderPomResolver(repositoryManager, workingDir, logger);
         }
-
     };
 
     /**
