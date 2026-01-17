@@ -68,7 +68,6 @@ public final class DependencyTreeBuilder {
         while (!this.dependenciesToCheck.isEmpty())
             populateTree(this.dependenciesToCheck.poll());
 
-        this.dependencyTree.remove(projectDependency.getCoordinates());
         this.project = null;
     }
 
