@@ -2,6 +2,8 @@ package it.fulminazzo.conveyor;
 
 import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.artifact.resolver.ArtifactResolver;
+import it.fulminazzo.conveyor.model.artifact.resolver.ConveyorArtifactResolver;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.resolver.ConveyorPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
@@ -25,16 +27,20 @@ public final class Conveyor {
 
     private final @NotNull RepositoryManager repositoryManager;
 
-    private final @NotNull ConveyorPomResolver resolver;
+    private final @NotNull ConveyorPomResolver pomResolver;
     private final @NotNull DependencyTreeBuilder dependencyTreeBuilder;
+
+    private final @NotNull ArtifactResolver artifactResolver;
 
     private Conveyor(final @NotNull ActivationContext context,
                      final @NotNull File workingDir,
                      final @NotNull Logger logger) {
         this.repositoryManager = RepositoryManager.newManager(logger);
 
-        this.resolver = ConveyorPomResolver.newResolver(this.repositoryManager, workingDir, logger);
-        this.dependencyTreeBuilder = new DependencyTreeBuilder(this.resolver, context);
+        this.pomResolver = ConveyorPomResolver.newResolver(this.repositoryManager, workingDir, logger);
+        this.dependencyTreeBuilder = new DependencyTreeBuilder(this.pomResolver, context);
+
+        this.artifactResolver = ConveyorArtifactResolver.newResolver(this.repositoryManager, workingDir, logger);
     }
 
     /**
@@ -79,7 +85,7 @@ public final class Conveyor {
      * @return this conveyor
      */
     public @NotNull Conveyor setPomResolveMode(final @NotNull PomResolverMode mode) {
-        this.resolver.setMode(mode);
+        this.pomResolver.setMode(mode);
         return this;
     }
 
