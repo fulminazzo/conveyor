@@ -23,7 +23,6 @@ final class DownloaderArtifactResolver implements ArtifactResolver {
     @Override
     public @NotNull File resolve(final @NotNull Artifact artifact, 
                                  final @NotNull String packaging) throws ArtifactResolverException {
-
         try {
             final String artifactPath = artifact.getFullPath(packaging);
             boolean snapshots = artifact.getVersion().endsWith("-SNAPSHOT");
