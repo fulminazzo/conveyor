@@ -1,0 +1,119 @@
+<profile>
+    <id>complete-profile</id>
+
+    <activation>
+        <activeByDefault>false</activeByDefault>
+        <jdk>[11,17)</jdk>
+        <os>
+            <name>linux</name>
+            <family>unix</family>
+            <arch>amd64</arch>
+            <version>5.15.0-generic</version>
+        </os>
+        <property>
+            <name>env</name>
+            <value>!dev</value>
+        </property>
+        <file>
+            <exists>${project.basedir}/src/main/resources/prod.properties</exists>
+            <missing>${project.basedir}/STAGING_LOCK</missing>
+        </file>
+    </activation>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2021.0.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.5.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <finalName>${project.artifactId}-${project.version}-PROD</finalName>
+
+        <directory>target/production-build</directory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <optimize>true</optimize>
+                    <debug>false</debug>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+            </plugins>
+        </pluginManagement>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources-prod</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+        <config.api.url>https://api.project.it</config.api.url>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>enterprise-repo</id>
+            <url>https://nexus.company.it/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>enterprise-plugin-repo</id>
+            <url>https://nexus.company.it/repository/maven-plugins/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>prod-release</id>
+            <url>https://nexus.company.it/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <modules>
+        <module>extra-module-for-prod</module>
+    </modules>
+
+</profile>
