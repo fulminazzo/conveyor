@@ -47,4 +47,13 @@ public interface RepositoryManager {
      */
     @NotNull Collection<DownloadSource> getSnapshotsRepositories();
 
+    /**
+     * Instantiates a new Repository manager.
+     *
+     * @return the repository manager
+     */
+    static @NotNull RepositoryManager newManager() {
+        return new RepositoryManagerImpl();
+    }
+
 }
