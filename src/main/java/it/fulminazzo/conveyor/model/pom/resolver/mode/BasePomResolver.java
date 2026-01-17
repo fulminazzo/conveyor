@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.model.pom.resolver;
+package it.fulminazzo.conveyor.model.pom.resolver.mode;
 
 import it.fulminazzo.conveyor.downloader.DownloadException;
 import it.fulminazzo.conveyor.downloader.DownloadSource;
@@ -6,6 +6,8 @@ import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.pom.Pom;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import it.fulminazzo.conveyor.xml.XmlParserException;
 import lombok.RequiredArgsConstructor;

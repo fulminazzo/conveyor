@@ -1,6 +1,7 @@
-package it.fulminazzo.conveyor.model.pom.resolver;
+package it.fulminazzo.conveyor.model.pom.resolver.mode;
 
 import it.fulminazzo.conveyor.manager.RepositoryManager;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 

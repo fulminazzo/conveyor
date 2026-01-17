@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.pom.resolver;
 import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.pom.Pom;
+import it.fulminazzo.conveyor.model.pom.resolver.mode.PomResolverMode;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
