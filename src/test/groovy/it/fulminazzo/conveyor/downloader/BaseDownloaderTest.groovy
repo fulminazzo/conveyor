@@ -31,6 +31,24 @@ class BaseDownloaderTest extends Specification {
         file.readLines() == ['Data of \'path/to/resource.txt\'']
     }
 
+    def 'test that resolveToFile throws DownloadException on IOException'() {
+        given:
+        def downloader = Spy(BaseDownloader, constructorArgs: [workingDir, log])
+        downloader.resolve(_, _) >> { a ->
+            def stream = Mock(InputStream)
+            stream.transferTo(_) >> {
+                throw new IOException('Test exception')
+            }
+            return stream
+        }
+
+        when:
+        downloader.resolveToFile('path/to/resource.txt', [])
+
+        then:
+        thrown(DownloadException)
+    }
+
     def 'test that resolve of #resourcePath does not throw'() {
         given:
         def downloader = new BaseDownloader(workingDir, log)
