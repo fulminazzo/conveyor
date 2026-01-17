@@ -9,7 +9,7 @@ import spock.lang.Specification
 @Slf4j
 class ConveyorTest extends Specification {
 
-    def 'buildDependencyTree integration tests'() {
+    def 'buildDependenciesTree integration tests'() {
         given:
         def workDir = new File(TestUtils.BASE_DIR, 'conveyor')
 
@@ -21,7 +21,7 @@ class ConveyorTest extends Specification {
         )
 
         when:
-        conveyor.buildDependencyTree(
+        conveyor.buildDependenciesTree(
                 new Artifact('org.springframework', 'spring-core', '7.0.3')
         )
 

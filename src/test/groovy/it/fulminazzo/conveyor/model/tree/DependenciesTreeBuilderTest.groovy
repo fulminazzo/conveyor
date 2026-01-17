@@ -10,21 +10,21 @@ import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import spock.lang.Specification
 
-class DependencyTreeBuilderTest extends Specification {
+class DependenciesTreeBuilderTest extends Specification {
     private static final Artifact artifact = new Artifact('it.fulminazzo', 'main', '1.0')
 
     private RepositoryPomResolver resolver
-    private DependencyTreeBuilder builder
+    private DependenciesTreeBuilder builder
 
     void setup() {
         this.resolver = Mock(RepositoryPomResolver)
 
-        this.builder = new DependencyTreeBuilder(artifact, this.resolver, Mock(ActivationContext))
+        this.builder = new DependenciesTreeBuilder(artifact, this.resolver, Mock(ActivationContext))
     }
 
     def 'test that build returns the correct tree'() {
         given:
-        def builder = new DependencyTreeBuilder(artifact, new MockResolver(), Mock(ActivationContext))
+        def builder = new DependenciesTreeBuilder(artifact, new MockResolver(), Mock(ActivationContext))
 
         and:
         def expected = [
@@ -44,7 +44,7 @@ class DependencyTreeBuilderTest extends Specification {
 
     def 'test that build does not throw stack overflow on circular dependency'() {
         given:
-        def builder = new DependencyTreeBuilder(Artifact.builder()
+        def builder = new DependenciesTreeBuilder(Artifact.builder()
                 .groupId('it.fulminazzo')
                 .artifactId('problematic1')
                 .version('1.0')
@@ -97,10 +97,10 @@ class DependencyTreeBuilderTest extends Specification {
         }
 
         and:
-        this.builder.dependencyTree.get(dependencyNode.dependency().coordinates).depth() == 2
+        this.builder.dependenciesTree.get(dependencyNode.dependency().coordinates).depth() == 2
     }
 
-    def 'test that populateTree does not add new dependencies if dependency already present in dependency tree'() {
+    def 'test that populateTree does not add new dependencies if dependency already present in dependencies tree'() {
         given:
         def pom = createFullDependenciesPom('it.fulminazzo', 'main')
         this.resolver.resolve(_) >> pom
@@ -116,7 +116,7 @@ class DependencyTreeBuilderTest extends Specification {
         )
 
         and:
-        this.builder.dependencyTree.put(
+        this.builder.dependenciesTree.put(
                 dependencyNode.dependency().coordinates,
                 new DependencyNode(dependencyNode.dependency(), 1)
         )
@@ -131,7 +131,7 @@ class DependencyTreeBuilderTest extends Specification {
         dependencies.size() == 0
 
         and:
-        this.builder.dependencyTree.get(dependencyNode.dependency().coordinates).depth() == 1
+        this.builder.dependenciesTree.get(dependencyNode.dependency().coordinates).depth() == 1
     }
 
     def 'test that addPomDependenciesToCheckList adds all dependencies'() {

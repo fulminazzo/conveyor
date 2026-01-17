@@ -13,7 +13,7 @@ import it.fulminazzo.conveyor.model.pom.resolver.mode.PomResolverMode;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.model.tree.DependencyNode;
-import it.fulminazzo.conveyor.model.tree.DependencyTreeBuilder;
+import it.fulminazzo.conveyor.model.tree.DependenciesTreeBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -32,7 +32,7 @@ public final class Conveyor {
     private final @NotNull RepositoryManager repositoryManager;
 
     private final @NotNull ConveyorPomResolver pomResolver;
-    private final @NotNull DependencyTreeBuilder dependencyTreeBuilder;
+    private final @NotNull DependenciesTreeBuilder dependenciesTreeBuilder;
 
     private final @NotNull ArtifactResolver artifactResolver;
 
@@ -42,7 +42,7 @@ public final class Conveyor {
         this.repositoryManager = RepositoryManager.newManager(logger);
 
         this.pomResolver = ConveyorPomResolver.newResolver(this.repositoryManager, workingDir, logger);
-        this.dependencyTreeBuilder = new DependencyTreeBuilder(this.pomResolver, context);
+        this.dependenciesTreeBuilder = new DependenciesTreeBuilder(this.pomResolver, context);
 
         this.artifactResolver = ConveyorArtifactResolver.newResolver(this.repositoryManager, workingDir, logger);
     }
@@ -61,9 +61,9 @@ public final class Conveyor {
     public @NotNull Map<DependencyNode, File> downloadLibrary(final @NotNull Artifact artifact) throws PomResolverException, ArtifactResolverException {
         final Map<DependencyNode, File> libraries = new LinkedHashMap<>();
 
-        Collection<DependencyNode> dependencyTree = buildDependencyTree(artifact);
+        Collection<DependencyNode> dependenciesTree = buildDependenciesTree(artifact);
 
-        for (DependencyNode dependencyNode : dependencyTree) {
+        for (DependencyNode dependencyNode : dependenciesTree) {
             Dependency dependency = dependencyNode.dependency();
             File dependencyFile = this.artifactResolver.resolve(dependency, dependency.getType());
             libraries.put(dependencyNode, dependencyFile);
@@ -73,14 +73,14 @@ public final class Conveyor {
     }
 
     /**
-     * Builds the dependency tree of the given artifact.
+     * Builds the dependencies tree of the given artifact.
      *
      * @param artifact the artifact
-     * @return the dependency tree
+     * @return the dependencies tree
      * @throws PomResolverException in case of any errors
      */
-    @NotNull Collection<DependencyNode> buildDependencyTree(final @NotNull Artifact artifact) throws PomResolverException {
-        return this.dependencyTreeBuilder.setProject(artifact).build();
+    @NotNull Collection<DependencyNode> buildDependenciesTree(final @NotNull Artifact artifact) throws PomResolverException {
+        return this.dependenciesTreeBuilder.setProject(artifact).build();
     }
 
     /**
@@ -125,7 +125,7 @@ public final class Conveyor {
      * @return this conveyor
      */
     public @NotNull Conveyor setScopesOfInterest(final Scope @NotNull ... scopes) {
-        this.dependencyTreeBuilder.setRequiredScopes(scopes);
+        this.dependenciesTreeBuilder.setRequiredScopes(scopes);
         return this;
     }
 
