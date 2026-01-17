@@ -198,6 +198,30 @@ class ChecksumDownloaderTest extends Specification {
         algorithm << ChecksumAlgorithm.values()
     }
 
+    def 'test that resolveChecksum does not throw on IOException'() {
+        given:
+        def sources = []
+
+        and:
+        final algorithm = ChecksumAlgorithm.MD5
+
+        and:
+        def first = Mock(DownloadSource)
+        first.resolveResource(_) >> {
+            throw new IOException('Test exception')
+        }
+        sources.add(first)
+
+        and:
+        sources.add(downloadSources[algorithm])
+
+        when:
+        this.downloader.resolveChecksum('checksum.txt', algorithm, sources)
+
+        then:
+        noExceptionThrown()
+    }
+
     def 'test that computeChecksum of file with #algorithm returns expected'() {
         given:
         def path = 'checksum.txt'
