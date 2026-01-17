@@ -11,13 +11,12 @@ class BaseDownloaderTest extends Specification {
     def 'test that resolve of #resourcePath does not throw'() {
         given:
         def downloader = new BaseDownloader(workingDir, log)
-                .addDownloadSources(
-                        new DownloadSource('fulminazzo.it'),
-                        new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
-                )
 
         when:
-        def data = downloader.resolve(resourcePath)
+        def data = downloader.resolve(resourcePath,
+                new DownloadSource('fulminazzo.it'),
+                new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
+        )
 
         then:
         noExceptionThrown()
@@ -35,10 +34,9 @@ class BaseDownloaderTest extends Specification {
     def 'test that resolve throws DownloadException on not found'() {
         given:
         def downloader = new BaseDownloader(workingDir, log)
-                .addDownloadSources(new DownloadSource(TestUtils.MAVEN_CENTRAL_URL))
 
         when:
-        downloader.resolve('path')
+        downloader.resolve('path', new DownloadSource(TestUtils.MAVEN_CENTRAL_URL))
 
         then:
         def e = thrown(DownloadException)

@@ -32,29 +32,29 @@ class ChecksumDownloaderTest extends Specification {
 
         and:
         def path = TestUtils.LOMBOK_PATH
+        def source = new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
 
         and:
         def delegate = Spy(BaseDownloader, constructorArgs: [workingDir, log])
 
         and:
         def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [delegate, log])
-                .addDownloadSources(new DownloadSource(TestUtils.MAVEN_CENTRAL_URL))
 
         when:
-        downloader.resolveToFile(path)
+        downloader.resolveToFile(path, source)
 
         then:
-        0 * downloader.verifyChecksum(path)
-        0 * downloader.resolveChecksum(path, ChecksumAlgorithm.MD5)
-        1 * delegate.resolveToFile(path)
+        0 * downloader.verifyChecksum(path, [source])
+        0 * downloader.resolveChecksum(path, ChecksumAlgorithm.MD5, [source])
+        1 * delegate.resolveToFile(path, [source])
 
         when:
-        downloader.resolveToFile(path)
+        downloader.resolveToFile(path, [source])
 
         then:
-        1 * downloader.verifyChecksum(path)
-        1 * downloader.resolveChecksum(path, ChecksumAlgorithm.MD5)
-        0 * delegate.resolveToFile(path)
+        1 * downloader.verifyChecksum(path, [source])
+        1 * downloader.resolveChecksum(path, ChecksumAlgorithm.MD5, [source])
+        0 * delegate.resolveToFile(path, [source])
     }
 
     def 'test that verifyChecksum with failure and WARN checksum policy returns true'() {
@@ -66,14 +66,13 @@ class ChecksumDownloaderTest extends Specification {
 
         and:
         def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
-                .addDownloadSources(downloadSource)
 
         and:
         downloader.computeChecksum(_, _) >> 'compute'
-        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+        downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyChecksum('path')
+        def result = downloader.verifyChecksum('path', downloadSource)
 
         then:
         result
@@ -89,14 +88,13 @@ class ChecksumDownloaderTest extends Specification {
 
         and:
         def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
-                .addDownloadSources(downloadSource)
 
         and:
         downloader.computeChecksum(_, _) >> 'compute'
-        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+        downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        downloader.verifyChecksum('path')
+        downloader.verifyChecksum('path', downloadSource)
 
         then:
         thrown(DownloadException)
@@ -108,14 +106,13 @@ class ChecksumDownloaderTest extends Specification {
 
         and:
         def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
-                .addDownloadSources(downloadSource)
 
         and:
         downloader.computeChecksum(_, _) >> 'compute'
-        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+        downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyChecksum('path')
+        def result = downloader.verifyChecksum('path', downloadSource)
 
         then:
         result
@@ -127,14 +124,13 @@ class ChecksumDownloaderTest extends Specification {
 
         and:
         def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
-                .addDownloadSources(downloadSource)
 
         and:
         downloader.computeChecksum(_, _) >> 'compute'
-        downloader.resolveChecksum(_, _) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
+        downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyChecksum('path')
+        def result = downloader.verifyChecksum('path', downloadSource)
 
         then:
         !result
@@ -146,7 +142,7 @@ class ChecksumDownloaderTest extends Specification {
 
         and:
         downloader.computeChecksum(_, _) >> checksum[algorithm]
-        downloader.resolveChecksum(_, _) >> { a ->
+        downloader.resolveChecksum(_, _, _ as Collection) >> { a ->
             ChecksumAlgorithm alg = a[1]
             if (alg == algorithm) return new ChecksumDownloader.ChecksumResult(checksum[alg], downloadSources[alg])
             else throw new DownloadException('Checksum not found')
@@ -181,8 +177,7 @@ class ChecksumDownloaderTest extends Specification {
     def 'test that resolveChecksum with algorithm #algorithm returns expected'() {
         when:
         def actual = this.downloader
-                .addDownloadSources(downloadSources.values())
-                .resolveChecksum('checksum.txt', algorithm)
+                .resolveChecksum('checksum.txt', algorithm, downloadSources.values())
 
         then:
         actual.checksum() == checksum[algorithm]
