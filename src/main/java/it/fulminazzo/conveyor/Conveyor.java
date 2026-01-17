@@ -1,11 +1,11 @@
 package it.fulminazzo.conveyor;
 
+import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.resolver.ConveyorPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
-import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
-import it.fulminazzo.conveyor.model.pom.resolver.engine.PomResolveEngineType;
+import it.fulminazzo.conveyor.model.pom.resolver.mode.PomResolverMode;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.model.tree.DependencyNode;
@@ -23,16 +23,18 @@ import java.util.Collection;
 public final class Conveyor {
     private static final @NotNull String mavenCentralUrl = "https://repo.maven.apache.org/maven2/";
 
-    private final @NotNull ActivationContext context;
-    private final @NotNull RepositoryPomResolver resolver;
+    private final @NotNull RepositoryManager repositoryManager;
+
+    private final @NotNull ConveyorPomResolver resolver;
     private final @NotNull DependencyTreeBuilder dependencyTreeBuilder;
 
     private Conveyor(final @NotNull ActivationContext context,
                      final @NotNull File workingDir,
                      final @NotNull Logger logger) {
-        this.context = context;
-        this.resolver = ConveyorPomResolver.newResolver(workingDir, logger);
-        this.dependencyTreeBuilder = new DependencyTreeBuilder(this.resolver, this.context);
+        this.repositoryManager = RepositoryManager.newManager(logger);
+
+        this.resolver = ConveyorPomResolver.newResolver(this.repositoryManager, workingDir, logger);
+        this.dependencyTreeBuilder = new DependencyTreeBuilder(this.resolver, context);
     }
 
     /**
@@ -76,7 +78,7 @@ public final class Conveyor {
      * @param mode the mode
      * @return this conveyor
      */
-    public @NotNull Conveyor setPomResolveMode(final @NotNull PomResolveEngineType mode) {
+    public @NotNull Conveyor setPomResolveMode(final @NotNull PomResolverMode mode) {
         this.resolver.setMode(mode);
         return this;
     }
@@ -104,7 +106,7 @@ public final class Conveyor {
                                                 final @NotNull File workingDir,
                                                 final @NotNull Logger logger) {
         return new Conveyor(context, workingDir, logger)
-                .setPomResolveMode(PomResolveEngineType.CHECKSUM)
+                .setPomResolveMode(PomResolverMode.CHECKSUM)
                 .addRawRepositories(mavenCentralUrl)
                 .setScopesOfInterest(Scope.COMPILE, Scope.PROVIDED, Scope.RUNTIME);
     }
