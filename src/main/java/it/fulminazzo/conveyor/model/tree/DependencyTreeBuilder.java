@@ -6,7 +6,7 @@ import it.fulminazzo.conveyor.model.dependency.Exclusions;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
-import it.fulminazzo.conveyor.model.pom.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
