@@ -36,4 +36,13 @@ public interface DownloadSourceManager {
      */
     @NotNull DownloadSourceManager addDownloadSources(final @NotNull Collection<DownloadSource> sources);
 
+    /**
+     * Instantiates a new Download source manager.
+     *
+     * @return the download source manager
+     */
+    static @NotNull DownloadSourceManager newManager() {
+        return new DownloadSourceManagerImpl();
+    }
+
 }
