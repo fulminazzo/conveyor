@@ -2,7 +2,7 @@ package it.fulminazzo.conveyor.downloader;
 
 import it.fulminazzo.conveyor.downloader.policy.ChecksumPolicy;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import lombok.experimental.Delegate;import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -27,6 +27,7 @@ import java.util.HexFormat;
 final class ChecksumDownloader implements Downloader {
     private static final int readingBufferSize = 8192;
 
+    @Delegate
     private final @NotNull Downloader delegate;
     private final @NotNull Logger logger;
 
@@ -147,17 +148,6 @@ final class ChecksumDownloader implements Downloader {
         }
 
         return HexFormat.of().formatHex(messageDigest.digest());
-    }
-
-    @Override
-    public @NotNull InputStream resolve(final @NotNull String resourcePath,
-                                        final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
-        return this.delegate.resolve(resourcePath, downloadSources);
-    }
-
-    @Override
-    public @NotNull File getWorkingDir() {
-        return this.delegate.getWorkingDir();
     }
 
     /**
