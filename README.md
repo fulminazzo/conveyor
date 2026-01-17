@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href=""><img src="https://forthebadge.com/badges/contains-17-coffee-cups.svg" alt="" width="58%" ></a>
+  <a href=""><img src="https://forthebadge.com/badges/contains-17-coffee-cups.svg" alt="" width="27%" ></a>
   <a href=""><img src="https://forthebadge.com/badges/no-ragrets.svg" alt="" ></a>
 </p>
 
