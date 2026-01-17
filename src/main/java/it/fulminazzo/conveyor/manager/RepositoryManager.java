@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.manager;
 import it.fulminazzo.conveyor.downloader.DownloadSource;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,8 +53,8 @@ public interface RepositoryManager {
      *
      * @return the repository manager
      */
-    static @NotNull RepositoryManager newManager() {
-        return new RepositoryManagerImpl();
+    static @NotNull RepositoryManager newManager(final @NotNull Logger logger) {
+        return new RepositoryManagerImpl(logger);
     }
 
 }

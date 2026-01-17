@@ -3,7 +3,9 @@ package it.fulminazzo.conveyor.manager;
 import it.fulminazzo.conveyor.downloader.DownloadSource;
 import it.fulminazzo.conveyor.downloader.policy.ChecksumPolicies;
 import it.fulminazzo.conveyor.model.repository.Repository;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.net.MalformedURLException;
 import java.util.Collection;
@@ -11,9 +13,12 @@ import java.util.Collection;
 /**
  * A basic implementation for {@link RepositoryManager}.
  */
+@RequiredArgsConstructor
 final class RepositoryManagerImpl implements RepositoryManager {
     private final @NotNull DownloadSourceManager releases = DownloadSourceManager.newManager();
     private final @NotNull DownloadSourceManager snapshots = DownloadSourceManager.newManager();
+
+    private final @NotNull Logger logger;
 
     @Override
     public @NotNull RepositoryManager addRepositories(final @NotNull Collection<Repository> repositories) {
