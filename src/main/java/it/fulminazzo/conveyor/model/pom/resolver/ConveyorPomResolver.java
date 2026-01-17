@@ -5,6 +5,7 @@ import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.pom.Pom;
 import it.fulminazzo.conveyor.model.pom.resolver.mode.PomResolverMode;
 import it.fulminazzo.conveyor.model.repository.Repository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,7 @@ import java.util.Collection;
 /**
  * Conveyor official {@link PomResolver}.
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConveyorPomResolver implements RepositoryPomResolver {
     private final @NotNull RepositoryManager repositoryManager;
     private final @NotNull File workingDir;
@@ -56,6 +57,20 @@ public final class ConveyorPomResolver implements RepositoryPomResolver {
         if (this.delegate == null)
             throw new PomResolverException("No resolving mode has been set yet. Please use setMode before calling this method");
         return this.delegate;
+    }
+
+    /**
+     * Instantiates a new Conveyor PomResolver.
+     *
+     * @param repositoryManager the repository manager that will keep track of all the repositories
+     * @param workingDir        the directory where the resolver should operate (for storing data)
+     * @param logger            the logger
+     * @return the conveyor pom resolver
+     */
+    public static @NotNull ConveyorPomResolver newResolver(final @NotNull RepositoryManager repositoryManager,
+                                                           final @NotNull File workingDir,
+                                                           final @NotNull Logger logger) {
+        return new ConveyorPomResolver(repositoryManager, workingDir, logger);
     }
 
 }
