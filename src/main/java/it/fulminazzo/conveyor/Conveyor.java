@@ -68,7 +68,7 @@ public final class Conveyor {
      * @return this conveyor
      */
     public @NotNull Conveyor addRepositories(final Repository @NotNull ... repositories) {
-        this.resolver.addRepositories(Arrays.asList(repositories));
+        this.repositoryManager.addRepositories(Arrays.asList(repositories));
         return this;
     }
 
