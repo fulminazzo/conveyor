@@ -2,14 +2,13 @@ package it.fulminazzo.conveyor.model.artifact.resolver.mode
 
 import groovy.util.logging.Slf4j
 import it.fulminazzo.conveyor.downloader.DownloadException
-import it.fulminazzo.conveyor.downloader.Downloader
 import it.fulminazzo.conveyor.manager.RepositoryManager
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.artifact.resolver.ArtifactResolverException
 import spock.lang.Specification
 
 @Slf4j
-class DownloaderArtifactResolverTest extends Specification {
+class BaseArtifactResolverTest extends Specification {
 
     def 'test that resolve correctly reroutes requests to repositories'() {
         given:
@@ -18,7 +17,7 @@ class DownloaderArtifactResolverTest extends Specification {
         repositoryManager.snapshotsRepositories >> []
 
         and:
-        def resolver = new DownloaderArtifactResolver(repositoryManager, Mock(Downloader))
+        def resolver = new MockArtifactResolver(repositoryManager)
 
         when:
         resolver.resolve(new Artifact('it.fulminazzo', 'conveyor', '1.0'), 'jar')
@@ -37,13 +36,12 @@ class DownloaderArtifactResolverTest extends Specification {
 
     def 'test that resolve throws DownloadException as ArtifactResolverException'() {
         given:
-        def downloader = Mock(Downloader)
-        downloader.resolveToFile(_, _) >> {
-            throw new DownloadException('Download exception')
-        }
+        def resolver = Spy(MockArtifactResolver, constructorArgs: [RepositoryManager.newManager(log)])
 
         and:
-        def resolver = Spy(DownloaderArtifactResolver, constructorArgs: [RepositoryManager.newManager(log), downloader])
+        resolver.resolve(_ as String, _ as Collection) >> {
+            throw new DownloadException('Download exception')
+        }
 
         when:
         resolver.resolve(new Artifact('it.fulminazzo', 'conveyor', '1.0-SNAPSHOT'), 'jar')
