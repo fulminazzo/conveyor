@@ -31,7 +31,7 @@ public final class ConveyorPomResolver implements RepositoryPomResolver {
     }
 
     @Override
-    public @NotNull RepositoryPomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
+    public @NotNull ConveyorPomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
         this.repositoryManager.addRepositories(repositories);
         return this;
     }
