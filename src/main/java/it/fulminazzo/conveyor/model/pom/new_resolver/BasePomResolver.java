@@ -1,7 +1,7 @@
 package it.fulminazzo.conveyor.model.pom.new_resolver;
 
 import it.fulminazzo.conveyor.downloader.DownloadException;
-import it.fulminazzo.conveyor.downloader.Downloader;
+import it.fulminazzo.conveyor.downloader.DownloadSource;
 import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
@@ -12,22 +12,25 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * An abstract {@link PomResolver} that handles parsing and
- * building logic internally, exposing a {@link #resolve(String)} method
- * and using a {@link Downloader}.
+ * building logic internally, exposing a {@link #resolve(String, Collection)} method.
  */
 @RequiredArgsConstructor
-abstract class DownloaderPomResolver implements PomResolver {
-    protected final @NotNull RepositoryManager repositoryManager;
-    protected final @NotNull Downloader downloader;
+abstract class BasePomResolver implements PomResolver {
+    private final @NotNull RepositoryManager repositoryManager;
 
     @Override
     public @NotNull Pom resolve(final @NotNull Artifact artifact) throws PomResolverException {
         try {
             final String artifactPath = artifact.getFullPath("pom");
-            InputStream pomData = resolve(artifactPath);
+            boolean snapshots = artifact.getVersion().endsWith("-SNAPSHOT");
+            InputStream pomData = resolve(artifactPath, snapshots ?
+                    this.repositoryManager.getSnapshotsRepositories() :
+                    this.repositoryManager.getReleasesRepositories()
+            );
             XmlParser parser = XmlParser.newParser(pomData);
             return Pom.builder(parser).build();
         } catch (XmlParserException e) {
@@ -42,10 +45,12 @@ abstract class DownloaderPomResolver implements PomResolver {
     /**
      * Resolves the artifact pom data.
      *
-     * @param artifactPath the artifact path
+     * @param artifactPath    the artifact path
+     * @param downloadSources the download sources
      * @return the raw data of the pom
      * @throws DownloadException in case of download errors
      */
-    protected abstract @NotNull InputStream resolve(final @NotNull String artifactPath) throws DownloadException;
+    protected abstract @NotNull InputStream resolve(final @NotNull String artifactPath,
+                                                    final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException;
 
 }
