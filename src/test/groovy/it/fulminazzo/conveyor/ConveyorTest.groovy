@@ -9,6 +9,39 @@ import spock.lang.Specification
 @Slf4j
 class ConveyorTest extends Specification {
 
+    def 'downloadLibrary integration tests'() {
+        given:
+        def workDir = new File(TestUtils.BASE_DIR, 'conveyor')
+
+        and:
+        def conveyor = Conveyor.newConveyor(
+                ActivationContext.current(workDir),
+                workDir,
+                log
+        )
+
+        and:
+        def artifact = new Artifact('org.springframework', 'spring-core', '7.0.3')
+
+        when:
+        def files = conveyor.downloadLibrary(artifact)
+
+        and:
+        def key = files.keySet().find {
+            def dependency = it.dependency()
+            return dependency.groupId == artifact.groupId &&
+                    dependency.artifactId == artifact.groupId &&
+                    dependency.version == artifact.version
+        }
+
+        then:
+        key != null
+        key.depth() == 0
+
+        and:
+        files.get(key).exists()
+    }
+
     def 'buildDependenciesTree integration tests'() {
         given:
         def workDir = new File(TestUtils.BASE_DIR, 'conveyor')
