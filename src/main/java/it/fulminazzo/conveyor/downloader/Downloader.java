@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * A specialized object to download files to the given path.
@@ -46,31 +44,6 @@ public interface Downloader {
      * @throws DownloadException if the download could not be completed (mostly for resource not found)
      */
     @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException;
-
-    /**
-     * Gets the currently stored download sources.
-     *
-     * @return the download sources
-     */
-    @NotNull Collection<DownloadSource> getDownloadSources();
-
-    /**
-     * Adds all the given {@link DownloadSource}s to the current downloader.
-     *
-     * @param sources the download sources
-     * @return this downloader
-     */
-    default @NotNull Downloader addDownloadSources(final DownloadSource @NotNull ... sources) {
-        return addDownloadSources(Arrays.asList(sources));
-    }
-
-    /**
-     * Adds all the given {@link DownloadSource}s to the current downloader.
-     *
-     * @param sources the download sources
-     * @return this downloader
-     */
-    @NotNull Downloader addDownloadSources(final @NotNull Collection<DownloadSource> sources);
 
     /**
      * Gets the associated resource file.
