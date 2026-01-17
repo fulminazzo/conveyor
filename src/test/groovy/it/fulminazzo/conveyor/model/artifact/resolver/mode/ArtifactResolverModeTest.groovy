@@ -22,9 +22,38 @@ class ArtifactResolverModeTest extends Specification {
         )
     }
 
-    def 'test that ArtifactResolver of CHECKSUM only downloads once'() {
+    def 'test that ArtifactResolver of DISK only downloads once'() {
         given:
         def workDir = new File(baseDir, 'disk')
+        if (workDir.exists()) workDir.deleteDir()
+        workDir.mkdirs()
+
+        and:
+        def resolver = ArtifactResolverMode.DISK.create(this.manager, workDir, log)
+        def delegateDownloader = injectDownloader(resolver, 'downloader')
+
+        when:
+        def file1 = resolver.resolve(artifact, 'jar')
+
+        then:
+        file1.exists()
+
+        and:
+        1 * delegateDownloader.resolveToFile(_, _)
+
+        when:
+        def file2 = resolver.resolve(artifact, 'jar')
+
+        then:
+        file2.exists()
+
+        and:
+        0 * delegateDownloader.resolveToFile(_, _)
+    }
+
+    def 'test that ArtifactResolver of CHECKSUM only downloads once'() {
+        given:
+        def workDir = new File(baseDir, 'checksum')
         if (workDir.exists()) workDir.deleteDir()
         workDir.mkdirs()
 
