@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HexFormat;
 
@@ -38,7 +39,7 @@ final class ChecksumDownloader implements Downloader {
      * <br>
      * If not found, it is downloaded.
      *
-     * @param resourcePath the resource path
+     * @param resourcePath    the resource path
      * @param downloadSources the download sources
      * @return the file (whether already present or newly downloaded)
      * @throws DownloadException in case of any errors
@@ -51,7 +52,23 @@ final class ChecksumDownloader implements Downloader {
             if (verifyChecksum(resourcePath, downloadSources))
                 return resourceFile;
         }
-        return this.delegate.resolveToFile(resourcePath);
+        return this.delegate.resolveToFile(resourcePath, downloadSources);
+    }
+
+    /**
+     * Uses all the {@link ChecksumAlgorithm}s to verify if
+     * the corresponding resource file is valid or not.
+     * <br>
+     * <b>WARNING</b>: will <b>NOT</b> check for the file existence.
+     *
+     * @param resourcePath    the resource path
+     * @param downloadSources the download sources to resolve the expected checksum
+     * @return true if it is
+     * @throws DownloadException in case of verification errors
+     */
+    public boolean verifyChecksum(final @NotNull String resourcePath,
+                                  final DownloadSource @NotNull ... downloadSources) throws DownloadException {
+        return verifyChecksum(resourcePath, Arrays.asList(downloadSources));
     }
 
     /**
@@ -90,6 +107,23 @@ final class ChecksumDownloader implements Downloader {
             }
         }
         return false;
+    }
+
+    /**
+     * Attempts to obtain the given resource associated checksum.
+     * The checksum resource location is computed as
+     * "&lt;resource_path&gt;.&lt;algorithm_extension&gt;".
+     *
+     * @param resourcePath    the resource path
+     * @param algorithm       the algorithm
+     * @param downloadSources the download sources to resolve the checksum
+     * @return a tuple containing the checksum and the used {@link DownloadSource}
+     * @throws DownloadException in case it was not possible to download the checksum with the given algorithm
+     */
+    @NotNull ChecksumResult resolveChecksum(final @NotNull String resourcePath,
+                                            final @NotNull ChecksumAlgorithm algorithm,
+                                            final DownloadSource @NotNull ... downloadSources) throws DownloadException {
+        return resolveChecksum(resourcePath, algorithm, Arrays.asList(downloadSources));
     }
 
     /**
