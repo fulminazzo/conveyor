@@ -61,4 +61,30 @@ class DownloadSourceTest extends Specification {
         thrown(IOException)
     }
 
+    def 'test that getCapability returns exact type if present'() {
+        given:
+        def source = new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
+                .withCapability('Hello, world!')
+
+        when:
+        def capability = source.getCapability(String)
+
+        then:
+        capability.isPresent()
+
+        and:
+        capability.get() == 'Hello, world!'
+    }
+
+    def 'test that getCapability does not throw if not present'() {
+        given:
+        def source = new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
+
+        when:
+        def capability = source.getCapability(String)
+
+        then:
+        !capability.isPresent()
+    }
+
 }
