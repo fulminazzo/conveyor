@@ -3,7 +3,7 @@ package it.fulminazzo.conveyor.model.pom;
 import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
-import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -47,11 +47,13 @@ public class EffectivePom implements PomLike {
      * @param startingPom the {@link Pom} object to build the effective pom from.
      *                    All the dependencies will be parsed using properties and dependency management
      * @param pomResolver a function to resolve the pom of an artifact
-     * @param context     the context where the builder should operate (with operating system data and similar)
+     * @param context     the base context where the builder should operate (with operating system data and similar).
+     *                    A new {@link ActivationContext} will be instantiated for each pom request,
+     *                    with the update of the internal packaging.
      * @return the builder
      */
     public static @NotNull EffectivePomBuilder builder(final @NotNull Pom startingPom,
-                                                       final @NotNull PomResolver pomResolver,
+                                                       final @NotNull RepositoryBasedPomResolver pomResolver,
                                                        final @NotNull ActivationContext context) {
         return new EffectivePomBuilder(startingPom, pomResolver, context);
     }

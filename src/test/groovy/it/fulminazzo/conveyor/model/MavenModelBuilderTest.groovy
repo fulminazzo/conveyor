@@ -16,6 +16,7 @@ class MavenModelBuilderTest extends Specification {
                 <dependency.version>1.0</dependency.version>
                 <dependency.name>conveyor</dependency.name>
                 <name>\${dependency.name}</name>
+                <empty />
             </properties>
         """)
         XmlObjectBuilderUtils.getParser(builder).next()
@@ -33,7 +34,8 @@ class MavenModelBuilderTest extends Specification {
                 'hello'             : 'world',
                 'dependency.version': '1.0',
                 'dependency.name'   : 'conveyor',
-                'name'              : '${dependency.name}'
+                'name'              : '${dependency.name}',
+                'empty'             : ''
         ]
     }
 

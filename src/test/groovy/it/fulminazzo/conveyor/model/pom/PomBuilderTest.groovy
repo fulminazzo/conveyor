@@ -7,6 +7,7 @@ import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.RawRepository
+import it.fulminazzo.conveyor.util.TestUtils
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
@@ -15,17 +16,17 @@ class PomBuilderTest extends Specification {
     def 'test that build returns correct profile'() {
         given:
         def expected = new Pom(
-                Artifact.builder()
-                        .groupId('com.example.superapp')
-                        .artifactId('super-app-core')
-                        .version('1.0.0-SNAPSHOT')
-                        .build(),
+                new Artifact(
+                        'com.example.superapp',
+                        'super-app-core',
+                        '1.0.0-SNAPSHOT',
+                ),
                 'war',
-                Artifact.builder()
-                        .groupId('com.example.superapp')
-                        .artifactId('super-app-parent')
-                        .version('1.0.0-SNAPSHOT')
-                        .build(),
+                new Artifact(
+                        'com.example.superapp',
+                        'super-app-parent',
+                        '1.0.0-SNAPSHOT',
+                ),
                 [
                         newRawProfile("""
                             <profile>
@@ -155,6 +156,28 @@ class PomBuilderTest extends Specification {
         actual == expected
     }
 
+    def 'test that build gets groupId and version from parent if missing'() {
+        given:
+        def builder = newBuilder("""
+            <project>
+                <parent>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>parent</artifactId>
+                    <version>1.0</version>
+                </parent>
+                <artifactId>conveyor</artifactId>
+            </project>
+        """)
+
+        when:
+        def project = builder.build().project
+
+        then:
+        project.groupId == 'it.fulminazzo'
+        project.artifactId == 'conveyor'
+        project.version == '1.0'
+    }
+
     def 'test that parseParent returns correct parent'() {
         given:
         def builder = newBuilder("""
@@ -214,6 +237,24 @@ class PomBuilderTest extends Specification {
 
         then:
         profiles.values().sort() == expected.sort()
+    }
+
+    /**
+     * INTEGRATION TESTS
+     */
+
+    def 'test that build does not throw on commons-parent-81.pom'() {
+        given:
+        def file = new File(TestUtils.BASE_DIR, 'commons-parent-81.pom')
+
+        and:
+        def builder = new PomBuilder(XmlParser.newParser(file.newInputStream()))
+
+        when:
+        builder.build()
+
+        then:
+        noExceptionThrown()
     }
 
     private static Profile newProfile(final String id) {

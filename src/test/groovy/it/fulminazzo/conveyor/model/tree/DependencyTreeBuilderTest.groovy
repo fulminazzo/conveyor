@@ -6,22 +6,18 @@ import it.fulminazzo.conveyor.model.dependency.Exclusions
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.pom.Pom
-import it.fulminazzo.conveyor.model.pom.resolver.PomResolver
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import spock.lang.Specification
 
 class DependencyTreeBuilderTest extends Specification {
-    private static final Artifact artifact = Artifact.builder()
-            .groupId('it.fulminazzo')
-            .artifactId('main')
-            .version('1.0')
-            .build()
+    private static final Artifact artifact = new Artifact('it.fulminazzo', 'main', '1.0')
 
-    private PomResolver resolver
+    private RepositoryBasedPomResolver resolver
     private DependencyTreeBuilder builder
 
     void setup() {
-        this.resolver = Mock(PomResolver)
+        this.resolver = Mock(RepositoryBasedPomResolver)
 
         this.builder = new DependencyTreeBuilder(artifact, this.resolver, Mock(ActivationContext))
     }
@@ -190,11 +186,7 @@ class DependencyTreeBuilderTest extends Specification {
         ]
 
         and:
-        def pom = new Pom(Artifact.builder()
-                .groupId('it.fulminazzo')
-                .artifactId('main')
-                .version('1.0')
-                .build(), 'packaging', null, [], [:], [], [], [
+        def pom = new Pom(artifact, 'packaging', null, [], [:], [], [], [
                 dep,
                 RawDependency.builder()
                         .groupId('it.fulminazzo')
@@ -245,11 +237,8 @@ class DependencyTreeBuilderTest extends Specification {
     }
 
     private static Pom createFullDependenciesPom(final String groupId, final String artifactId) {
-        return new Pom(Artifact.builder()
-                .groupId(groupId)
-                .artifactId(artifactId)
-                .version('1.0')
-                .build(), 'packaging', null, [], [:], [], [], Scope.values().collect {
+        return new Pom(new Artifact(groupId, artifactId, '1.0'),
+                'packaging', null, [], [:], [], [], Scope.values().collect {
             RawDependency.builder()
                     .groupId('it.fulminazzo')
                     .artifactId("dependency-${it.value()}")

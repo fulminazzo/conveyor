@@ -1,28 +1,71 @@
 package it.fulminazzo.conveyor.model.profile.activation.context;
 
-import lombok.Value;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * An implementation of {@link ActivationContext} that represents the current environment.
  */
-@Value
-class CurrentActivationContext implements ActivationContext {
+@RequiredArgsConstructor
+final class CurrentActivationContext implements ActivationContext {
     private static final Pattern propertiesRegex = Pattern.compile("\\$\\{([^}]+)}");
     private static final @NotNull String envPropertyPrefix = "env.";
     private static final @NotNull List<String> projectDirectoryPropertyNames = Arrays.asList(
             "basedir", "project.basedir", "maven.multiModuleProjectDirectory"
     );
 
-    @NotNull File currentDir;
-    @NotNull String packaging;
+    @Getter
+    private final @NotNull File currentDir;
+    private @Nullable String packaging;
+
+    /**
+     * Gets the context JDK version.
+     *
+     * @return the jdk version
+     */
+    @Override
+    public @NotNull String getJdkVersion() {
+        return Objects.requireNonNull(getProperty("java.version"), "Could not find JDK version");
+    }
+
+    /**
+     * Gets the context Operating System name.
+     *
+     * @return the os name
+     */
+    @Override
+    public @NotNull String getOsName() {
+        return Objects.requireNonNull(getProperty("os.name"), "Could not find OS name");
+    }
+
+    /**
+     * Gets the context Operating System arch.
+     *
+     * @return the os arch
+     */
+    @Override
+    public @NotNull String getOsArch() {
+        return Objects.requireNonNull(getProperty("os.arch"), "Could not find OS arch");
+    }
+
+    /**
+     * Gets the context Operating System version.
+     *
+     * @return the os version
+     */
+    @Override
+    public @NotNull String getOsVersion() {
+        return Objects.requireNonNull(getProperty("os.version"), "Could not find OS version");
+    }
 
     @Override
     public @NotNull String applyProperties(@NotNull String string) {
@@ -46,6 +89,22 @@ class CurrentActivationContext implements ActivationContext {
             return System.getenv(name);
         }
         return System.getProperty(name);
+    }
+
+    @Override
+    public @NotNull ActivationContext copy() {
+        return new CurrentActivationContext(this.currentDir).setPackaging(this.packaging);
+    }
+
+    @Override
+    public @NotNull ActivationContext setPackaging(final @Nullable String packaging) {
+        this.packaging = packaging;
+        return this;
+    }
+
+    @Override
+    public @NotNull String getPackaging() {
+        return Objects.requireNonNull(this.packaging, "packaging has not been set yet");
     }
 
 }

@@ -320,9 +320,9 @@ class XmlParserImplTest extends Specification {
         parser.close()
     }
 
-    private XmlParserImpl newParser(final String rawData) {
-        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes());
-        return new XmlParserImpl(inputStream);
+    private static XmlParserImpl newParser(final String rawData) {
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes())
+        return new XmlParserImpl(inputStream)
     }
 
 }

@@ -29,4 +29,9 @@ public final class Dependency extends Artifact implements DependencyLike {
     @Builder.Default
     private final @NotNull Exclusions exclusions = new Exclusions();
 
+    @Override
+    public @NotNull String getCoordinates() {
+        return DependencyLike.super.getCoordinates();
+    }
+
 }

@@ -5,13 +5,12 @@ import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.dependency.Scope;
-import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.model.repository.Repository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +20,9 @@ import java.util.stream.Collectors;
 /**
  * Responsible for creating a {@link EffectivePom} object.
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class EffectivePomBuilder {
     private final @NotNull Pom startingPom;
-    private final @NotNull PomResolver pomResolver;
+    private final @NotNull RepositoryBasedPomResolver pomResolver;
     private final @NotNull ActivationContext context;
 
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();
@@ -35,12 +33,28 @@ public final class EffectivePomBuilder {
     private @Nullable EffectivePomBuilder parentEffectivePomBuilder;
 
     /**
+     * Instantiates a new Effective pom builder.
+     *
+     * @param startingPom the starting pom
+     * @param pomResolver the pom resolver
+     * @param context     the context
+     */
+    EffectivePomBuilder(final @NotNull Pom startingPom,
+                        final @NotNull RepositoryBasedPomResolver pomResolver,
+                        final @NotNull ActivationContext context) {
+        this.startingPom = startingPom;
+        this.pomResolver = pomResolver;
+        this.context = context.setPackaging(startingPom.getPackaging());
+    }
+
+    /**
      * Builds the effective pom out of
      * the given {@link #startingPom}.
      *
      * @return the effective pom
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    public @NotNull EffectivePom build() {
+    public @NotNull EffectivePom build() throws PomResolverException {
         buildIncomplete().populateDependencies();
         return new EffectivePom(
                 this.startingPom.getProject(),
@@ -81,8 +95,9 @@ public final class EffectivePomBuilder {
      * from other artifacts.
      *
      * @return this builder
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    @NotNull EffectivePomBuilder buildIncomplete() {
+    @NotNull EffectivePomBuilder buildIncomplete() throws PomResolverException {
         return populateActiveProfiles()
                 .resolveParentEffectivePom()
                 .populateProperties()
@@ -106,8 +121,9 @@ public final class EffectivePomBuilder {
      * </ol>
      *
      * @return this builder
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    @NotNull EffectivePomBuilder populateDependencyManagement() {
+    @NotNull EffectivePomBuilder populateDependencyManagement() throws PomResolverException {
         this.dependencyManagement.clear();
 
         if (this.parentEffectivePomBuilder != null)
@@ -120,7 +136,7 @@ public final class EffectivePomBuilder {
         return this;
     }
 
-    private void populateDependencyManagementSingle(final @NotNull Collection<RawDependency> dependencyManagement) {
+    private void populateDependencyManagementSingle(final @NotNull Collection<RawDependency> dependencyManagement) throws PomResolverException {
         final @NotNull Map<String, String> dependencies = new LinkedHashMap<>();
         for (final RawDependency raw : dependencyManagement) {
             Dependency dependency = raw.applyProperties(this.properties);
@@ -191,8 +207,9 @@ public final class EffectivePomBuilder {
      * of the current builder).
      *
      * @return this builder
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    @NotNull EffectivePomBuilder resolveParentEffectivePom() {
+    @NotNull EffectivePomBuilder resolveParentEffectivePom() throws PomResolverException {
         this.parentEffectivePomBuilder = null;
         Artifact parent = this.startingPom.getParent();
         if (parent != null) {

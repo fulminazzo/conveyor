@@ -6,10 +6,13 @@ import it.fulminazzo.conveyor.model.dependency.Exclusions;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
-import it.fulminazzo.conveyor.model.pom.resolver.PomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -17,30 +20,37 @@ import java.util.*;
  * A helper class to create a tree ({@link Map}) of {@link DependencyNode}.
  */
 @RequiredArgsConstructor
+@AllArgsConstructor
 public final class DependencyTreeBuilder {
     private final @NotNull Map<String, DependencyNode> dependencyTree = new LinkedHashMap<>();
     private final @NotNull Queue<DependencyNode> dependenciesToCheck = new LinkedList<>();
 
     private final @NotNull Set<Scope> scopes = new HashSet<>();
 
-    private final @NotNull Artifact project;
-    private final @NotNull PomResolver resolver;
+    private @Nullable Artifact project;
+    private final @NotNull RepositoryBasedPomResolver resolver;
     private final @NotNull ActivationContext context;
 
     /**
      * Builds the dependency tree.
      *
      * @return the tree
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    public @NotNull Collection<DependencyNode> build() {
+    public @NotNull Collection<DependencyNode> build() throws PomResolverException {
         populateTree();
         return this.dependencyTree.values();
     }
 
     /**
      * Populates the {@link #dependencyTree} with the required dependencies.
+     *
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    void populateTree() {
+    void populateTree() throws PomResolverException {
+        if (this.project == null)
+            throw new IllegalStateException("project has not been initialized yet");
+
         this.dependencyTree.clear();
         this.dependenciesToCheck.clear();
 
@@ -59,14 +69,16 @@ public final class DependencyTreeBuilder {
             populateTree(this.dependenciesToCheck.poll());
 
         this.dependencyTree.remove(projectDependency.getCoordinates());
+        this.project = null;
     }
 
     /**
      * Support method to populate the final {@link #dependencyTree}.
      *
      * @param node the starting dependency node
+     * @throws PomResolverException in case of any errors during pom construction
      */
-    void populateTree(final @NotNull DependencyNode node) {
+    void populateTree(final @NotNull DependencyNode node) throws PomResolverException {
         final Dependency dependency = node.dependency();
         final int depth = node.depth();
         final String coordinates = dependency.getCoordinates();
@@ -88,10 +100,11 @@ public final class DependencyTreeBuilder {
      * @param pom        the pom
      * @param depth      the depth of the dependencies
      * @param exclusions the exclusions of the dependency that generated the pom
+     * @throws PomResolverException in case of any errors during pom construction
      */
     void addPomDependenciesToCheckList(final @NotNull Pom pom,
                                        final int depth,
-                                       final @NotNull Exclusions exclusions) {
+                                       final @NotNull Exclusions exclusions) throws PomResolverException {
         EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.context).build();
 
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
@@ -115,6 +128,17 @@ public final class DependencyTreeBuilder {
      */
     public @NotNull DependencyTreeBuilder setRequiredScopes(final Scope @NotNull ... scopes) {
         return setRequiredScopes(Arrays.asList(scopes));
+    }
+
+    /**
+     * Sets the project of which to build the dependency tree.
+     *
+     * @param project the project
+     * @return this builder
+     */
+    public @NotNull DependencyTreeBuilder setProject(final @Nullable Artifact project) {
+        this.project = project;
+        return this;
     }
 
     /**

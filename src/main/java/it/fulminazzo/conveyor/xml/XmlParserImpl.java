@@ -102,7 +102,7 @@ final class XmlParserImpl implements XmlParser {
         if (this.currentContent == null) {
             if (isText()) this.currentContent = this.reader.getText();
             if (this.currentContent == null)
-                throw XmlParserException.of("No text content available");
+                throw XmlParserException.of(String.format("No text content of XML element '%s'", this.currentTag));
         }
         return this.currentContent;
     }

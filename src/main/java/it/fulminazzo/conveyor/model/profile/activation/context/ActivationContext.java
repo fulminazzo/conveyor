@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Objects;
 
 /**
  * Represents the current context where an {@link Activation} is checked.
@@ -17,36 +16,28 @@ public interface ActivationContext {
      *
      * @return the jdk version
      */
-    default @NotNull String getJdkVersion() {
-        return Objects.requireNonNull(getProperty("java.version"), "Could not find JDK version");
-    }
+    @NotNull String getJdkVersion();
 
     /**
      * Gets the context Operating System name.
      *
      * @return the os name
      */
-    default @NotNull String getOsName() {
-        return Objects.requireNonNull(getProperty("os.name"), "Could not find OS name");
-    }
+    @NotNull String getOsName();
 
     /**
      * Gets the context Operating System arch.
      *
      * @return the os arch
      */
-    default @NotNull String getOsArch() {
-        return Objects.requireNonNull(getProperty("os.arch"), "Could not find OS arch");
-    }
+    @NotNull String getOsArch();
 
     /**
      * Gets the context Operating System version.
      *
      * @return the os version
      */
-    default @NotNull String getOsVersion() {
-        return Objects.requireNonNull(getProperty("os.version"), "Could not find OS version");
-    }
+    @NotNull String getOsVersion();
 
     /**
      * Applies all the properties of the current context to the given string.
@@ -91,6 +82,21 @@ public interface ActivationContext {
     @Nullable String getProperty(final @NotNull String name);
 
     /**
+     * Creates a copy of the current context.
+     *
+     * @return the copy
+     */
+    @NotNull ActivationContext copy();
+
+    /**
+     * Sets the packaging defined in the associated <b>pom.xml</b> file.
+     *
+     * @param packaging the packaging
+     * @return this context
+     */
+    @NotNull ActivationContext setPackaging(final @Nullable String packaging);
+
+    /**
      * Gets the packaging defined in the associated <b>pom.xml</b> file.
      *
      * @return the packaging
@@ -108,12 +114,10 @@ public interface ActivationContext {
      * Gets a new activation context with the current environment variables and properties.
      *
      * @param workingDir the working dir
-     * @param packaging  the packaging
      * @return the activation context
      */
-    static @NotNull ActivationContext current(final @NotNull File workingDir,
-                                              final @NotNull String packaging) {
-        return new CurrentActivationContext(workingDir, packaging);
+    static @NotNull ActivationContext current(final @NotNull File workingDir) {
+        return new CurrentActivationContext(workingDir);
     }
 
 }
