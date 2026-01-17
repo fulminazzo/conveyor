@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 
 /**
@@ -33,6 +35,24 @@ final class BaseDownloader implements Downloader {
                 latest = e;
             }
         throw new DownloadException(String.format("Could not resolve resource '%s'", resourcePath), latest);
+    }
+
+    @Override
+    public @NotNull File resolveToFile(final @NotNull String resourcePath,
+                                       final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
+        try (InputStream stream = resolve(resourcePath, downloadSources)) {
+            File destination = getResourceFile(resourcePath);
+            Files.createDirectories(destination.getParentFile().toPath());
+            Files.copy(stream, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return destination;
+        } catch (IOException e) {
+            throw new DownloadException(String.format("Error while downloading resource '%s'", resourcePath), e);
+        }
+    }
+
+    @Override
+    public @NotNull File getResourceFile(final @NotNull String resourcePath) {
+        return new File(getWorkingDir(), resourcePath);
     }
 
 }
