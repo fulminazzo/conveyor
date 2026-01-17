@@ -3,7 +3,9 @@ package it.fulminazzo.conveyor;
 import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.artifact.resolver.ArtifactResolver;
+import it.fulminazzo.conveyor.model.artifact.resolver.ArtifactResolverException;
 import it.fulminazzo.conveyor.model.artifact.resolver.ConveyorArtifactResolver;
+import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.resolver.ConveyorPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
@@ -18,6 +20,8 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Main access point of the library.
@@ -41,6 +45,31 @@ public final class Conveyor {
         this.dependencyTreeBuilder = new DependencyTreeBuilder(this.pomResolver, context);
 
         this.artifactResolver = ConveyorArtifactResolver.newResolver(this.repositoryManager, workingDir, logger);
+    }
+
+    /**
+     * Downloads the requested artifact and all related dependencies.
+     *
+     * @param artifact the artifact
+     * @return a map containing all the downloaded libraries.
+     *         The <b>keys</b> are {@link DependencyNode}s, with the <code>depth</code> reflecting
+     *         the one in the <b>dependencies tree</b>.
+     *         The <b>values</b> are the package files corresponding to the artifact.
+     * @throws PomResolverException      the pom resolver exception
+     * @throws ArtifactResolverException the artifact resolver exception
+     */
+    public @NotNull Map<DependencyNode, File> downloadLibrary(final @NotNull Artifact artifact) throws PomResolverException, ArtifactResolverException {
+        final Map<DependencyNode, File> libraries = new LinkedHashMap<>();
+
+        Collection<DependencyNode> dependencyTree = buildDependencyTree(artifact);
+
+        for (DependencyNode dependencyNode : dependencyTree) {
+            Dependency dependency = dependencyNode.dependency();
+            File dependencyFile = this.artifactResolver.resolve(dependency, dependency.getType());
+            libraries.put(dependencyNode, dependencyFile);
+        }
+
+        return libraries;
     }
 
     /**
