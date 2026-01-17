@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.model.pom.new_resolver;
+package it.fulminazzo.conveyor.model.pom.resolver;
 
 import it.fulminazzo.conveyor.downloader.DownloadException;
 import it.fulminazzo.conveyor.downloader.DownloadSource;
@@ -8,26 +8,29 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collection;
 
 /**
  * An implementation of {@link BasePomResolver} that
- * downloads the requested pom in every request.
+ * downloads the requested pom only if it is not already present
+ * on disk (does not check for its validity).
  */
-final class MemoryDownloaderPomResolver extends BasePomResolver {
+final class DiskDownloaderPomResolver extends BasePomResolver {
     private final @NotNull Downloader downloader;
 
     /**
-     * Instantiates a new Memory downloader pom resolver.
+     * Instantiates a new Disk downloader pom resolver.
      *
      * @param repositoryManager the repository manager
      * @param workingDir        the working dir
      * @param logger            the logger
      */
-    public MemoryDownloaderPomResolver(final @NotNull RepositoryManager repositoryManager,
-                                       final @NotNull File workingDir,
-                                       final @NotNull Logger logger) {
+    public DiskDownloaderPomResolver(final @NotNull RepositoryManager repositoryManager,
+                                     final @NotNull File workingDir,
+                                     final @NotNull Logger logger) {
         super(repositoryManager);
         this.downloader = Downloader.newDownloader(workingDir, logger);
     }
@@ -35,7 +38,15 @@ final class MemoryDownloaderPomResolver extends BasePomResolver {
     @Override
     protected @NotNull InputStream resolve(final @NotNull String artifactPath,
                                            final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
-        return this.downloader.resolve(artifactPath, downloadSources);
+        try {
+            File file = this.downloader.getResourceFile(artifactPath);
+            if (!file.exists())
+                file = this.downloader.resolveToFile(artifactPath, downloadSources);
+            return new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            // should be impossible
+            throw new DownloadException(e);
+        }
     }
 
 }

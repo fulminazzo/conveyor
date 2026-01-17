@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.model.pom.new_resolver;
+package it.fulminazzo.conveyor.model.pom.resolver;
 
 import it.fulminazzo.conveyor.downloader.DownloadException;
 import it.fulminazzo.conveyor.model.BuilderException;

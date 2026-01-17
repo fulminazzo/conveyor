@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.model.pom.new_resolver;
+package it.fulminazzo.conveyor.model.pom.resolver;
 
 import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
