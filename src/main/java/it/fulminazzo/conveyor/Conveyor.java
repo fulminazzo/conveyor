@@ -2,9 +2,9 @@ package it.fulminazzo.conveyor;
 
 import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
-import it.fulminazzo.conveyor.model.artifact.resolver.ArtifactResolver;
 import it.fulminazzo.conveyor.model.artifact.resolver.ArtifactResolverException;
 import it.fulminazzo.conveyor.model.artifact.resolver.ConveyorArtifactResolver;
+import it.fulminazzo.conveyor.model.artifact.resolver.mode.ArtifactResolverMode;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.resolver.ConveyorPomResolver;
@@ -12,8 +12,8 @@ import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.mode.PomResolverMode;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.Repository;
-import it.fulminazzo.conveyor.model.tree.DependencyNode;
 import it.fulminazzo.conveyor.model.tree.DependenciesTreeBuilder;
+import it.fulminazzo.conveyor.model.tree.DependencyNode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -34,7 +34,7 @@ public final class Conveyor {
     private final @NotNull ConveyorPomResolver pomResolver;
     private final @NotNull DependenciesTreeBuilder dependenciesTreeBuilder;
 
-    private final @NotNull ArtifactResolver artifactResolver;
+    private final @NotNull ConveyorArtifactResolver artifactResolver;
 
     private Conveyor(final @NotNull ActivationContext context,
                      final @NotNull File workingDir,
@@ -52,9 +52,9 @@ public final class Conveyor {
      *
      * @param artifact the artifact
      * @return a map containing all the downloaded libraries.
-     *         The <b>keys</b> are {@link DependencyNode}s, with the <code>depth</code> reflecting
-     *         the one in the <b>dependencies tree</b>.
-     *         The <b>values</b> are the package files corresponding to the artifact.
+     * The <b>keys</b> are {@link DependencyNode}s, with the <code>depth</code> reflecting
+     * the one in the <b>dependencies tree</b>.
+     * The <b>values</b> are the package files corresponding to the artifact.
      * @throws PomResolverException      the pom resolver exception
      * @throws ArtifactResolverException the artifact resolver exception
      */
@@ -73,13 +73,24 @@ public final class Conveyor {
     }
 
     /**
+     * Updates the mode of resolving the artifacts files.
+     *
+     * @param mode the mode
+     * @return this conveyor
+     */
+    public @NotNull Conveyor setArtifactResolveMode(final @NotNull ArtifactResolverMode mode) {
+        this.artifactResolver.setMode(mode);
+        return this;
+    }
+
+    /**
      * Builds the dependencies tree of the given artifact.
      *
      * @param artifact the artifact
      * @return the dependencies tree
      * @throws PomResolverException in case of any errors
      */
-    @NotNull Collection<DependencyNode> buildDependenciesTree(final @NotNull Artifact artifact) throws PomResolverException {
+    public @NotNull Collection<DependencyNode> buildDependenciesTree(final @NotNull Artifact artifact) throws PomResolverException {
         return this.dependenciesTreeBuilder.setProject(artifact).build();
     }
 
@@ -143,7 +154,8 @@ public final class Conveyor {
         return new Conveyor(context, workingDir, logger)
                 .setPomResolveMode(PomResolverMode.CHECKSUM)
                 .addRawRepositories(mavenCentralUrl)
-                .setScopesOfInterest(Scope.COMPILE, Scope.PROVIDED, Scope.RUNTIME);
+                .setScopesOfInterest(Scope.COMPILE, Scope.PROVIDED, Scope.RUNTIME)
+                .setArtifactResolveMode(ArtifactResolverMode.CHECKSUM);
     }
 
 }
