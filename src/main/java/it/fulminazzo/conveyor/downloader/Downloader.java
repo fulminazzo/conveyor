@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * A specialized object to download files to the given path.
@@ -19,12 +21,29 @@ public interface Downloader {
      * at "&lt;url&gt;/&lt;resource_path&gt;".
      * Then, downloads it at "{@link #getWorkingDir()}/&lt;resource_path&gt;".
      *
-     * @param resourcePath the resource path
+     * @param resourcePath    the resource path
+     * @param downloadSources the download sources
      * @return the newly downloaded file
      * @throws DownloadException in case of any errors
      */
-    default @NotNull File resolveToFile(final @NotNull String resourcePath) throws DownloadException {
-        try (InputStream stream = resolve(resourcePath)) {
+    default @NotNull File resolveToFile(final @NotNull String resourcePath,
+                                        final DownloadSource @NotNull ... downloadSources) throws DownloadException {
+        return resolveToFile(resourcePath, Arrays.asList(downloadSources));
+    }
+
+    /**
+     * Loops through all the download sources trying to download the resource
+     * at "&lt;url&gt;/&lt;resource_path&gt;".
+     * Then, downloads it at "{@link #getWorkingDir()}/&lt;resource_path&gt;".
+     *
+     * @param resourcePath    the resource path
+     * @param downloadSources the download sources
+     * @return the newly downloaded file
+     * @throws DownloadException in case of any errors
+     */
+    default @NotNull File resolveToFile(final @NotNull String resourcePath,
+                                        final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
+        try (InputStream stream = resolve(resourcePath, downloadSources)) {
             File destination = getResourceFile(resourcePath);
             Files.createDirectories(destination.getParentFile().toPath());
             Files.copy(stream, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -39,11 +58,28 @@ public interface Downloader {
      * at "&lt;url&gt;/&lt;resource_path&gt;".
      * Then, returns the resulting stream.
      *
-     * @param resourcePath the resource path
+     * @param resourcePath    the resource path
+     * @param downloadSources the download sources
      * @return the download stream
      * @throws DownloadException if the download could not be completed (mostly for resource not found)
      */
-    @NotNull InputStream resolve(final @NotNull String resourcePath) throws DownloadException;
+    default @NotNull InputStream resolve(final @NotNull String resourcePath,
+                                         final DownloadSource @NotNull ... downloadSources) throws DownloadException {
+        return resolve(resourcePath, Arrays.asList(downloadSources));
+    }
+
+    /**
+     * Loops through all the download sources trying to download the resource
+     * at "&lt;url&gt;/&lt;resource_path&gt;".
+     * Then, returns the resulting stream.
+     *
+     * @param resourcePath    the resource path
+     * @param downloadSources the download sources
+     * @return the download stream
+     * @throws DownloadException if the download could not be completed (mostly for resource not found)
+     */
+    @NotNull InputStream resolve(final @NotNull String resourcePath,
+                                 final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException;
 
     /**
      * Gets the associated resource file.
