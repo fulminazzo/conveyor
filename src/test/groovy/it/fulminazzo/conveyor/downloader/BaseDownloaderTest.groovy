@@ -13,10 +13,10 @@ class BaseDownloaderTest extends Specification {
         def downloader = new BaseDownloader(workingDir, log)
 
         when:
-        def data = downloader.resolve(resourcePath,
+        def data = downloader.resolve(resourcePath, [
                 new DownloadSource('fulminazzo.it'),
                 new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
-        )
+        ])
 
         then:
         noExceptionThrown()
@@ -36,7 +36,7 @@ class BaseDownloaderTest extends Specification {
         def downloader = new BaseDownloader(workingDir, log)
 
         when:
-        downloader.resolve('path', new DownloadSource(TestUtils.MAVEN_CENTRAL_URL))
+        downloader.resolve('path', [new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)])
 
         then:
         def e = thrown(DownloadException)
@@ -48,7 +48,7 @@ class BaseDownloaderTest extends Specification {
         def downloader = new BaseDownloader(workingDir, log)
 
         when:
-        downloader.resolve('path')
+        downloader.resolve('path', [])
 
         then:
         def e = thrown(DownloadException)

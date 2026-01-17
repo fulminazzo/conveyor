@@ -14,7 +14,7 @@ class DownloaderTest extends Specification {
         def downloader = new MockDownloader(workingDir)
 
         when:
-        def file = downloader.resolveToFile('path/to/resource.txt')
+        def file = downloader.resolveToFile('path/to/resource.txt', [])
 
         then:
         file.exists()

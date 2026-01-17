@@ -41,7 +41,7 @@ class ChecksumDownloaderTest extends Specification {
         def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [delegate, log])
 
         when:
-        downloader.resolveToFile(path, source)
+        downloader.resolveToFile(path, [source])
 
         then:
         0 * downloader.verifyChecksum(path, [source])
@@ -72,7 +72,7 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyChecksum('path', downloadSource)
+        def result = downloader.verifyChecksum('path', [downloadSource])
 
         then:
         result
@@ -94,7 +94,7 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        downloader.verifyChecksum('path', downloadSource)
+        downloader.verifyChecksum('path', [downloadSource])
 
         then:
         thrown(DownloadException)
@@ -112,7 +112,7 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyChecksum('path', downloadSource)
+        def result = downloader.verifyChecksum('path', [downloadSource])
 
         then:
         result
@@ -130,7 +130,7 @@ class ChecksumDownloaderTest extends Specification {
         downloader.resolveChecksum(_, _, _ as Collection) >> new ChecksumDownloader.ChecksumResult('resolved', downloadSource)
 
         when:
-        def result = downloader.verifyChecksum('path', downloadSource)
+        def result = downloader.verifyChecksum('path', [downloadSource])
 
         then:
         !result
@@ -149,7 +149,7 @@ class ChecksumDownloaderTest extends Specification {
         }
 
         when:
-        def result = downloader.verifyChecksum('path')
+        def result = downloader.verifyChecksum('path', [])
 
         then:
         result
@@ -163,12 +163,12 @@ class ChecksumDownloaderTest extends Specification {
         def downloader = Spy(ChecksumDownloader, constructorArgs: [this.delegate, log])
 
         and:
-        downloader.resolveChecksum(_, _) >> { a ->
+        downloader.resolveChecksum(_, _, _) >> { a ->
             throw new DownloadException('Checksum not found')
         }
 
         when:
-        def result = downloader.verifyChecksum('path')
+        def result = downloader.verifyChecksum('path', [])
 
         then:
         !result
@@ -189,7 +189,7 @@ class ChecksumDownloaderTest extends Specification {
 
     def 'test that resolveChecksum throws if it could not find the checksum with algorithm #algorithm'() {
         when:
-        this.downloader.resolveChecksum('checksum.txt', algorithm)
+        this.downloader.resolveChecksum('checksum.txt', algorithm, [])
 
         then:
         thrown(DownloadException)
