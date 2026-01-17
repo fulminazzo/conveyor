@@ -32,8 +32,7 @@ final class RepositoryManagerImpl implements RepositoryManager {
                 if (snapshots.isEnabled())
                     this.snapshots.addDownloadSources(toDownloadSource(repository, snapshots));
             } catch (MalformedURLException e) {
-                //TODO: logging?
-                throw new RuntimeException(e);
+                this.logger.warn("Skipping repository: {}", e.getMessage());
             }
         }
         return this;
