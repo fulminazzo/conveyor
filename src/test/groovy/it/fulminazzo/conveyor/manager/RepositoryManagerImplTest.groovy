@@ -19,12 +19,14 @@ class RepositoryManagerImplTest extends Specification {
                                     .enabled(true)
                                     .checksumPolicy(it)
                                     .build())
+                            .snapshots(Repository.Policy.builder().enabled(false).build())
                             .build()
                 },
                 *ChecksumPolicy.values().collect {
                     Repository.builder()
                             .id("snapshots-$it")
                             .url("https://snapshots.$it")
+                            .releases(Repository.Policy.builder().enabled(false).build())
                             .snapshots(Repository.Policy.builder()
                                     .enabled(true)
                                     .checksumPolicy(it)
@@ -40,16 +42,18 @@ class RepositoryManagerImplTest extends Specification {
         manager.addRepositories(repositories)
 
         then:
-        manager.releasesRepositories == ChecksumPolicies.values()
-                .collect { new DownloadSource("https://releases.$it")
-                        .withCapability(it)
-                }
+        manager.releasesRepositories.sort() == ChecksumPolicies.values()
+                .collect {
+                    new DownloadSource("https://releases.$it")
+                            .withCapability(it)
+                }.sort()
 
         then:
-        manager.snapshotsRepositories == ChecksumPolicies.values()
-                .collect { new DownloadSource("https://snapshots.$it")
-                        .withCapability(it)
-                }
+        manager.snapshotsRepositories.sort() == ChecksumPolicies.values()
+                .collect {
+                    new DownloadSource("https://snapshots.$it")
+                            .withCapability(it)
+                }.sort()
     }
 
 }
