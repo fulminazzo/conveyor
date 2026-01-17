@@ -36,6 +36,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike,
     @Builder.Default
     private final @NotNull String optional = String.valueOf(Boolean.FALSE);
 
+    @Builder.Default
     private final @NotNull Exclusions exclusions = new Exclusions();
 
     @Override

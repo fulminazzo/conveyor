@@ -49,9 +49,9 @@ public class EffectivePom implements PomLike {
      * @param context     the context where the builder should operate (with operating system data and similar)
      * @return the builder
      */
-    public @NotNull EffectivePomBuilder builder(final @NotNull Pom startingPom,
-                                                final @NotNull PomResolver pomResolver,
-                                                final @NotNull ActivationContext context) {
+    public static @NotNull EffectivePomBuilder builder(final @NotNull Pom startingPom,
+                                                       final @NotNull PomResolver pomResolver,
+                                                       final @NotNull ActivationContext context) {
         return new EffectivePomBuilder(startingPom, pomResolver, context);
     }
 
