@@ -8,6 +8,29 @@ import spock.lang.Specification
 class BaseDownloaderTest extends Specification {
     private static final File workingDir = new File(TestUtils.BASE_DIR, 'base_downloader')
 
+    def 'test that resolveToFile correctly saves to path'() {
+        given:
+        if (workingDir.exists()) workingDir.deleteDir()
+
+        and:
+        def downloader = Spy(BaseDownloader, constructorArgs: [workingDir, log])
+        downloader.resolve(_, _) >> { a ->
+            return new ByteArrayInputStream("Data of '${a[0]}'".bytes)
+        }
+
+        when:
+        def file = downloader.resolveToFile('path/to/resource.txt', [])
+
+        then:
+        file.exists()
+
+        and:
+        file.absolutePath == workingDir.absolutePath + '/path/to/resource.txt'
+
+        and:
+        file.readLines() == ['Data of \'path/to/resource.txt\'']
+    }
+
     def 'test that resolve of #resourcePath does not throw'() {
         given:
         def downloader = new BaseDownloader(workingDir, log)
