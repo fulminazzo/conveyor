@@ -30,7 +30,7 @@ class ConveyorTest extends Specification {
         def key = files.keySet().find {
             def dependency = it.dependency()
             return dependency.groupId == artifact.groupId &&
-                    dependency.artifactId == artifact.groupId &&
+                    dependency.artifactId == artifact.artifactId &&
                     dependency.version == artifact.version
         }
 
