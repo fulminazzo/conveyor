@@ -3,7 +3,7 @@ package it.fulminazzo.conveyor.model.pom;
 import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
-import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class EffectivePom implements PomLike {
      * @return the builder
      */
     public static @NotNull EffectivePomBuilder builder(final @NotNull Pom startingPom,
-                                                       final @NotNull RepositoryBasedPomResolver pomResolver,
+                                                       final @NotNull RepositoryPomResolver pomResolver,
                                                        final @NotNull ActivationContext context) {
         return new EffectivePomBuilder(startingPom, pomResolver, context);
     }

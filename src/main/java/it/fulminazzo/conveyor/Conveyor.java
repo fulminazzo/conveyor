@@ -4,7 +4,7 @@ import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.resolver.ConveyorPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
-import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.engine.PomResolveEngineType;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.Repository;
@@ -24,7 +24,7 @@ public final class Conveyor {
     private static final @NotNull String mavenCentralUrl = "https://repo.maven.apache.org/maven2/";
 
     private final @NotNull ActivationContext context;
-    private final @NotNull RepositoryBasedPomResolver resolver;
+    private final @NotNull RepositoryPomResolver resolver;
     private final @NotNull DependencyTreeBuilder dependencyTreeBuilder;
 
     private Conveyor(final @NotNull ActivationContext context,

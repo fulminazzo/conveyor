@@ -12,7 +12,7 @@ import java.util.Collection;
  * <br>
  * Uses repositories to query for the requested data.
  */
-public interface RepositoryBasedPomResolver extends PomResolver {
+public interface RepositoryPomResolver extends PomResolver {
 
     /**
      * Adds repositories to the repository manager of the resolver.
@@ -20,7 +20,7 @@ public interface RepositoryBasedPomResolver extends PomResolver {
      * @param repositories the repositories
      * @return this resolver
      */
-    @NotNull RepositoryBasedPomResolver addRepositories(final @NotNull Collection<Repository> repositories);
+    @NotNull RepositoryPomResolver addRepositories(final @NotNull Collection<Repository> repositories);
 
 
 }

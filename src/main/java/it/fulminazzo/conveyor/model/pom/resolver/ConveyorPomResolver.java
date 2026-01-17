@@ -16,7 +16,7 @@ import java.util.Collection;
  * Conveyor official {@link PomResolver}.
  */
 @RequiredArgsConstructor
-public final class ConveyorPomResolver implements RepositoryBasedPomResolver {
+public final class ConveyorPomResolver implements RepositoryPomResolver {
     private final @NotNull RepositoryManager repositoryManager;
     private final @NotNull File workingDir;
     private final @NotNull Logger logger;
@@ -29,7 +29,7 @@ public final class ConveyorPomResolver implements RepositoryBasedPomResolver {
     }
 
     @Override
-    public @NotNull RepositoryBasedPomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
+    public @NotNull RepositoryPomResolver addRepositories(final @NotNull Collection<Repository> repositories) {
         this.repositoryManager.addRepositories(repositories);
         return this;
     }

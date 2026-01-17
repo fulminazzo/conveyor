@@ -7,7 +7,7 @@ import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
-import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver;
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public final class DependencyTreeBuilder {
     private final @NotNull Set<Scope> scopes = new HashSet<>();
 
     private @Nullable Artifact project;
-    private final @NotNull RepositoryBasedPomResolver resolver;
+    private final @NotNull RepositoryPomResolver resolver;
     private final @NotNull ActivationContext context;
 
     /**

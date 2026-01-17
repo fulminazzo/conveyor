@@ -6,18 +6,18 @@ import it.fulminazzo.conveyor.model.dependency.Exclusions
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.pom.Pom
-import it.fulminazzo.conveyor.model.pom.resolver.RepositoryBasedPomResolver
+import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import spock.lang.Specification
 
 class DependencyTreeBuilderTest extends Specification {
     private static final Artifact artifact = new Artifact('it.fulminazzo', 'main', '1.0')
 
-    private RepositoryBasedPomResolver resolver
+    private RepositoryPomResolver resolver
     private DependencyTreeBuilder builder
 
     void setup() {
-        this.resolver = Mock(RepositoryBasedPomResolver)
+        this.resolver = Mock(RepositoryPomResolver)
 
         this.builder = new DependencyTreeBuilder(artifact, this.resolver, Mock(ActivationContext))
     }
