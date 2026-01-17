@@ -28,6 +28,7 @@ class DependencyTreeBuilderTest extends Specification {
 
         and:
         def expected = [
+                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('main').version('1.0').build(), 0),
                 new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(), 1),
                 new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(), 1),
                 new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('2.0').build(), 2),
@@ -51,6 +52,7 @@ class DependencyTreeBuilderTest extends Specification {
 
         and:
         def expected = [
+                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('problematic1').version('1.0').build(), 0),
                 new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('problematic2').version('1.0').build(), 1)
         ]
 
