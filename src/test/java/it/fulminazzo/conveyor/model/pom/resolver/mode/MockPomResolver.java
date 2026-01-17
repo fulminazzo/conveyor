@@ -17,7 +17,15 @@ public class MockPomResolver extends BasePomResolver {
     @Override
     protected @NotNull InputStream resolve(final @NotNull String artifactPath,
                                            final @NotNull Collection<DownloadSource> downloadSources) {
-        return new ByteArrayInputStream(new byte[0]);
+        String version = artifactPath.substring(artifactPath.lastIndexOf("-") + 1);
+        version = version.substring(0, version.indexOf("."));
+        return new ByteArrayInputStream(String.format("""
+                <project>
+                    <groupId>it.fulminazzo</groupId>
+                    <artifactId>conveyor</artifactId>
+                    <version>%s</version>
+                </project>
+                """, version).getBytes());
     }
 
 }
