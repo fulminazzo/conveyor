@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.pom.metadata.Contributor
 import it.fulminazzo.conveyor.model.pom.metadata.Developer
 import it.fulminazzo.conveyor.model.pom.metadata.License
+import it.fulminazzo.conveyor.model.pom.metadata.MailingList
 import it.fulminazzo.conveyor.model.pom.metadata.Organization
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata
 import spock.lang.Specification
@@ -86,6 +87,24 @@ class PomTest extends Specification {
                                         .properties(['contribution': '100%'])
                                         .build()
                         ]))
+                        .mailingLists([
+                                MailingList.builder()
+                                        .name('first')
+                                        .subscribe('first-subscribe@fulminazzo.it')
+                                        .unsubscribe('first-unsubscribe@fulminazzo.it')
+                                        .post('first-post@fulminazzo.it')
+                                        .archive('first1.fulminazzo.it')
+                                        .otherArchives(['first2.fulminazzo.it'])
+                                        .build(),
+                                MailingList.builder()
+                                        .name('second')
+                                        .subscribe('second-subscribe@fulminazzo.it')
+                                        .unsubscribe('second-unsubscribe@fulminazzo.it')
+                                        .post('second-post@fulminazzo.it')
+                                        .archive('second1.fulminazzo.it')
+                                        .otherArchives(['second2.fulminazzo.it', 'second3.fulminazzo.it'])
+                                        .build()
+                        ])
                         .build())
                 .build()
 
@@ -96,66 +115,79 @@ class PomTest extends Specification {
         value == expected
 
         where:
-        key                               || expected
-        'modelVersion'                    || '4.0.0'
-        'parent.groupId'                  || 'it.fulminazzo'
-        'parent.artifactId'               || 'conveyor-parent'
-        'parent.version'                  || '1.0'
+        key                                || expected
+        'modelVersion'                     || '4.0.0'
+        'parent.groupId'                   || 'it.fulminazzo'
+        'parent.artifactId'                || 'conveyor-parent'
+        'parent.version'                   || '1.0'
         // 'parent.relativePath' || NOT SUPPORTED
-        'groupId'                         || 'it.fulminazzo'
-        'artifactId'                      || 'conveyor'
-        'version'                         || '1.0'
-        'packaging'                       || 'war'
-        'name'                            || 'conveyor'
-        'description'                     || 'A maven library...'
-        'url'                             || 'fulminazzo.it'
-        'inceptionYear'                   || '2024'
-        'organization.name'               || 'fulminazzo'
-        'organization.url'                || 'fulminazzo.it'
-        'licenses[0].name'                || 'license1'
-        'licenses[0].url'                 || 'license1.com'
-        'licenses[0].distribution'        || 'distribution1'
-        'licenses[0].comments'            || 'comments1'
-        'licenses[1].name'                || 'license2'
-        'licenses[1].url'                 || 'license2.com'
-        'licenses[1].distribution'        || 'distribution2'
-        'licenses[1].comments'            || 'comments2'
-        'developers[0].id'                || 'fulminazzo'
-        'developers[0].name'              || 'Alex'
-        'developers[0].email'             || 'alex@fulminazzo.it'
-        'developers[0].url'               || 'alex.fulminazzo.it'
-        'developers[0].organization'      || 'Fulminazzo'
-        'developers[0].organizationUrl'   || 'fulminazzo.it'
-        'developers[0].roles[0]'          || 'founder'
-        'developers[0].timezone'          || '+1'
-        'developers[0].properties'        || '{contribution=0%}'
-        'developers[1].id'                || 'camu'
-        'developers[1].name'              || 'Camilla'
-        'developers[1].email'             || 'camu@fulminazzo.it'
-        'developers[1].url'               || 'camu.fulminazzo.it'
-        'developers[1].organization'      || 'Fulminazzo'
-        'developers[1].organizationUrl'   || 'fulminazzo.it'
-        'developers[1].roles[0]'          || 'co-founder'
-        'developers[1].roles[1]'          || 'accountant'
-        'developers[1].timezone'          || '+1'
-        'developers[1].properties'        || '{contribution=100%}'
-        'contributors[0].name'            || 'Alex'
-        'contributors[0].email'           || 'alex@fulminazzo.it'
-        'contributors[0].url'             || 'alex.fulminazzo.it'
-        'contributors[0].organization'    || 'Fulminazzo'
-        'contributors[0].organizationUrl' || 'fulminazzo.it'
-        'contributors[0].roles[0]'        || 'founder'
-        'contributors[0].timezone'        || '+1'
-        'contributors[0].properties'      || '{contribution=0%}'
-        'contributors[1].name'            || 'Camilla'
-        'contributors[1].email'           || 'camu@fulminazzo.it'
-        'contributors[1].url'             || 'camu.fulminazzo.it'
-        'contributors[1].organization'    || 'Fulminazzo'
-        'contributors[1].organizationUrl' || 'fulminazzo.it'
-        'contributors[1].roles[0]'        || 'co-founder'
-        'contributors[1].roles[1]'        || 'accountant'
-        'contributors[1].timezone'        || '+1'
-        'contributors[1].properties'      || '{contribution=100%}'
+        'groupId'                          || 'it.fulminazzo'
+        'artifactId'                       || 'conveyor'
+        'version'                          || '1.0'
+        'packaging'                        || 'war'
+        'name'                             || 'conveyor'
+        'description'                      || 'A maven library...'
+        'url'                              || 'fulminazzo.it'
+        'inceptionYear'                    || '2024'
+        'organization.name'                || 'fulminazzo'
+        'organization.url'                 || 'fulminazzo.it'
+        'licenses[0].name'                 || 'license1'
+        'licenses[0].url'                  || 'license1.com'
+        'licenses[0].distribution'         || 'distribution1'
+        'licenses[0].comments'             || 'comments1'
+        'licenses[1].name'                 || 'license2'
+        'licenses[1].url'                  || 'license2.com'
+        'licenses[1].distribution'         || 'distribution2'
+        'licenses[1].comments'             || 'comments2'
+        'developers[0].id'                 || 'fulminazzo'
+        'developers[0].name'               || 'Alex'
+        'developers[0].email'              || 'alex@fulminazzo.it'
+        'developers[0].url'                || 'alex.fulminazzo.it'
+        'developers[0].organization'       || 'Fulminazzo'
+        'developers[0].organizationUrl'    || 'fulminazzo.it'
+        'developers[0].roles[0]'           || 'founder'
+        'developers[0].timezone'           || '+1'
+        'developers[0].properties'         || '{contribution=0%}'
+        'developers[1].id'                 || 'camu'
+        'developers[1].name'               || 'Camilla'
+        'developers[1].email'              || 'camu@fulminazzo.it'
+        'developers[1].url'                || 'camu.fulminazzo.it'
+        'developers[1].organization'       || 'Fulminazzo'
+        'developers[1].organizationUrl'    || 'fulminazzo.it'
+        'developers[1].roles[0]'           || 'co-founder'
+        'developers[1].roles[1]'           || 'accountant'
+        'developers[1].timezone'           || '+1'
+        'developers[1].properties'         || '{contribution=100%}'
+        'contributors[0].name'             || 'Alex'
+        'contributors[0].email'            || 'alex@fulminazzo.it'
+        'contributors[0].url'              || 'alex.fulminazzo.it'
+        'contributors[0].organization'     || 'Fulminazzo'
+        'contributors[0].organizationUrl'  || 'fulminazzo.it'
+        'contributors[0].roles[0]'         || 'founder'
+        'contributors[0].timezone'         || '+1'
+        'contributors[0].properties'       || '{contribution=0%}'
+        'contributors[1].name'             || 'Camilla'
+        'contributors[1].email'            || 'camu@fulminazzo.it'
+        'contributors[1].url'              || 'camu.fulminazzo.it'
+        'contributors[1].organization'     || 'Fulminazzo'
+        'contributors[1].organizationUrl'  || 'fulminazzo.it'
+        'contributors[1].roles[0]'         || 'co-founder'
+        'contributors[1].roles[1]'         || 'accountant'
+        'contributors[1].timezone'         || '+1'
+        'contributors[1].properties'       || '{contribution=100%}'
+        'mailingLists[0].name'             || 'first'
+        'mailingLists[0].subscribe'        || 'first-subscribe@fulminazzo.it'
+        'mailingLists[0].unsubscribe'      || 'first-unsubscribe@fulminazzo.it'
+        'mailingLists[0].post'             || 'first-post@fulminazzo.it'
+        'mailingLists[0].archive'          || 'first1.fulminazzo.it'
+        'mailingLists[0].otherArchives[0]' || 'first2.fulminazzo.it'
+        'mailingLists[1].name'             || 'second'
+        'mailingLists[1].subscribe'        || 'second-subscribe@fulminazzo.it'
+        'mailingLists[1].unsubscribe'      || 'second-unsubscribe@fulminazzo.it'
+        'mailingLists[1].post'             || 'second-post@fulminazzo.it'
+        'mailingLists[1].archive'          || 'second1.fulminazzo.it'
+        'mailingLists[1].otherArchives[0]' || 'second2.fulminazzo.it'
+        'mailingLists[1].otherArchives[1]' || 'second3.fulminazzo.it'
     }
 
 }
