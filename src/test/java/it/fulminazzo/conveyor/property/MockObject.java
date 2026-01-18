@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -20,8 +17,8 @@ final class MockObject {
     Object field4 = null;
 
     List<String> indexed1 = Arrays.asList("Hello", "world");
-    Set<Integer> indexed2 = Set.of(1, 2, 3);
-    Collection<Boolean> indexed3 = List.of(true, false);
+    Set<Integer> indexed2 = new HashSet<>(Arrays.asList(1, 2, 3));
+    Collection<Boolean> indexed3 = Arrays.asList(true, false);
     String[] indexed4 = new String[]{"Hello", "world"};
 
     MockSubObject sub1 = new MockSubObject();
@@ -50,7 +47,8 @@ final class MockObject {
         return what;
     }
 
-    final class MockSubObject {
+    @Data
+    static final class MockSubObject {
 
         String field1 = "Hello, world";
 
