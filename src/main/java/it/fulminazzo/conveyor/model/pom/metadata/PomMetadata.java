@@ -50,6 +50,9 @@ public class PomMetadata {
     @Builder.Default
     @NotNull Set<RawRepository> pluginRepositories = new HashSet<>();
 
+    @Builder.Default
+    @NotNull Build build = Build.builder().build();
+
     @Data
     @Builder
     @NoArgsConstructor
