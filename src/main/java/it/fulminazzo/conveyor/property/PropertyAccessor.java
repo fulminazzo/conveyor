@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,11 +126,11 @@ final class PropertyAccessor {
     static @Nullable Object getField(final @NotNull Object object,
                                      final @NotNull String name) {
         try {
-            Field field = object.getClass().getDeclaredField(name);
+            Field field = getDeclaredField(object.getClass(), name);
             field.setAccessible(true);
             return field.get(object);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            List<Field> fields = Arrays.stream(object.getClass().getDeclaredFields())
+            List<Field> fields = getDeclaredFields(object.getClass()).stream()
                     .filter(f -> !Modifier.isStatic(f.getModifiers()))
                     .filter(f -> !f.getName().equals(name)) // ignore previously looked up field
                     .filter(f -> f.isAnnotationPresent(DelegateProperties.class))
@@ -164,6 +164,29 @@ final class PropertyAccessor {
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return null;
         }
+    }
+
+    private static @NotNull Field getDeclaredField(final @NotNull Class<?> clazz,
+                                                   final @NotNull String name) throws NoSuchFieldException {
+        if (clazz.equals(Object.class))
+            throw new NoSuchFieldException(String.format("Could not find field '%s'", name));
+        try {
+            return clazz.getDeclaredField(name);
+        } catch (NoSuchFieldException e) {
+            try {
+                return getDeclaredField(clazz.getSuperclass(), name);
+            } catch (NoSuchFieldException ignored) {
+            }
+            throw e;
+        }
+    }
+
+    private static @NotNull Collection<Field> getDeclaredFields(final @NotNull Class<?> clazz) {
+        List<Field> fields = new LinkedList<>();
+        if (clazz.equals(Object.class)) return fields;
+        fields.addAll(getDeclaredFields(clazz.getSuperclass()));
+        fields.addAll(List.of(clazz.getDeclaredFields()));
+        return fields;
     }
 
 }
