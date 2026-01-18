@@ -32,5 +32,7 @@ public class PomMetadata {
     @Builder.Default
     @NotNull Set<Contributor> contributors = new HashSet<>();
 
+    @Builder.Default
+    @NotNull Set<MailingList> mailingLists = new HashSet<>();
 
 }
