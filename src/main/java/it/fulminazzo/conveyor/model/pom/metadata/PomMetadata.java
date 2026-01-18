@@ -20,7 +20,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @SuperBuilder
-public class PomMetadata extends MavenModelMetadata {
+public final class PomMetadata extends MavenModelMetadata {
     @Nullable String modelVersion;
 
     @Nullable String name;
