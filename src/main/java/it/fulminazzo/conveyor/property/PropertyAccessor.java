@@ -8,10 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * A utility class to access fields and methods of a given object.
@@ -76,6 +74,22 @@ final class PropertyAccessor {
             return list.get(index).toString();
         }
         throw new IllegalArgumentException(String.format("Value '%s' with name '%s' is not a collection", o, name));
+    }
+
+    /**
+     * Attempts to get a field with the given name from the object.
+     * If it fails, it will try to invoke a method with the given name
+     * and no parameters.
+     *
+     * @param object the object
+     * @param name   the name
+     * @return the result object
+     */
+    static @Nullable Object getObject(final @NotNull Object object,
+                                     final @NotNull String name) {
+        Object obj = getField(object, name);
+        if (obj == null) obj = invokeMethod(object, name);
+        return obj;
     }
 
     /**
