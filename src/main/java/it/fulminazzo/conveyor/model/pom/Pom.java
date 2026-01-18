@@ -24,14 +24,21 @@ import java.util.Set;
 @ToString(callSuper = true)
 @SuperBuilder
 public final class Pom extends MavenModel implements PomLike {
+
+    private final @Nullable String modelVersion;
+
+    private final @Nullable Artifact parent;
+
     @DelegateProperties
     private final @NotNull Artifact project;
+
     private final @Nullable String name;
     private final @Nullable String description;
     private final @Nullable String url;
+
     @Builder.Default
     private final @NotNull String packaging = "jar";
-    private final @Nullable Artifact parent;
+
     @Builder.Default
     private final @NotNull Set<Profile> profiles = new HashSet<>();
 

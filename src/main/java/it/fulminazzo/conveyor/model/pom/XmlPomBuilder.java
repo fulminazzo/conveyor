@@ -74,6 +74,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     protected void parseDocument() throws BuilderException {
         onChildElements(t -> {
             switch (t) {
+                case "modelVersion" -> this.builder.modelVersion(getCurrentTextContent());
                 case "groupId" -> this.groupId = getCurrentTextContent();
                 case "artifactId" -> this.artifactId = getCurrentTextContent();
                 case "version" -> this.version = getCurrentTextContent();
