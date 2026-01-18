@@ -19,12 +19,12 @@ import java.util.*;
 public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     private final @NotNull Pom.PomBuilder<?, ?> builder = Pom.builder();
     private final @NotNull PomMetadata.PomMetadataBuilder pomMetadataBuilder = PomMetadata.builder();
-    
+
     private @Nullable String groupId;
     private @Nullable String artifactId;
     private @Nullable String classifier;
     private @Nullable String version;
-    
+
     private @Nullable Artifact parent;
 
     private final @NotNull Map<String, Profile> profiles = new LinkedHashMap<>();
@@ -95,6 +95,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseDevelopers()));
                 case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseContributors()));
                 case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseMailingLists()));
+                case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
             }
         });
     }
@@ -328,6 +329,21 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 archives.add(getCurrentTextContent());
         });
         return archives;
+    }
+
+    /**
+     * Handles the <b>&lt;prerequisites&gt;</b> tag in the document.
+     *
+     * @return the prerequisites
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull PomMetadata.Prerequisites parsePrerequisites() throws BuilderException {
+        PomMetadata.Prerequisites.PrerequisitesBuilder prerequisites = PomMetadata.Prerequisites.builder();
+        onChildElements(t -> {
+            if (t.equals("maven"))
+                prerequisites.maven(getCurrentTag());
+        });
+        return prerequisites.build();
     }
 
 }
