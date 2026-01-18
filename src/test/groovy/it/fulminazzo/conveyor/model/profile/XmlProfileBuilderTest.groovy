@@ -37,22 +37,22 @@ class XmlProfileBuilderTest extends Specification {
         def expectedActivation = Activation.builder(parser).build()
 
         and:
-        def expected = new Profile(
-                'complete-profile',
-                expectedActivation,
-                [
+        def expected = Profile.builder()
+                .id('complete-profile')
+                .activation(expectedActivation)
+                .properties([
                         'maven.test.skip': 'true',
                         'config.api.url' : 'https://api.project.it'
-                ],
-                [
+                ])
+                .repositories(Set.copyOf([
                         RawRepository.builder()
                                 .id('enterprise-repo')
                                 .url('https://nexus.company.it/repository/maven-public/')
                                 .releases(RawRepository.Policy.builder().enabled('true').build())
                                 .snapshots(RawRepository.Policy.builder().enabled('false').build())
                                 .build()
-                ],
-                [
+                ]))
+                .dependencyManagement(Set.copyOf([
                         RawDependency.builder()
                                 .groupId('org.springframework.cloud')
                                 .artifactId('spring-cloud-dependencies')
@@ -60,15 +60,15 @@ class XmlProfileBuilderTest extends Specification {
                                 .type('pom')
                                 .scope(Scope.IMPORT.value())
                                 .build()
-                ],
-                [
+                ]))
+                .dependencies(List.copyOf([
                         RawDependency.builder()
                                 .groupId('org.postgresql')
                                 .artifactId('postgresql')
                                 .version('42.5.0')
                                 .build()
-                ]
-        )
+                ]))
+                .build()
 
         and:
         def file = new File('build/resources/test/profile.xml')
