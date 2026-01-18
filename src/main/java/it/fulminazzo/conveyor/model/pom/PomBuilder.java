@@ -27,6 +27,7 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     private @Nullable String packaging;
     private @Nullable String name;
     private @Nullable String description;
+    private @Nullable String url;
     private @Nullable Artifact parent;
 
     private final @NotNull Map<String, Profile> profiles = new LinkedHashMap<>();
@@ -62,6 +63,7 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
                         .build(),
                 this.name,
                 this.description,
+                this.url,
                 this.packaging == null ? defaultPackaging : this.packaging,
                 this.parent,
                 this.profiles.values(),
@@ -86,6 +88,7 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
                 case "classifier" -> this.classifier = getCurrentTextContent();
                 case "name" -> this.name = getCurrentTextContent();
                 case "description" -> this.description = getCurrentTextContent();
+                case "url" -> this.url = getCurrentTextContent();
                 case "packaging" -> this.packaging = getCurrentTextContent();
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
