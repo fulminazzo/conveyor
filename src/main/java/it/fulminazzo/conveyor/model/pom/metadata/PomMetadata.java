@@ -53,6 +53,9 @@ public class PomMetadata {
     @Builder.Default
     @NotNull Build build = Build.builder().build();
 
+    @Builder.Default
+    @NotNull Reporting reporting = Reporting.builder().build();
+
     @Data
     @Builder
     @NoArgsConstructor
