@@ -21,6 +21,16 @@ final class MockObject {
     Collection<Boolean> indexed3 = Arrays.asList(true, false);
     String[] indexed4 = new String[]{"Hello", "world"};
 
+    String[][][] indexedMatrix1 = new String[][][]{
+            new String[][] {
+                    new String[]{"Hello", "world!"}
+            },
+            new String[][] {
+                    new String[]{"Hello", "foe!", "or", "not?"},
+                    new String[]{"Hey", "friend!"}
+            }
+    };
+
     MockSubObject sub1 = new MockSubObject();
 
     public String method1() {

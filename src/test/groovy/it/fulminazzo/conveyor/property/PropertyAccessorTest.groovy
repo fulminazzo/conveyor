@@ -4,6 +4,17 @@ import spock.lang.Specification
 
 class PropertyAccessorTest extends Specification {
 
+    def 'test getObject with matrix'() {
+        given:
+        def object = new MockObject()
+
+        when:
+        def value = PropertyAccessor.getObject(object, 'indexedMatrix1[1][0][3]')
+
+        then:
+        value == 'not?'
+    }
+
     def 'test that getSubProperty returns expected value'() {
         given:
         def object = new MockObject()
