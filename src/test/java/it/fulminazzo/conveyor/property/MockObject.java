@@ -1,10 +1,12 @@
 package it.fulminazzo.conveyor.property;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 final class MockObject {
 
     String field1 = "Hello, world!";
