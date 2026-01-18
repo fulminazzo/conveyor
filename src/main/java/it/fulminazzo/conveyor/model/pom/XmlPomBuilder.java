@@ -95,6 +95,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
                 case "organization" -> this.pomMetadataBuilder.organization(parseOrganization());
                 case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseLicenses()));
+                case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseDevelopers()));
             }
         });
     }
@@ -185,6 +186,21 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("license", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;developers&gt;</b> tag in the document.
+     *
+     * @return the developers
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Developer> parseDevelopers() throws BuilderException {
+        List<Developer> developers = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("developer"))
+                developers.add(parseDeveloper());
+        });
+        return developers;
     }
 
     /**
