@@ -17,5 +17,7 @@ public class PomMetadata {
     @Nullable String url;
     @Nullable String inceptionYear;
 
+    @Nullable Organization organization;
+
 
 }
