@@ -412,6 +412,103 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
         return buildObject("notifier", builder::build);
     }
 
+    /**
+     * Handles the <b>&lt;build&gt;</b> tag in the document.
+     *
+     * @return the build
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Build parseBuild() throws BuilderException {
+        Build.BuildBuilder builder = Build.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "sourceDirectory" -> builder.sourceDirectory(getCurrentTextContent());
+                case "scriptSourceDirectory" -> builder.scriptSourceDirectory(getCurrentTextContent());
+                case "testSourceDirectory" -> builder.testSourceDirectory(getCurrentTextContent());
+                case "outputDirectory" -> builder.outputDirectory(getCurrentTextContent());
+                case "testOutputDirectory" -> builder.testOutputDirectory(getCurrentTextContent());
+                case "extensions" -> builder.extensions(List.copyOf(parseExtensions()));
+                case "defaultGoal" -> builder.defaultGoal(getCurrentTextContent());
+                case "resources" -> builder.resources(List.copyOf(parseResources()));
+                case "testResources" -> builder.testResources(List.copyOf(parseResources()));
+                case "directory" -> builder.directory(getCurrentTextContent());
+                case "finalName" -> builder.finalName(getCurrentTextContent());
+                case "filters" -> builder.filters(parseStringList("filter"));
+                case "pluginManagement" -> builder.pluginManagement(getCurrentTextContent());
+                case "plugins" -> builder.plugins(getCurrentTextContent());
+            }
+        });
+        return buildObject("build", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;extensions&gt;</b> tag in the document.
+     *
+     * @return the extensions
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Artifact> parseExtensions() throws BuilderException {
+        List<Artifact> extensions = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("extension"))
+                extensions.add(parseExtension());
+        });
+        return extensions;
+    }
+
+    /**
+     * Handles the <b>&lt;extension&gt;</b> tag in the document.
+     *
+     * @return the extension artifact
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Artifact parseExtension() throws BuilderException {
+        Artifact.ArtifactBuilder<?, ?> builder = Artifact.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "groupId" -> builder.groupId(getCurrentTextContent());
+                case "artifactId" -> builder.artifactId(getCurrentTextContent());
+                case "version" -> builder.version(getCurrentTextContent());
+            }
+        });
+        return buildObject("extension", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;resources&gt;</b> tag in the document.
+     *
+     * @return the resources
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Resource> parseResources() throws BuilderException {
+        List<Resource> resources = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("resource"))
+                resources.add(parseResource());
+        });
+        return resources;
+    }
+
+    /**
+     * Handles the <b>&lt;resource&gt;</b> tag in the document.
+     *
+     * @return the resource
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Resource parseResource() throws BuilderException {
+        Resource.ResourceBuilder builder = Resource.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "targetPath" -> builder.targetPath(getCurrentTextContent());
+                case "filtering" -> builder.filtering(getCurrentTextContent());
+                case "directory" -> builder.directory(getCurrentTextContent());
+                case "includes" -> builder.includes(parseStringList("include"));
+                case "excludes" -> builder.excludes(parseStringList("exclude"));
+            }
+        });
+        return buildObject("resource", builder::build);
+    }
+
     private @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
         List<String> list = new LinkedList<>();
         onChildElements(t -> {
