@@ -10,12 +10,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A utility class to access fields and methods of a given object.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 final class PropertyAccessor {
+    private static final Pattern indexPattern = Pattern.compile("^([a-zA-Z_][a-zA-Z0-9\\-_]*)\\[(\\d+)]");
 
     /**
      * Attempts to retrieve the property associated with the given key.
@@ -37,6 +40,18 @@ final class PropertyAccessor {
     public static @Nullable String getProperty(final @NotNull Object object,
                                                final @NotNull String key) {
         throw new UnsupportedOperationException();
+    }
+
+    private static @Nullable Object getObject(final @NotNull Object object,
+                                              @NotNull String name) {
+        Matcher matcher = indexPattern.matcher(name);
+        if (matcher.matches()) {
+            name = matcher.group(1);
+            return getIndexed(object, name, matcher.group(2));
+        }
+        Object obj = getField(object, name);
+        if (obj == null) obj = invokeMethod(object, name);
+        return obj;
     }
 
     /**
@@ -91,22 +106,6 @@ final class PropertyAccessor {
         if (o != null && o.getClass().isArray()) return Array.get(o, index);
         if (o instanceof Collection<?> collection) return collection.stream().toList().get(index);
         throw new IllegalArgumentException(String.format("Property %s.%s = %s is not an indexable object", object, name, o));
-    }
-
-    /**
-     * Attempts to get a field with the given name from the object.
-     * If it fails, it will try to invoke a method with the given name
-     * and no parameters.
-     *
-     * @param object the object
-     * @param name   the name
-     * @return the result object
-     */
-    static @Nullable Object getObject(final @NotNull Object object,
-                                      final @NotNull String name) {
-        Object obj = getField(object, name);
-        if (obj == null) obj = invokeMethod(object, name);
-        return obj;
     }
 
     /**
