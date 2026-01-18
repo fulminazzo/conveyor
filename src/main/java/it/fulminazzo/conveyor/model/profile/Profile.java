@@ -2,11 +2,13 @@ package it.fulminazzo.conveyor.model.profile;
 
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
+import it.fulminazzo.conveyor.model.profile.metadata.ProfileMetadata;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.Delegate;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,9 +20,14 @@ import org.jetbrains.annotations.NotNull;
 @ToString(callSuper = true)
 @SuperBuilder
 public final class Profile extends MavenModel {
+
     private final @NotNull String id;
+
     @Builder.Default
     private final @NotNull Activation activation = Activation.alwaysFalse();
+
+    @Delegate
+    private final @NotNull ProfileMetadata metadata;
 
     /**
      * Instantiates a new builder to create a {@link Profile} object.
