@@ -21,6 +21,8 @@ class PomBuilderTest extends Specification {
                         'super-app-core',
                         '1.0.0-SNAPSHOT',
                 ),
+                'Super Application Core',
+                'The core logic for the Super Application suite.',
                 'war',
                 new Artifact(
                         'com.example.superapp',
