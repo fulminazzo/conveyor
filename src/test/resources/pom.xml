@@ -46,6 +46,51 @@
         </developer>
     </developers>
 
+    <contributors>
+        <contributor>
+            <name>Jane Smith</name>
+            <email>jsmith@example.com</email>
+            <url>https://github.com/jsmith</url>
+            <organization>Freelance</organization>
+            <organizationUrl>https://www.jsmith.com</organizationUrl>
+            <roles>
+                <role>Tester</role>
+                <role>Documentation</role>
+            </roles>
+            <timezone>Europe/London</timezone>
+            <properties>
+                <contribution-type>UI/UX Design</contribution-type>
+            </properties>
+        </contributor>
+        <contributor>
+            <name>Mario Rossi</name>
+            <roles>
+                <role>Translator</role>
+            </roles>
+            <timezone>Europe/Rome</timezone>
+        </contributor>
+    </contributors>
+
+    <mailingLists>
+        <mailingList>
+            <name>SuperApp User List</name>
+            <subscribe>users-subscribe@example.com</subscribe>
+            <unsubscribe>users-unsubscribe@example.com</unsubscribe>
+            <post>users@example.com</post>
+            <archive>https://mail-archives.example.com/users/</archive>
+            <otherArchives>
+                <otherArchive>https://www.mail-archive.com/users@example.com/</otherArchive>
+            </otherArchives>
+        </mailingList>
+        <mailingList>
+            <name>SuperApp Developer List</name>
+            <subscribe>dev-subscribe@example.com</subscribe>
+            <unsubscribe>dev-unsubscribe@example.com</unsubscribe>
+            <post>dev@example.com</post>
+            <archive>https://mail-archives.example.com/dev/</archive>
+        </mailingList>
+    </mailingLists>
+
     <prerequisites>
         <maven>3.6.0</maven>
     </prerequisites>
