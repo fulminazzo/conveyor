@@ -39,6 +39,9 @@ public class PomMetadata {
     @Builder.Default
     @NotNull Prerequisites prerequisites = new Prerequisites();
 
+    @Builder.Default
+    @NotNull List<String> modules = new LinkedList<>();
+
     @Data
     @Builder
     @NoArgsConstructor
