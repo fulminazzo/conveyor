@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.pom.metadata.Organization;
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.xml.XmlParser;
@@ -77,15 +78,10 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     protected void parseDocument() throws BuilderException {
         onChildElements(t -> {
             switch (t) {
-                case "modelVersion" -> this.pomMetadataBuilder.modelVersion(getCurrentTextContent());
                 case "groupId" -> this.groupId = getCurrentTextContent();
                 case "artifactId" -> this.artifactId = getCurrentTextContent();
                 case "version" -> this.version = getCurrentTextContent();
                 case "classifier" -> this.classifier = getCurrentTextContent();
-                case "name" -> this.pomMetadataBuilder.name(getCurrentTextContent());
-                case "description" -> this.pomMetadataBuilder.description(getCurrentTextContent());
-                case "url" -> this.pomMetadataBuilder.url(getCurrentTextContent());
-                case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
                 case "packaging" -> this.builder.packaging(getCurrentTextContent());
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
@@ -93,6 +89,13 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "repositories" -> parseRepositories();
                 case "dependencyManagement" -> parseDependencyManagement();
                 case "dependencies" -> parseDependencies();
+                // METADATA
+                case "modelVersion" -> this.pomMetadataBuilder.modelVersion(getCurrentTextContent());
+                case "name" -> this.pomMetadataBuilder.name(getCurrentTextContent());
+                case "description" -> this.pomMetadataBuilder.description(getCurrentTextContent());
+                case "url" -> this.pomMetadataBuilder.url(getCurrentTextContent());
+                case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
+                case "organization" -> this.pomMetadataBuilder.organization(parseOrganization());
             }
         });
     }
@@ -128,6 +131,27 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("parent", builder::build);
+    }
+
+    /**
+     * METADATA
+     */
+
+    /**
+     * Handles the <b>&lt;organization&gt;</b> tag in the document.
+     *
+     * @return the organization
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Organization parseOrganization() throws BuilderException {
+        Organization.OrganizationBuilder builder = Organization.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "name" -> builder.name(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+            }
+        });
+        return buildObject("organization", builder::build);
     }
 
 }
