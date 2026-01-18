@@ -5,11 +5,10 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,6 +130,18 @@ final class PropertyAccessor {
             field.setAccessible(true);
             return field.get(object);
         } catch (NoSuchFieldException | IllegalAccessException e) {
+            List<Field> fields = Arrays.stream(object.getClass().getDeclaredFields())
+                    .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                    .filter(f -> !f.getName().equals(name)) // ignore previously looked up field
+                    .filter(f -> f.isAnnotationPresent(DelegateProperties.class))
+                    .toList();
+            for (Field field : fields) {
+                try {
+                    Object raw = getSubProperty(object, field.getName(), name);
+                    if (raw != null) return raw;
+                } catch (NullPointerException ignored) {
+                }
+            }
             return null;
         }
     }
