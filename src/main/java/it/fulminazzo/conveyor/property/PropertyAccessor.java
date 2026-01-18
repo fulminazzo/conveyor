@@ -70,7 +70,7 @@ final class PropertyAccessor {
                                        final int index) {
         Object o = getObject(object, name);
         if (o instanceof Collection<?> collection) {
-            List<?> list = List.of(collection);
+            List<?> list = collection.stream().toList();
             return list.get(index);
         }
         throw new IllegalArgumentException(String.format("Value '%s' with name '%s' is not a collection", o, name));
