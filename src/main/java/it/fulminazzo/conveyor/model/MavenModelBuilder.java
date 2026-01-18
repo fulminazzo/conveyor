@@ -83,6 +83,8 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
                 case "url" -> builder.url(getCurrentTextContent());
                 case "releases" -> builder.releases(parseRepositoryPolicy());
                 case "snapshots" -> builder.snapshots(parseRepositoryPolicy());
+                case "uniqueVersion" -> builder.uniqueVersion(getCurrentTextContent());
+                case "layout" -> builder.layout(getCurrentTextContent());
             }
         });
         return buildObject("repository", builder::build);
