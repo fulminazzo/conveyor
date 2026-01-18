@@ -13,10 +13,6 @@ import java.util.*;
  * @param <O> the type of the built object
  */
 public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectBuilder<O> {
-    protected final @NotNull Map<String, String> properties = new HashMap<>();
-    protected final @NotNull Map<String, RawRepository> repositories = new LinkedHashMap<>();
-    protected final @NotNull Map<String, RawDependency> dependencyManagement = new LinkedHashMap<>();
-    protected final @NotNull Map<String, RawDependency> dependencies = new LinkedHashMap<>();
 
     /**
      * Instantiates a new Maven model builder.
@@ -37,9 +33,11 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     /**
      * Handles the <b>&lt;properties&gt;</b> tag in the document.
      *
+     * @return the properties
      * @throws BuilderException in case of any errors
      */
-    protected void parseProperties() throws BuilderException {
+    protected @NotNull Map<String, String> parseProperties() throws BuilderException {
+        final @NotNull Map<String, String> properties = new HashMap<>();
         onChildElements(t -> {
             String value;
             try {
@@ -47,23 +45,27 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
             } catch (BuilderException e) {
                 value = "";
             }
-            this.properties.put(t, value);
+            properties.put(t, value);
         });
+        return properties;
     }
 
     /**
      * Handles the <b>&lt;repositories&gt;</b> tag in the document.
      *
+     * @return the repositories
      * @throws BuilderException in case of any errors
      */
-    protected void parseRepositories() throws BuilderException {
+    protected @NotNull Set<RawRepository> parseRepositories() throws BuilderException {
+        final @NotNull Map<String, RawRepository> repositories = new LinkedHashMap<>();
         onChildElements(t -> {
             if (t.equals("repository")) {
                 RawRepository repository = parseRepository();
                 String key = repository.getId();
-                this.repositories.put(key, repository);
+                repositories.put(key, repository);
             }
         });
+        return Set.copyOf(repositories.values());
     }
 
     /**
@@ -108,34 +110,40 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     /**
      * Handles a <b>&lt;dependencyManagement&gt;</b> tag in the document.
      *
+     * @return the dependency management
      * @throws BuilderException in case of any errors
      */
-    protected void parseDependencyManagement() throws BuilderException {
+    protected @NotNull Set<RawDependency> parseDependencyManagement() throws BuilderException {
+        final @NotNull Map<String, RawDependency> dependencyManagement = new LinkedHashMap<>();
         onChildElements(t -> {
             if (t.equals("dependencies"))
                 onChildElements(t2 -> {
                     if (t2.equals("dependency")) {
                         RawDependency dependency = parseDependency();
                         String key = dependency.getCoordinates();
-                        this.dependencyManagement.put(key, dependency);
+                        dependencyManagement.put(key, dependency);
                     }
                 });
         });
+        return Set.copyOf(dependencyManagement.values());
     }
 
     /**
      * Handles a <b>&lt;dependencies&gt;</b> tag in the document.
      *
+     * @return the dependencies
      * @throws BuilderException in case of any errors
      */
-    protected void parseDependencies() throws BuilderException {
+    protected @NotNull List<RawDependency> parseDependencies() throws BuilderException {
+        final @NotNull Map<String, RawDependency> dependencies = new LinkedHashMap<>();
         onChildElements(t -> {
             if (t.equals("dependency")) {
                 RawDependency dependency = parseDependency();
                 String key = dependency.getCoordinates();
-                this.dependencies.put(key, dependency);
+                dependencies.put(key, dependency);
             }
         });
+        return List.copyOf(dependencies.values());
     }
 
     /**
