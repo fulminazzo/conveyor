@@ -272,12 +272,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
      * @throws BuilderException in case of reading or parsing errors
      */
     @NotNull List<String> parseRoles() throws BuilderException {
-        List<String> roles = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("role"))
-                roles.add(getCurrentTextContent());
-        });
-        return roles;
+        return parseStringList("role");
     }
 
     /**
@@ -323,12 +318,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
      * @throws BuilderException in case of reading or parsing errors
      */
     @NotNull List<String> parseOtherArchives() throws BuilderException {
-        List<String> archives = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("otherArchive"))
-                archives.add(getCurrentTextContent());
-        });
-        return archives;
+        return parseStringList("otherArchive");
     }
 
     /**
@@ -344,6 +334,15 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 prerequisites.maven(getCurrentTag());
         });
         return prerequisites.build();
+    }
+
+    private @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
+        List<String> list = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals(tagName))
+                list.add(getCurrentTextContent());
+        });
+        return list;
     }
 
 }
