@@ -1,8 +1,6 @@
 package it.fulminazzo.conveyor.model.pom.metadata;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Value;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,10 +36,13 @@ public class PomMetadata {
     @Builder.Default
     @NotNull List<MailingList> mailingLists = new LinkedList<>();
 
-    @Nullable Prerequisites prerequisites;
+    @Builder.Default
+    @NotNull Prerequisites prerequisites = new Prerequisites();
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Prerequisites {
 
         @Builder.Default
