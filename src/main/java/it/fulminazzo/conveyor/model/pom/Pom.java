@@ -2,18 +2,16 @@ package it.fulminazzo.conveyor.model.pom;
 
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
-import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.profile.Profile;
-import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.xml.XmlParser;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,50 +20,24 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public final class Pom extends MavenModel implements PomLike {
     private final @NotNull Artifact project;
     private final @Nullable String name;
     private final @Nullable String description;
     private final @Nullable String url;
-    private final @NotNull String packaging;
+    @Builder.Default
+    private final @NotNull String packaging = "jar";
     private final @Nullable Artifact parent;
     private final @NotNull Set<Profile> profiles;
 
     /**
-     * Instantiates a new Pom.
+     * Instantiates a new builder to create a {@link Pom} object.
      *
-     * @param project              the project
-     * @param name                 the name
-     * @param description          the description
-     * @param url                  the url
-     * @param packaging            the packaging
-     * @param parent               the parent
-     * @param profiles             the profiles
-     * @param properties           the properties
-     * @param repositories         the repositories
-     * @param dependencyManagement the dependency management
-     * @param dependencies         the dependencies
+     * @return the builder
      */
-    Pom(final @NotNull Artifact project,
-        final @Nullable String name,
-        final @Nullable String description,
-        final @Nullable String url,
-        final @NotNull String packaging,
-        final @Nullable Artifact parent,
-        final @NotNull Collection<Profile> profiles,
-        final @NotNull Map<String, String> properties,
-        final @NotNull Collection<RawRepository> repositories,
-        final @NotNull Collection<RawDependency> dependencyManagement,
-        final @NotNull Collection<RawDependency> dependencies
-    ) {
-        super(properties, repositories, dependencyManagement, dependencies);
-        this.project = project;
-        this.name = name;
-        this.description = description;
-        this.url = url;
-        this.packaging = packaging;
-        this.parent = parent;
-        this.profiles = Set.copyOf(profiles);
+    public static @NotNull PomBuilder<?,?> builder() {
+        return new PomBuilderImpl();
     }
 
     /**
@@ -74,8 +46,8 @@ public final class Pom extends MavenModel implements PomLike {
      * @param parser the XML parser
      * @return the builder
      */
-    public static @NotNull PomBuilder builder(final @NotNull XmlParser parser) {
-        return new PomBuilder(parser);
+    public static @NotNull XmlPomBuilder builder(final @NotNull XmlParser parser) {
+        return new XmlPomBuilder(parser);
     }
 
 }
