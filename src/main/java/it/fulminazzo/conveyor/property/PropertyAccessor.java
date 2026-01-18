@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * A utility class to access fields and methods of a given object.
@@ -53,6 +55,28 @@ final class PropertyAccessor {
             if (fieldObject == null) return null;
             else return fieldObject.toString();
         } catch (NoSuchFieldException | IllegalAccessException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Attempts to invoke a method with the given name and no parameters from the object.
+     * If its value is <code>null</code> or the method is not found,
+     * then <code>null</code> is returned.
+     *
+     * @param object the object
+     * @param name   the name
+     * @return the method return
+     */
+    static @Nullable String invokeMethod(final @NotNull Object object,
+                                         final @NotNull String name) {
+        try {
+            Method method = object.getClass().getDeclaredMethod(name);
+            method.setAccessible(true);
+            Object methodObject = method.invoke(object);
+            if (methodObject == null) return null;
+            else return methodObject.toString();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return null;
         }
     }
