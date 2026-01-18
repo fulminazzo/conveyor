@@ -20,6 +20,7 @@ public class Plugin {
 
     @Nullable String version;
 
+    @Builder.Default
     @Nullable String extensions = "false";
 
     @Builder.Default
@@ -33,7 +34,7 @@ public class Plugin {
 
     @Value
     @Builder
-    static class Execution {
+    public static class Execution {
 
         @Builder.Default
         @NotNull String id = "default";
