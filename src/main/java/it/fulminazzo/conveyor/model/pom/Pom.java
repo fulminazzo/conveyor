@@ -26,6 +26,7 @@ public final class Pom extends MavenModel implements PomLike {
     private final @NotNull Artifact project;
     private final @Nullable String name;
     private final @Nullable String description;
+    private final @Nullable String url;
     private final @NotNull String packaging;
     private final @Nullable Artifact parent;
     private final @NotNull Set<Profile> profiles;
@@ -36,6 +37,7 @@ public final class Pom extends MavenModel implements PomLike {
      * @param project              the project
      * @param name                 the name
      * @param description          the description
+     * @param url                  the url
      * @param packaging            the packaging
      * @param parent               the parent
      * @param profiles             the profiles
@@ -47,6 +49,7 @@ public final class Pom extends MavenModel implements PomLike {
     Pom(final @NotNull Artifact project,
         final @Nullable String name,
         final @Nullable String description,
+        final @Nullable String url,
         final @NotNull String packaging,
         final @Nullable Artifact parent,
         final @NotNull Collection<Profile> profiles,
@@ -59,6 +62,7 @@ public final class Pom extends MavenModel implements PomLike {
         this.project = project;
         this.name = name;
         this.description = description;
+        this.url = url;
         this.packaging = packaging;
         this.parent = parent;
         this.profiles = Set.copyOf(profiles);
