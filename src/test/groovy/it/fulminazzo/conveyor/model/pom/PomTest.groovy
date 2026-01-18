@@ -105,6 +105,7 @@ class PomTest extends Specification {
                                         .otherArchives(['second2.fulminazzo.it', 'second3.fulminazzo.it'])
                                         .build()
                         ])
+                        .prerequisites(PomMetadata.Prerequisites.builder().maven('2.1.0').build())
                         .build())
                 .build()
 
@@ -188,6 +189,7 @@ class PomTest extends Specification {
         'mailingLists[1].archive'          || 'second1.fulminazzo.it'
         'mailingLists[1].otherArchives[0]' || 'second2.fulminazzo.it'
         'mailingLists[1].otherArchives[1]' || 'second3.fulminazzo.it'
+        'prerequisites.maven'              || '2.1.0'
     }
 
 }
