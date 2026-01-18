@@ -42,6 +42,8 @@ public class PomMetadata {
     @Builder.Default
     @NotNull List<String> modules = new LinkedList<>();
 
+    @Nullable IssueManagement issueManagement;
+
     @Data
     @Builder
     @NoArgsConstructor
@@ -50,6 +52,18 @@ public class PomMetadata {
 
         @Builder.Default
         @NotNull String maven = "2.0";
+
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class IssueManagement {
+
+        @Nullable String system;
+
+        @Nullable String url;
 
     }
 
