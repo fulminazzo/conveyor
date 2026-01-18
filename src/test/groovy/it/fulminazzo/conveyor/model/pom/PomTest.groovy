@@ -106,6 +106,7 @@ class PomTest extends Specification {
                                         .build()
                         ])
                         .prerequisites(new PomMetadata.Prerequisites('2.1.0'))
+                        .modules(['first', 'second', 'third'])
                         .build())
                 .build()
 
@@ -190,6 +191,9 @@ class PomTest extends Specification {
         'mailingLists[1].otherArchives[0]' || 'second2.fulminazzo.it'
         'mailingLists[1].otherArchives[1]' || 'second3.fulminazzo.it'
         'prerequisites.maven'              || '2.1.0'
+        'modules[0]'                       || 'first'
+        'modules[1]'                       || 'second'
+        'modules[2]'                       || 'third'
     }
 
 }
