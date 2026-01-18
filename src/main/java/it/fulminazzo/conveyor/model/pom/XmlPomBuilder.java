@@ -10,24 +10,19 @@ import it.fulminazzo.conveyor.xml.XmlParserException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Responsible for creating a {@link Pom} object.
  */
 public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
-    private static final String defaultPackaging = "jar";
-
+    private final @NotNull Pom.PomBuilder<?, ?> builder = Pom.builder();
+    
     private @Nullable String groupId;
     private @Nullable String artifactId;
     private @Nullable String classifier;
     private @Nullable String version;
-    private @Nullable String packaging;
-    private @Nullable String name;
-    private @Nullable String description;
-    private @Nullable String url;
+    
     private @Nullable Artifact parent;
 
     private final @NotNull Map<String, Profile> profiles = new LinkedHashMap<>();
@@ -54,24 +49,21 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             if (this.groupId == null) this.groupId = this.parent.getGroupId();
             if (this.version == null) this.version = this.parent.getVersion();
         }
-        return buildObject("pom", () -> new Pom(
-                Artifact.builder()
+        return buildObject("pom", () -> this.builder
+                .project(Artifact.builder()
                         .groupId(Objects.requireNonNull(this.groupId, "groupId is marked non-null but is null"))
                         .artifactId(Objects.requireNonNull(this.artifactId, "artifactId is marked non-null but is null"))
                         .version(Objects.requireNonNull(this.version, "version is marked non-null but is null"))
                         .classifier(this.classifier)
-                        .build(),
-                this.name,
-                this.description,
-                this.url,
-                this.packaging == null ? defaultPackaging : this.packaging,
-                this.parent,
-                this.profiles.values(),
-                this.properties,
-                this.repositories.values(),
-                this.dependencyManagement.values(),
-                this.dependencies.values()
-        ));
+                        .build())
+                .parent(this.parent)
+                .profiles(Set.copyOf(this.profiles.values()))
+                .properties(this.properties)
+                .repositories(Set.copyOf(this.repositories.values()))
+                .dependencyManagement(Set.copyOf(this.dependencyManagement.values()))
+                .dependencies(List.copyOf(this.dependencies.values()))
+                .build()
+        );
     }
 
     /**
@@ -86,10 +78,10 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "artifactId" -> this.artifactId = getCurrentTextContent();
                 case "version" -> this.version = getCurrentTextContent();
                 case "classifier" -> this.classifier = getCurrentTextContent();
-                case "name" -> this.name = getCurrentTextContent();
-                case "description" -> this.description = getCurrentTextContent();
-                case "url" -> this.url = getCurrentTextContent();
-                case "packaging" -> this.packaging = getCurrentTextContent();
+                case "name" -> this.builder.name(getCurrentTextContent());
+                case "description" -> this.builder.description(getCurrentTextContent());
+                case "url" -> this.builder.url(getCurrentTextContent());
+                case "packaging" -> this.builder.packaging(getCurrentTextContent());
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
                 case "properties" -> parseProperties();
