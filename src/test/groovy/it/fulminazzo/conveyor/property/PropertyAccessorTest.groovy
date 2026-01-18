@@ -111,6 +111,17 @@ class PropertyAccessorTest extends Specification {
         'field5' || null
     }
 
+    def 'test that getField of delegate returns value'() {
+        given:
+        def object = new MockObject()
+
+        when:
+        def value = PropertyAccessor.getField(object, 'field6')
+
+        then:
+        value == 3.14
+    }
+
     def 'test that invokeMethod of #name returns #expected'() {
         given:
         def object = new MockObject()
