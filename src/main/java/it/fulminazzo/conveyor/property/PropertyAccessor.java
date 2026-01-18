@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
+
 /**
  * A utility class to access fields and methods of a given object.
  */
@@ -31,6 +33,28 @@ final class PropertyAccessor {
     public static @Nullable String getProperty(final @NotNull Object object,
                                                final @NotNull String key) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Attempts to get a field with the given name from the object.
+     * If its value is <code>null</code> or the field is not found,
+     * then <code>null</code> is returned.
+     *
+     * @param object the object
+     * @param name   the name
+     * @return the field value
+     */
+    static @Nullable String getField(final @NotNull Object object,
+                                     final @NotNull String name) {
+        try {
+            Field field = object.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            Object fieldObject = field.get(object);
+            if (fieldObject == null) return null;
+            else return fieldObject.toString();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return null;
+        }
     }
 
 }
