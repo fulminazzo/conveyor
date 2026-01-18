@@ -15,13 +15,24 @@ import org.jetbrains.annotations.Nullable;
 @Value
 @Builder
 public class RawRepository implements RepositoryLike, RawObject<Repository> {
+
     @NotNull String id;
+
     @NotNull String url;
+
     @Nullable String name;
+
     @Builder.Default
     @NotNull Policy releases = Policy.builder().enabled(Boolean.TRUE.toString()).build();
+
     @Builder.Default
     @NotNull Policy snapshots = Policy.builder().build();
+
+    @Builder.Default
+    @NotNull String uniqueVersion = "true";
+
+    @Builder.Default
+    @NotNull String layout = "default";
 
     @Override
     public @NotNull Repository applyProperties(final @NotNull Properties properties) {
