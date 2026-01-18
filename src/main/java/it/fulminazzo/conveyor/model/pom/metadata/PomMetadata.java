@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,6 +35,6 @@ public class PomMetadata {
     @NotNull Set<Contributor> contributors = new HashSet<>();
 
     @Builder.Default
-    @NotNull Set<MailingList> mailingLists = new HashSet<>();
+    @NotNull List<MailingList> mailingLists = new LinkedList<>();
 
 }
