@@ -4,6 +4,28 @@ import spock.lang.Specification
 
 class PropertyAccessorTest extends Specification {
 
+    def 'test that getSubProperty returns expected value'() {
+        given:
+        def object = new MockObject()
+
+        when:
+        def value = PropertyAccessor.getSubProperty(object, 'sub1', 'field1')
+
+        then:
+        value == 'Hello, world'
+    }
+
+    def 'test that getSubProperty throws on null first object'() {
+        given:
+        def object = new MockObject()
+
+        when:
+        PropertyAccessor.getSubProperty(object, 'a', 'b')
+
+        then:
+        thrown(NullPointerException)
+    }
+
     def 'test that getIndexed of #name with #index returns #expected'() {
         given:
         def object = new MockObject()
