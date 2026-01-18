@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.artifact;
 
+import it.fulminazzo.conveyor.property.PropertyAccessible;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode
 @ToString
 @SuperBuilder
-public abstract class ArtifactLike {
+public abstract class ArtifactLike implements PropertyAccessible {
     protected final @NotNull String groupId;
     protected final @NotNull String artifactId;
 

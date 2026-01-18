@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
+import it.fulminazzo.conveyor.property.PropertyAccessible;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode
 @ToString
-public abstract class MavenModel {
+public abstract class MavenModel implements PropertyAccessible {
     private final @NotNull Map<String, String> properties;
     private final @NotNull Set<RawRepository> repositories;
     private final @NotNull Set<RawDependency> dependencyManagement;
