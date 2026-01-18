@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,7 +30,8 @@ public final class Pom extends MavenModel implements PomLike {
     @Builder.Default
     private final @NotNull String packaging = "jar";
     private final @Nullable Artifact parent;
-    private final @NotNull Set<Profile> profiles;
+    @Builder.Default
+    private final @NotNull Set<Profile> profiles = new HashSet<>();
 
     /**
      * Instantiates a new builder to create a {@link Pom} object.

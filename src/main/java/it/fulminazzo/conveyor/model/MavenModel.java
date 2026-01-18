@@ -3,15 +3,14 @@ package it.fulminazzo.conveyor.model;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.property.PropertyAccessible;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a general Maven model object with
@@ -22,9 +21,13 @@ import java.util.Set;
 @ToString
 @SuperBuilder
 public abstract class MavenModel implements PropertyAccessible {
-    private final @NotNull Map<String, String> properties;
-    private final @NotNull Set<RawRepository> repositories;
-    private final @NotNull Set<RawDependency> dependencyManagement;
-    private final @NotNull List<RawDependency> dependencies;
+    @Builder.Default
+    private final @NotNull Map<String, String> properties = new HashMap<>();
+    @Builder.Default
+    private final @NotNull Set<RawRepository> repositories = new HashSet<>();
+    @Builder.Default
+    private final @NotNull Set<RawDependency> dependencyManagement = new HashSet<>();
+    @Builder.Default
+    private final @NotNull List<RawDependency> dependencies = new ArrayList<>();
 
 }
