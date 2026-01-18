@@ -6,6 +6,8 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.profile.activation.AndActivation
+import it.fulminazzo.conveyor.model.profile.activation.BooleanActivation
+import it.fulminazzo.conveyor.model.profile.activation.PropertyActivation
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.RawRepository
 import it.fulminazzo.conveyor.util.TestUtils
@@ -32,50 +34,25 @@ class XmlPomBuilderTest extends Specification {
                         '1.0.0-SNAPSHOT',
                 ))
                 .profiles(Set.copyOf([
-                        newRawProfile("""
-                            <profile>
-                                <id>development</id>
-                                <activation>
-                                    <activeByDefault>true</activeByDefault>
-                                    <property>
-                                        <name>env</name>
-                                        <value>dev</value>
-                                    </property>
-                                </activation>
-                                <properties>
-                                    <db.url>jdbc:mysql://localhost:3306/dev_db</db.url>
-                                </properties>
-                            </profile>"""),
-                        newRawProfile("""
-                            <profile>
-                                <id>production</id>
-                                <activation>
-                                    <property>
-                                        <name>env</name>
-                                        <value>prod</value>
-                                    </property>
-                                </activation>
-                                <properties>
-                                    <db.url>jdbc:mysql://prod-db:3306/prod_db</db.url>
-                                </properties>
-                                <build>
-                                    <plugins>
-                                        <plugin>
-                                            <groupId>com.github.wvengen</groupId>
-                                            <artifactId>proguard-maven-plugin</artifactId>
-                                            <version>2.5.3</version>
-                                            <executions>
-                                                <execution>
-                                                    <phase>package</phase>
-                                                    <goals>
-                                                        <goal>proguard</goal>
-                                                    </goals>
-                                                </execution>
-                                            </executions>
-                                        </plugin>
-                                    </plugins>
-                                </build>
-                            </profile>""")
+                        Profile.builder()
+                                .id('development')
+                                .activation(new AndActivation()
+                                        .addActivation('activeByDefault', new BooleanActivation(true))
+                                        .addActivation('property', new PropertyActivation('env', 'dev'))
+                                )
+                                .properties([
+                                        'db.url': 'jdbc:mysql://localhost:3306/dev_db'
+                                ])
+                                .build(),
+                        Profile.builder()
+                                .id('production')
+                                .activation(new AndActivation()
+                                        .addActivation('property', new PropertyActivation('env', 'prod'))
+                                )
+                                .properties([
+                                        'db.url': 'jdbc:mysql://prod-db:3306/prod_db'
+                                ])
+                                .build()
                 ]))
                 .properties([
                         'project.build.sourceEncoding': 'UTF-8',
