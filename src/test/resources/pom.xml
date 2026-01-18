@@ -110,6 +110,24 @@
     <ciManagement>
         <system>Jenkins</system>
         <url>https://jenkins.example.com/job/superapp</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <sendOnError>true</sendOnError>
+                <sendOnFailure>true</sendOnFailure>
+                <sendOnSuccess>false</sendOnSuccess>
+                <sendOnWarning>false</sendOnWarning>
+                <address>build-alerts@example.com</address>
+                <configuration>
+                    <prefix>[BUILD-REPORT]</prefix>
+                </configuration>
+            </notifier>
+            <notifier>
+                <type>irc</type>
+                <sendOnFailure>true</sendOnFailure>
+                <address>irc.freenode.net:6667 #superapp-devs</address>
+            </notifier>
+        </notifiers>
     </ciManagement>
 
     <properties>
