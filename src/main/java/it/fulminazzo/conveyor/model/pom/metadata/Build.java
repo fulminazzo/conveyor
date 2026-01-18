@@ -1,19 +1,21 @@
 package it.fulminazzo.conveyor.model.pom.metadata;
 
 import it.fulminazzo.conveyor.model.artifact.Artifact;
-import lombok.Builder;
-import lombok.Value;
+import it.fulminazzo.conveyor.model.profile.metadata.BuildBase;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-@Value
-@Builder
-public class Build {
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@SuperBuilder
+public final class Build extends BuildBase {
 
     @Builder.Default
     @NotNull String sourceDirectory = "src/main/java";
@@ -32,28 +34,5 @@ public class Build {
 
     @Builder.Default
     @NotNull List<Artifact> extensions = new LinkedList<>();
-
-    @Nullable String defaultGoal;
-
-    @Builder.Default
-    @NotNull List<Resource> resources = new LinkedList<>();
-
-    @Builder.Default
-    @NotNull List<Resource> testResources = new LinkedList<>();
-
-    @Builder.Default
-    @NotNull String directory = "target";
-
-    @Builder.Default
-    @NotNull String finalName = "${artifactId}-${version}";
-
-    @Builder.Default
-    @NotNull List<String> filters = new LinkedList<>();
-
-    @Builder.Default
-    @NotNull Set<Plugin> pluginManagement = new HashSet<>();
-
-    @Builder.Default
-    @NotNull List<Plugin> plugins = new LinkedList<>();
 
 }
