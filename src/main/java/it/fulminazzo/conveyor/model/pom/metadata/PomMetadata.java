@@ -44,6 +44,8 @@ public class PomMetadata {
 
     @Nullable IssueManagement issueManagement;
 
+    @Nullable CiManagement ciManagement;
+
     @Data
     @Builder
     @NoArgsConstructor
@@ -64,6 +66,21 @@ public class PomMetadata {
         @Nullable String system;
 
         @Nullable String url;
+
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CiManagement {
+
+        @Nullable String system;
+
+        @Nullable String url;
+
+        @Builder.Default
+        @NotNull List<Notifier> notifiers = new LinkedList<>();
 
     }
 
