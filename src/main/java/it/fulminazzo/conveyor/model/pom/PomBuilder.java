@@ -25,6 +25,8 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
     private @Nullable String classifier;
     private @Nullable String version;
     private @Nullable String packaging;
+    private @Nullable String name;
+    private @Nullable String description;
     private @Nullable Artifact parent;
 
     private final @NotNull Map<String, Profile> profiles = new LinkedHashMap<>();
@@ -58,6 +60,8 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
                         .version(Objects.requireNonNull(this.version, "version is marked non-null but is null"))
                         .classifier(this.classifier)
                         .build(),
+                this.name,
+                this.description,
                 this.packaging == null ? defaultPackaging : this.packaging,
                 this.parent,
                 this.profiles.values(),
@@ -80,6 +84,8 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
                 case "artifactId" -> this.artifactId = getCurrentTextContent();
                 case "version" -> this.version = getCurrentTextContent();
                 case "classifier" -> this.classifier = getCurrentTextContent();
+                case "name" -> this.name = getCurrentTextContent();
+                case "description" -> this.description = getCurrentTextContent();
                 case "packaging" -> this.packaging = getCurrentTextContent();
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
