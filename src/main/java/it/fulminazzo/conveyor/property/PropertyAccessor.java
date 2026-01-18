@@ -87,14 +87,12 @@ final class PropertyAccessor {
      * @param name   the name
      * @return the field value
      */
-    static @Nullable String getField(final @NotNull Object object,
+    static @Nullable Object getField(final @NotNull Object object,
                                      final @NotNull String name) {
         try {
             Field field = object.getClass().getDeclaredField(name);
             field.setAccessible(true);
-            Object fieldObject = field.get(object);
-            if (fieldObject == null) return null;
-            else return fieldObject.toString();
+            return field.get(object);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             return null;
         }
@@ -109,14 +107,12 @@ final class PropertyAccessor {
      * @param name   the name
      * @return the method return
      */
-    static @Nullable String invokeMethod(final @NotNull Object object,
+    static @Nullable Object invokeMethod(final @NotNull Object object,
                                          final @NotNull String name) {
         try {
             Method method = object.getClass().getDeclaredMethod(name);
             method.setAccessible(true);
-            Object methodObject = method.invoke(object);
-            if (methodObject == null) return null;
-            else return methodObject.toString();
+            return method.invoke(object);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return null;
         }
