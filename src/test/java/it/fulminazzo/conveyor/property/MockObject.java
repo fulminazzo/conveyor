@@ -24,6 +24,8 @@ final class MockObject {
     Collection<Boolean> indexed3 = List.of(true, false);
     String[] indexed4 = new String[]{"Hello", "world"};
 
+    MockSubObject sub1 = new MockSubObject();
+
     public String method1() {
         return method1("world");
     }
@@ -46,6 +48,12 @@ final class MockObject {
 
     Object method5(String what) {
         return what;
+    }
+
+    final class MockSubObject {
+
+        String field1 = "Hello, world";
+
     }
 
 }
