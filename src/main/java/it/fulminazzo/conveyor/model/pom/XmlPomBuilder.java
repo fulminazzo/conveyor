@@ -17,7 +17,7 @@ import java.util.Objects;
 /**
  * Responsible for creating a {@link Pom} object.
  */
-public final class PomBuilder extends MavenModelBuilder<MavenModel> {
+public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     private static final String defaultPackaging = "jar";
 
     private @Nullable String groupId;
@@ -37,7 +37,7 @@ public final class PomBuilder extends MavenModelBuilder<MavenModel> {
      *
      * @param parser the XML parser
      */
-    PomBuilder(final @NotNull XmlParser parser) {
+    XmlPomBuilder(final @NotNull XmlParser parser) {
         super(parser);
     }
 

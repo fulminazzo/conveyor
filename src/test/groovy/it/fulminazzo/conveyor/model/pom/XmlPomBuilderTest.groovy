@@ -11,7 +11,7 @@ import it.fulminazzo.conveyor.util.TestUtils
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
-class PomBuilderTest extends Specification {
+class XmlPomBuilderTest extends Specification {
 
     def 'test that build returns correct profile'() {
         given:
@@ -150,7 +150,7 @@ class PomBuilderTest extends Specification {
         def parser = XmlParser.newParser(file.newInputStream())
 
         and:
-        def builder = new PomBuilder(parser)
+        def builder = new XmlPomBuilder(parser)
 
         when:
         def actual = builder.build()
@@ -234,7 +234,7 @@ class PomBuilderTest extends Specification {
         builder.parseProfiles()
 
         and:
-        def field = PomBuilder.getDeclaredField('profiles')
+        def field = XmlPomBuilder.getDeclaredField('profiles')
         field.accessible = true
         def profiles = field.get(builder)
 
@@ -251,7 +251,7 @@ class PomBuilderTest extends Specification {
         def file = new File(TestUtils.BASE_DIR, 'commons-parent-81.pom')
 
         and:
-        def builder = new PomBuilder(XmlParser.newParser(file.newInputStream()))
+        def builder = new XmlPomBuilder(XmlParser.newParser(file.newInputStream()))
 
         when:
         builder.build()
@@ -267,11 +267,11 @@ class PomBuilderTest extends Specification {
     private static Profile newRawProfile(final String data) {
         def parser = newParser(data)
         parser.next()
-        return Profile.builder(parser).build()
+        return Profile.builder().build()
     }
 
-    private static PomBuilder newBuilder(final String data) {
-        return new PomBuilder(newParser(data))
+    private static XmlPomBuilder newBuilder(final String data) {
+        return new XmlPomBuilder(newParser(data))
     }
 
     private static XmlParser newParser(final String data) {
