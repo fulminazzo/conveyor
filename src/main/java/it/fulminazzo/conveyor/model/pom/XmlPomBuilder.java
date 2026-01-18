@@ -4,10 +4,7 @@ import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
-import it.fulminazzo.conveyor.model.pom.metadata.Developer;
-import it.fulminazzo.conveyor.model.pom.metadata.License;
-import it.fulminazzo.conveyor.model.pom.metadata.Organization;
-import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata;
+import it.fulminazzo.conveyor.model.pom.metadata.*;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import it.fulminazzo.conveyor.xml.XmlParserException;
@@ -96,6 +93,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "organization" -> this.pomMetadataBuilder.organization(parseOrganization());
                 case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseLicenses()));
                 case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseDevelopers()));
+                case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseContributors()));
             }
         });
     }
@@ -133,7 +131,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
         return buildObject("parent", builder::build);
     }
 
-    /**
+    /*
      * METADATA
      */
 
@@ -225,6 +223,44 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("developer", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;contributors&gt;</b> tag in the document.
+     *
+     * @return the contributors
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Contributor> parseContributors() throws BuilderException {
+        List<Contributor> contributors = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("contributor"))
+                contributors.add(parseContributor());
+        });
+        return contributors;
+    }
+
+    /**
+     * Handles the <b>&lt;contributor&gt;</b> tag in the document.
+     *
+     * @return the contributor
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Contributor parseContributor() throws BuilderException {
+        Contributor.ContributorBuilder builder = Contributor.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "name" -> builder.name(getCurrentTextContent());
+                case "email" -> builder.email(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+                case "organization" -> builder.organization(getCurrentTextContent());
+                case "organizationUrl" -> builder.organizationUrl(getCurrentTextContent());
+                case "roles" -> builder.roles(parseRoles());
+                case "timezone" -> builder.timezone(getCurrentTextContent());
+                case "properties" -> builder.properties(parseProperties());
+            }
+        });
+        return buildObject("contributor", builder::build);
     }
 
     /**
