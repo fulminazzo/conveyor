@@ -5,16 +5,15 @@ import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A builder for creating {@link Profile} objects from <b>XML</b>.
  */
 public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
-    private @Nullable String id;
-    private @Nullable Activation activation;
+    private final @NotNull Profile.ProfileBuilder<?, ?> builder = Profile.builder();
 
     /**
      * Instantiates a new Profile builder.
@@ -28,21 +27,20 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
     @Override
     public @NotNull Profile build() throws BuilderException {
         parseDocument();
-        return buildObject("profile", () -> new Profile(
-                Objects.requireNonNull(this.id, "id is marked non-null but is null"),
-                this.activation == null ? Activation.alwaysFalse() : this.activation,
-                this.properties,
-                this.repositories.values(),
-                this.dependencyManagement.values(),
-                this.dependencies.values()
-        ));
+        return buildObject("profile", () -> this.builder
+                .properties(this.properties)
+                .repositories(Set.copyOf(this.repositories.values()))
+                .dependencyManagement(Set.copyOf(this.dependencyManagement.values()))
+                .dependencies(List.copyOf(this.dependencies.values()))
+                .build()
+        );
     }
 
     @Override
     protected void parseDocument() throws BuilderException {
         onChildElements(t -> {
             switch (t) {
-                case "id" -> parseId();
+                case "id" -> this.builder.id(getCurrentTextContent());
                 case "activation" -> parseActivation();
                 case "properties" -> parseProperties();
                 case "repositories" -> parseRepositories();
@@ -53,21 +51,12 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
     }
 
     /**
-     * Handles the <b>&lt;id&gt;</b> tag in the document.
-     *
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    void parseId() throws BuilderException {
-        this.id = getCurrentTextContent();
-    }
-
-    /**
      * Handles the <b>&lt;activation&gt;</b> tag in the document.
      *
      * @throws BuilderException in case of any errors
      */
     void parseActivation() throws BuilderException {
-        this.activation = Activation.builder(getParser()).build();
+        this.builder.activation(Activation.builder(getParser()).build());
     }
 
 }
