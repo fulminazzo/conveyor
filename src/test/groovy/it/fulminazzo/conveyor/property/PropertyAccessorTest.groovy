@@ -17,8 +17,8 @@ class PropertyAccessorTest extends Specification {
         where:
         name     || expected
         'field1' || 'Hello, world!'
-        'field2' || '10'
-        'field3' || 'true'
+        'field2' || 10
+        'field3' || true
         'field4' || null
         'field5' || null
     }
@@ -36,8 +36,8 @@ class PropertyAccessorTest extends Specification {
         where:
         name      || expected
         'method1' || 'Hello, world!'
-        'method2' || '10'
-        'method3' || 'true'
+        'method2' || 10
+        'method3' || true
         'method4' || null
         'method5' || null
         'method6' || null
