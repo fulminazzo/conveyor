@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.pom.metadata.License;
 import it.fulminazzo.conveyor.model.pom.metadata.Organization;
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata;
 import it.fulminazzo.conveyor.model.profile.Profile;
@@ -96,6 +97,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "url" -> this.pomMetadataBuilder.url(getCurrentTextContent());
                 case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
                 case "organization" -> this.pomMetadataBuilder.organization(parseOrganization());
+                case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseLicenses()));
             }
         });
     }
@@ -152,6 +154,40 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("organization", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;licenses&gt;</b> tag in the document.
+     *
+     * @return the licenses
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<License> parseLicenses() throws BuilderException {
+        List<License> licenses = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("license"))
+                licenses.add(parseLicense());
+        });
+        return licenses;
+    }
+
+    /**
+     * Handles the <b>&lt;license&gt;</b> tag in the document.
+     *
+     * @return the license
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull License parseLicense() throws BuilderException {
+        License.LicenseBuilder builder = License.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "name" -> builder.name(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+                case "distribution" -> builder.distribution(getCurrentTextContent());
+                case "comments" -> builder.comments(getCurrentTextContent());
+            }
+        });
+        return buildObject("license", builder::build);
     }
 
 }
