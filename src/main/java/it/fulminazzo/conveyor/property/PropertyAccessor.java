@@ -40,7 +40,8 @@ final class PropertyAccessor {
      */
     public static @Nullable String getProperty(final @NotNull Object object,
                                                final @NotNull String key) {
-        throw new UnsupportedOperationException();
+        Object property = getObject(object, key);
+        return property == null ? null : property.toString();
     }
 
     private static @Nullable Object getObject(final @NotNull Object object,
