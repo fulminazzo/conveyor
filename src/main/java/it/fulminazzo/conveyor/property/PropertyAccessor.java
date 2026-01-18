@@ -41,6 +41,25 @@ final class PropertyAccessor {
 
     /**
      * Attempts to get a property with the given name.
+     * Then, it will get the property with the other name
+     * from the first result.
+     *
+     * @param object          the object
+     * @param name            the name
+     * @param subPropertyName the sub property name
+     * @return the value
+     */
+    static @Nullable Object getSubProperty(final @NotNull Object object,
+                                           final @NotNull String name,
+                                           final @NotNull String subPropertyName) {
+        Object obj = getObject(object, name);
+        if (obj == null)
+            throw new NullPointerException(String.format("Could not get '%s' from %s.%s", subPropertyName, object, name));
+        return getObject(obj, subPropertyName);
+    }
+
+    /**
+     * Attempts to get a property with the given name.
      * Then, if it is a {@link Collection}, it will return the object at the given index.
      * If it is not a {@link Collection}, an exception will be returned.
      *
