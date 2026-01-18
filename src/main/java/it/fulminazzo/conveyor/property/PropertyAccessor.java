@@ -5,11 +5,11 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A utility class to access fields and methods of a given object.
@@ -69,10 +69,8 @@ final class PropertyAccessor {
                                        final @NotNull String name,
                                        final int index) {
         Object o = getObject(object, name);
-        if (o instanceof Collection<?> collection) {
-            List<?> list = collection.stream().toList();
-            return list.get(index);
-        }
+        if (o != null && o.getClass().isArray()) return Array.get(o, index);
+        if (o instanceof Collection<?> collection) return collection.stream().toList().get(index);
         throw new IllegalArgumentException(String.format("Property %s.%s = %s is not an indexable object", object, name, o));
     }
 
