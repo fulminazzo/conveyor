@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.pom
 
 import it.fulminazzo.conveyor.model.artifact.Artifact
+import it.fulminazzo.conveyor.model.pom.metadata.Organization
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata
 import spock.lang.Specification
 
@@ -18,6 +19,10 @@ class PomTest extends Specification {
                         .description('A maven library...')
                         .url('fulminazzo.it')
                         .inceptionYear('2024')
+                        .organization(Organization.builder()
+                                .name('fulminazzo')
+                                .url('fulminazzo.it')
+                                .build())
                         .build())
                 .build()
 
@@ -42,6 +47,8 @@ class PomTest extends Specification {
         'description'       || 'A maven library...'
         'url'               || 'fulminazzo.it'
         'inceptionYear'     || '2024'
+        'organization.name' || 'fulminazzo'
+        'organization.url'  || 'fulminazzo.it'
     }
 
 }
