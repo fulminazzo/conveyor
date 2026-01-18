@@ -27,9 +27,11 @@ final class AndActivation implements Activation {
      *
      * @param id         the identifier of the activation. Must be unique (or will be overridden)
      * @param activation the activation
+     * @return this activation (for method chaining)
      */
-    public void addActivation(final @NotNull String id, final @NotNull Activation activation) {
+    public @NotNull AndActivation addActivation(final @NotNull String id, final @NotNull Activation activation) {
         this.activations.put(id, activation);
+        return this;
     }
 
 }
