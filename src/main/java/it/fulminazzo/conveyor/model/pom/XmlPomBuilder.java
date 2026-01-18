@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.pom.metadata.Developer;
 import it.fulminazzo.conveyor.model.pom.metadata.License;
 import it.fulminazzo.conveyor.model.pom.metadata.Organization;
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata;
@@ -184,6 +185,30 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("license", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;developer&gt;</b> tag in the document.
+     *
+     * @return the developer
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Developer parseDeveloper() throws BuilderException {
+        Developer.DeveloperBuilder builder = Developer.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "id" -> builder.id(getCurrentTextContent());
+                case "name" -> builder.name(getCurrentTextContent());
+                case "email" -> builder.email(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+                case "organization" -> builder.organization(getCurrentTextContent());
+                case "organizationUrl" -> builder.organizationUrl(getCurrentTextContent());
+                case "roles" -> builder.roles(parseRoles());
+                case "timezone" -> builder.timezone(getCurrentTextContent());
+                case "properties" -> builder.properties(parseProperties());
+            }
+        });
+        return buildObject("developer", builder::build);
     }
 
     /**
