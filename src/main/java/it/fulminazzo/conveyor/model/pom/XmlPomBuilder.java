@@ -4,6 +4,7 @@ import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import it.fulminazzo.conveyor.xml.XmlParserException;
@@ -17,6 +18,7 @@ import java.util.*;
  */
 public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     private final @NotNull Pom.PomBuilder<?, ?> builder = Pom.builder();
+    private final @NotNull PomMetadata.PomMetadataBuilder pomMetadataBuilder = PomMetadata.builder();
     
     private @Nullable String groupId;
     private @Nullable String artifactId;
@@ -56,6 +58,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                         .version(Objects.requireNonNull(this.version, "version is marked non-null but is null"))
                         .classifier(this.classifier)
                         .build())
+                .metadata(this.pomMetadataBuilder.build())
                 .parent(this.parent)
                 .profiles(Set.copyOf(this.profiles.values()))
                 .properties(this.properties)
@@ -74,15 +77,15 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     protected void parseDocument() throws BuilderException {
         onChildElements(t -> {
             switch (t) {
-                case "modelVersion" -> this.builder.modelVersion(getCurrentTextContent());
+                case "modelVersion" -> this.pomMetadataBuilder.modelVersion(getCurrentTextContent());
                 case "groupId" -> this.groupId = getCurrentTextContent();
                 case "artifactId" -> this.artifactId = getCurrentTextContent();
                 case "version" -> this.version = getCurrentTextContent();
                 case "classifier" -> this.classifier = getCurrentTextContent();
-                case "name" -> this.builder.name(getCurrentTextContent());
-                case "description" -> this.builder.description(getCurrentTextContent());
-                case "url" -> this.builder.url(getCurrentTextContent());
-                case "inceptionYear" -> this.builder.inceptionYear(getCurrentTextContent());
+                case "name" -> this.pomMetadataBuilder.name(getCurrentTextContent());
+                case "description" -> this.pomMetadataBuilder.description(getCurrentTextContent());
+                case "url" -> this.pomMetadataBuilder.url(getCurrentTextContent());
+                case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
                 case "packaging" -> this.builder.packaging(getCurrentTextContent());
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
