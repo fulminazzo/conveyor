@@ -73,7 +73,7 @@ final class PropertyAccessor {
             List<?> list = collection.stream().toList();
             return list.get(index);
         }
-        throw new IllegalArgumentException(String.format("Value '%s' with name '%s' is not a collection", o, name));
+        throw new IllegalArgumentException(String.format("Property %s.%s = %s is not an indexable object", object, name, o));
     }
 
     /**
