@@ -100,6 +100,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "issueManagement" -> this.pomMetadataBuilder.issueManagement(parseIssueManagement());
                 case "ciManagement" -> this.pomMetadataBuilder.ciManagement(parseCiManagement());
                 case "pluginRepositories" -> this.pomMetadataBuilder.pluginRepositories(parseRepositories());
+                case "build" -> this.pomMetadataBuilder.build(parseBuild());
             }
         });
     }
@@ -434,8 +435,8 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "directory" -> builder.directory(getCurrentTextContent());
                 case "finalName" -> builder.finalName(getCurrentTextContent());
                 case "filters" -> builder.filters(parseStringList("filter"));
-                case "pluginManagement" -> builder.pluginManagement(getCurrentTextContent());
-                case "plugins" -> builder.plugins(getCurrentTextContent());
+                case "pluginManagement" -> builder.pluginManagement(Set.copyOf(parsePluginManagement()));
+                case "plugins" -> builder.plugins(List.copyOf(parsePlugins()));
             }
         });
         return buildObject("build", builder::build);
@@ -507,6 +508,92 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("resource", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;pluginManagement&gt;</b> tag in the document.
+     *
+     * @return the pluginManagement
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Plugin> parsePluginManagement() throws BuilderException {
+        List<Plugin> plugins = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("plugins"))
+                plugins.addAll(parsePlugins());
+        });
+        return plugins;
+    }
+
+    /**
+     * Handles the <b>&lt;plugins&gt;</b> tag in the document.
+     *
+     * @return the plugins
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Plugin> parsePlugins() throws BuilderException {
+        List<Plugin> plugins = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("plugin"))
+                plugins.add(parsePlugin());
+        });
+        return plugins;
+    }
+
+    /**
+     * Handles the <b>&lt;plugin&gt;</b> tag in the document.
+     *
+     * @return the plugin
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Plugin parsePlugin() throws BuilderException {
+        Plugin.PluginBuilder builder = Plugin.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "groupId" -> builder.groupId(getCurrentTextContent());
+                case "artifactId" -> builder.artifactId(getCurrentTextContent());
+                case "version" -> builder.version(getCurrentTextContent());
+                case "extensions" -> builder.extensions(getCurrentTextContent());
+                case "executions" -> builder.executions(List.copyOf(parseExecutions()));
+                case "dependencies" -> builder.dependencies(List.copyOf(parseDependencies()));
+                case "inherited" -> builder.inherited(getCurrentTextContent());
+            }
+        });
+        return buildObject("plugin", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;executions&gt;</b> tag in the document.
+     *
+     * @return the executions
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Plugin.Execution> parseExecutions() throws BuilderException {
+        List<Plugin.Execution> executions = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("executions"))
+                executions.add(parseExecution());
+        });
+        return executions;
+    }
+
+    /**
+     * Handles the <b>&lt;execution&gt;</b> tag in the document.
+     *
+     * @return the execution
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Plugin.Execution parseExecution() throws BuilderException {
+        Plugin.Execution.ExecutionBuilder builder = Plugin.Execution.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "id" -> builder.id(getCurrentTextContent());
+                case "phase" -> builder.phase(getCurrentTextContent());
+                case "goals" -> builder.goals(parseStringList("goal"));
+                case "inherited" -> builder.inherited(getCurrentTextContent());
+            }
+        });
+        return buildObject("execution", builder::build);
     }
 
     private @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
