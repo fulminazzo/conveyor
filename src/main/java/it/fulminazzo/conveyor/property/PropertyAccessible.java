@@ -25,6 +25,8 @@ public interface PropertyAccessible {
      * @param key the key associated with the property
      * @return the property
      */
-    @Nullable String getProperty(final @NotNull String key);
+    default @Nullable String getProperty(final @NotNull String key) {
+        return PropertyAccessor.getProperty(this, key);
+    }
 
 }
