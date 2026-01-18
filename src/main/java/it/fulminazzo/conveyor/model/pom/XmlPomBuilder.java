@@ -63,10 +63,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 .metadata(this.pomMetadataBuilder.build())
                 .parent(this.parent)
                 .profiles(Set.copyOf(this.profiles.values()))
-                .properties(this.properties)
-                .repositories(Set.copyOf(this.repositories.values()))
-                .dependencyManagement(Set.copyOf(this.dependencyManagement.values()))
-                .dependencies(List.copyOf(this.dependencies.values()))
                 .build()
         );
     }
@@ -86,10 +82,10 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "packaging" -> this.builder.packaging(getCurrentTextContent());
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
-                case "properties" -> parseProperties();
-                case "repositories" -> parseRepositories();
-                case "dependencyManagement" -> parseDependencyManagement();
-                case "dependencies" -> parseDependencies();
+                case "properties" -> this.builder.properties(parseProperties());
+                case "repositories" -> this.builder.repositories(parseRepositories());
+                case "dependencyManagement" -> this.builder.dependencyManagement(parseDependencyManagement());
+                case "dependencies" -> this.builder.dependencies(parseDependencies());
                 // METADATA
                 case "modelVersion" -> this.pomMetadataBuilder.modelVersion(getCurrentTextContent());
                 case "name" -> this.pomMetadataBuilder.name(getCurrentTextContent());

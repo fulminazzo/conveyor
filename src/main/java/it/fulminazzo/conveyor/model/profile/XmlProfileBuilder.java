@@ -6,9 +6,6 @@ import it.fulminazzo.conveyor.model.profile.activation.Activation;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * A builder for creating {@link Profile} objects from <b>XML</b>.
  */
@@ -27,13 +24,7 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
     @Override
     public @NotNull Profile build() throws BuilderException {
         parseDocument();
-        return buildObject("profile", () -> this.builder
-                .properties(this.properties)
-                .repositories(Set.copyOf(this.repositories.values()))
-                .dependencyManagement(Set.copyOf(this.dependencyManagement.values()))
-                .dependencies(List.copyOf(this.dependencies.values()))
-                .build()
-        );
+        return buildObject("profile", this.builder::build);
     }
 
     @Override
@@ -42,10 +33,10 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
             switch (t) {
                 case "id" -> this.builder.id(getCurrentTextContent());
                 case "activation" -> parseActivation();
-                case "properties" -> parseProperties();
-                case "repositories" -> parseRepositories();
-                case "dependencyManagement" -> parseDependencyManagement();
-                case "dependencies" -> parseDependencies();
+                case "properties" -> this.builder.properties(parseProperties());
+                case "repositories" -> this.builder.repositories(parseRepositories());
+                case "dependencyManagement" -> this.builder.dependencyManagement(parseDependencyManagement());
+                case "dependencies" -> this.builder.dependencies(parseDependencies());
             }
         });
     }
