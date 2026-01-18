@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.model.pom;
 
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.property.DelegateProperties;
 import it.fulminazzo.conveyor.xml.XmlParser;
@@ -25,17 +26,13 @@ import java.util.Set;
 @SuperBuilder
 public final class Pom extends MavenModel implements PomLike {
 
-    private final @Nullable String modelVersion;
-
     private final @Nullable Artifact parent;
 
     @DelegateProperties
     private final @NotNull Artifact project;
 
-    private final @Nullable String name;
-    private final @Nullable String description;
-    private final @Nullable String url;
-    private final @Nullable String inceptionYear;
+    @DelegateProperties
+    private final @NotNull PomMetadata metadata;
 
     @Builder.Default
     private final @NotNull String packaging = "jar";
