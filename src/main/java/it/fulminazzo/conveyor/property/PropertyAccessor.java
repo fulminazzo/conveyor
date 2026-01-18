@@ -8,6 +8,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * A utility class to access fields and methods of a given object.
@@ -35,6 +39,43 @@ final class PropertyAccessor {
     public static @Nullable String getProperty(final @NotNull Object object,
                                                final @NotNull String key) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Attempts to get a property with the given name.
+     * Then, if it is a {@link Collection}, it will return the object at the given index.
+     * If it is not a {@link Collection}, an exception will be returned.
+     *
+     * @param object   the object
+     * @param name     the name
+     * @param rawIndex the raw index
+     * @return the value
+     */
+    static @Nullable String getIndexed(final @NotNull Object object,
+                                       final @NotNull String name,
+                                       final @NotNull String rawIndex) {
+        return getIndexed(object, name, Integer.parseInt(rawIndex));
+    }
+
+    /**
+     * Attempts to get a property with the given name.
+     * Then, if it is a {@link Collection}, it will return the object at the given index.
+     * If it is not a {@link Collection}, an exception will be returned.
+     *
+     * @param object the object
+     * @param name   the name
+     * @param index  the index
+     * @return the value
+     */
+    static @Nullable String getIndexed(final @NotNull Object object,
+                                       final @NotNull String name,
+                                       final int index) {
+        Object o = getObject(object, name);
+        if (o instanceof Collection<?> collection) {
+            List<?> list = List.of(collection);
+            return list.get(index).toString();
+        }
+        throw new IllegalArgumentException(String.format("Value '%s' with name '%s' is not a collection", o, name));
     }
 
     /**
