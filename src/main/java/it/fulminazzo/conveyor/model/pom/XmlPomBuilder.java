@@ -310,7 +310,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "otherArchives" -> builder.otherArchives(parseOtherArchives());
             }
         });
-        return builder.build();
+        return buildObject("mailingList", builder::build);
     }
 
     /**
@@ -335,7 +335,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             if (t.equals("maven"))
                 builder.maven(getCurrentTag());
         });
-        return builder.build();
+        return buildObject("prerequisites", builder::build);
     }
 
     /**
@@ -352,7 +352,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "url" -> builder.url(getCurrentTextContent());
             }
         });
-        return builder.build();
+        return buildObject("issueManagement", builder::build);
     }
 
     private @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
