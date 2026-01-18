@@ -96,6 +96,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseContributors()));
                 case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseMailingLists()));
                 case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
+                case "modules" -> this.pomMetadataBuilder.modules(parseStringList("module"));
             }
         });
     }
