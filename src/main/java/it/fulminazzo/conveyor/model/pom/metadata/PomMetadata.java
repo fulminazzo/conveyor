@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.pom.metadata;
 
+import it.fulminazzo.conveyor.model.repository.RawRepository;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +46,9 @@ public class PomMetadata {
     @Nullable IssueManagement issueManagement;
 
     @Nullable CiManagement ciManagement;
+
+    @Builder.Default
+    @NotNull Set<RawRepository> pluginRepositories = new HashSet<>();
 
     @Data
     @Builder
