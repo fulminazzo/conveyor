@@ -4,6 +4,28 @@ import spock.lang.Specification
 
 class PropertyAccessorTest extends Specification {
 
+    def 'test getObject with subproperty and index'() {
+        given:
+        def object = new MockObject()
+
+        when:
+        def value = PropertyAccessor.getObject(object, 'sub1.indexed2[1].field1')
+
+        then:
+        value == 'world'
+    }
+
+    def 'test getObject with index in subproperty'() {
+        given:
+        def object = new MockObject()
+
+        when:
+        def value = PropertyAccessor.getObject(object, 'sub1.indexed1[1]')
+
+        then:
+        value == false
+    }
+
     def 'test getObject with matrix'() {
         given:
         def object = new MockObject()

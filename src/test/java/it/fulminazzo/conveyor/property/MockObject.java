@@ -62,6 +62,20 @@ final class MockObject {
 
         String field1 = "Hello, world";
 
+        Collection<Boolean> indexed1 = Arrays.asList(true, false);
+        Collection<MockSndSubObject> indexed2 = Arrays.asList(
+                new MockSndSubObject("Hello"),
+                new MockSndSubObject("world")
+        );
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    static final class MockSndSubObject {
+
+        String field1;
+
     }
 
 }
