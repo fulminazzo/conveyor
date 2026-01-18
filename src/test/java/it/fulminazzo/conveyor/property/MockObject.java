@@ -14,4 +14,28 @@ final class MockObject {
     boolean field3 = true;
     Object field4 = null;
 
+    public String method1() {
+        return method1("world");
+    }
+
+    public String method1(String who) {
+        return String.format("Hello, %s!", who);
+    }
+
+    int method2() {
+        return 10;
+    }
+
+    private boolean method3() {
+        return true;
+    }
+
+    Object method4() {
+        return null;
+    }
+
+    Object method5(String what) {
+        return what;
+    }
+
 }
