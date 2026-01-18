@@ -97,6 +97,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseMailingLists()));
                 case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
                 case "modules" -> this.pomMetadataBuilder.modules(parseStringList("module"));
+                case "issueManagement" -> this.pomMetadataBuilder.issueManagement(parseIssueManagement());
             }
         });
     }
@@ -329,12 +330,29 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
      * @throws BuilderException in case of reading or parsing errors
      */
     @NotNull PomMetadata.Prerequisites parsePrerequisites() throws BuilderException {
-        PomMetadata.Prerequisites.PrerequisitesBuilder prerequisites = PomMetadata.Prerequisites.builder();
+        PomMetadata.Prerequisites.PrerequisitesBuilder builder = PomMetadata.Prerequisites.builder();
         onChildElements(t -> {
             if (t.equals("maven"))
-                prerequisites.maven(getCurrentTag());
+                builder.maven(getCurrentTag());
         });
-        return prerequisites.build();
+        return builder.build();
+    }
+
+    /**
+     * Handles the <b>&lt;issueManagement&gt;</b> tag in the document.
+     *
+     * @return the issueManagement
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull PomMetadata.IssueManagement parseIssueManagement() throws BuilderException {
+        PomMetadata.IssueManagement.IssueManagementBuilder builder = PomMetadata.IssueManagement.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "system" -> builder.system(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+            }
+        });
+        return builder.build();
     }
 
     private @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
