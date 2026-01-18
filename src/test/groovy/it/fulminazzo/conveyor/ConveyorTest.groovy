@@ -9,7 +9,7 @@ import spock.lang.Specification
 @Slf4j
 class ConveyorTest extends Specification {
 
-    def 'downloadArtifact integration tests'() {
+    def 'downloadArtifact integration tests with #artifact'() {
         given:
         def workDir = new File(TestUtils.BASE_DIR, 'conveyor')
 
@@ -18,10 +18,7 @@ class ConveyorTest extends Specification {
                 ActivationContext.current(workDir),
                 workDir,
                 log
-        )
-
-        and:
-        def artifact = new Artifact('org.springframework', 'spring-core', '7.0.3')
+        ).addRawRepositories('repo.fulminazzo.it/releases')
 
         when:
         def files = conveyor.downloadArtifact(artifact)
@@ -35,7 +32,7 @@ class ConveyorTest extends Specification {
         }
 
         then:
-        files.size() > 1
+        files.size() > 0
 
         and:
         files.values().every { it.exists() }
@@ -46,6 +43,14 @@ class ConveyorTest extends Specification {
 
         and:
         files.get(key).exists()
+
+        where:
+        artifact << [
+                new Artifact('org.springframework', 'spring-core', '7.0.3'),
+                new Artifact('it.fulminazzo', 'FulmiCollection', '1.8.2'),
+                new Artifact('it.fulminazzo', 'Configurations', '1.6.4'),
+                new Artifact('it.fulminazzo', 'yagl', '5.2')
+        ]
     }
 
     def 'buildDependenciesTree integration tests'() {
