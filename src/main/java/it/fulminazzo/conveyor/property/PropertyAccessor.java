@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 final class PropertyAccessor {
+    private static final Pattern propertyPattern = Pattern.compile("^([a-zA-Z_].*)\\.([a-zA-Z_][^.]*)");
     private static final Pattern indexPattern = Pattern.compile("^([a-zA-Z_][^.]*)\\[(\\d+)]");
 
     /**
@@ -44,7 +45,12 @@ final class PropertyAccessor {
 
     private static @Nullable Object getObject(final @NotNull Object object,
                                               @NotNull String name) {
-        Matcher matcher = indexPattern.matcher(name);
+        Matcher matcher = propertyPattern.matcher(name);
+        if (matcher.find()) {
+            name = matcher.group(1);
+            return getSubProperty(object, name, matcher.group(2));
+        }
+        matcher = indexPattern.matcher(name);
         if (matcher.find()) {
             name = matcher.group(1);
             return getIndexed(object, name, matcher.group(2));
