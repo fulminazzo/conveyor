@@ -279,6 +279,27 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     }
 
     /**
+     * Handles the <b>&lt;mailingList&gt;</b> tag in the document.
+     *
+     * @return the mailingList
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull MailingList parseMailingList() throws BuilderException {
+        MailingList.MailingListBuilder builder = MailingList.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "name" -> builder.name(getCurrentTextContent());
+                case "subscribe" -> builder.subscribe(getCurrentTextContent());
+                case "unsubscribe" -> builder.unsubscribe(getCurrentTextContent());
+                case "post" -> builder.post(getCurrentTextContent());
+                case "archive" -> builder.archive(getCurrentTextContent());
+                case "otherArchives" -> builder.otherArchives(parseOtherArchives());
+            }
+        });
+        return builder.build();
+    }
+
+    /**
      * Handles the <b>&lt;otherArchives&gt;</b> tag in the document.
      *
      * @return the archives
