@@ -149,6 +149,18 @@ class PomTest extends Specification {
                                 .optional('true')
                                 .build()
                 ].toSet())
+                .dependencies([
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('conveyor')
+                                .version('1.0')
+                                .type('war')
+                                .classifier('sources')
+                                .scope('IMPORT')
+                                .exclusions(new Exclusions().add('it.fulminazzo.conveyor', 'common'))
+                                .optional('true')
+                                .build()
+                ])
                 .build()
 
         when:
@@ -264,6 +276,16 @@ class PomTest extends Specification {
         'dependencyManagement.dependencies[0].exclusions[0].groupId'    || 'it.fulminazzo.conveyor'
         'dependencyManagement.dependencies[0].exclusions[0].artifactId' || 'common'
         'dependencyManagement.dependencies[0].optional'                 || 'true'
+        'dependencies[0].groupId'                                       || 'it.fulminazzo'
+        'dependencies[0].artifactId'                                    || 'conveyor'
+        'dependencies[0].version'                                       || '1.0'
+        'dependencies[0].type'                                          || 'war'
+        'dependencies[0].classifier'                                    || 'sources'
+        'dependencies[0].scope'                                         || 'IMPORT'
+        //'dependencies[0].systemPath' || NOT SUPPORTED
+        'dependencies[0].exclusions[0].groupId'                         || 'it.fulminazzo.conveyor'
+        'dependencies[0].exclusions[0].artifactId'                      || 'common'
+        'dependencies[0].optional'                                      || 'true'
     }
 
 }
