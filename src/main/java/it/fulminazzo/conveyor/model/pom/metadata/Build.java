@@ -36,10 +36,10 @@ public class Build {
     @Nullable String defaultGoal;
 
     @Builder.Default
-    @NotNull List<Resource> resource = new LinkedList<>();
+    @NotNull List<Resource> resources = new LinkedList<>();
 
     @Builder.Default
-    @NotNull List<Resource> testResource = new LinkedList<>();
+    @NotNull List<Resource> testResources = new LinkedList<>();
 
     @Builder.Default
     @NotNull String directory = "target";

@@ -20,9 +20,9 @@ public class Resource {
     @Nullable String directory;
 
     @Builder.Default
-    @NotNull List<String> include = new LinkedList<>();
+    @NotNull List<String> includes = new LinkedList<>();
 
     @Builder.Default
-    @NotNull List<String> exclude = new LinkedList<>();
+    @NotNull List<String> excludes = new LinkedList<>();
 
 }
