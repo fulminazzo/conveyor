@@ -5,6 +5,7 @@ import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.profile.Profile
+import it.fulminazzo.conveyor.model.profile.activation.AndActivation
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.RawRepository
 import it.fulminazzo.conveyor.util.TestUtils
@@ -228,7 +229,20 @@ class XmlPomBuilderTest extends Specification {
         XmlObjectBuilderUtils.getParser(builder).next()
 
         and:
-        def expected = [newProfile('first'), newProfile('second'), newProfile('third')]
+        def expected = [
+                Profile.builder()
+                        .id('first')
+                        .activation(new AndActivation())
+                        .build(),
+                Profile.builder()
+                        .id('second')
+                        .activation(new AndActivation())
+                        .build(),
+                Profile.builder()
+                        .id('third')
+                        .activation(new AndActivation())
+                        .build()
+        ]
 
         when:
         builder.parseProfiles()
@@ -258,16 +272,6 @@ class XmlPomBuilderTest extends Specification {
 
         then:
         noExceptionThrown()
-    }
-
-    private static Profile newProfile(final String id) {
-        return newRawProfile("<profile><id>$id</id><activation></activation></profile>")
-    }
-
-    private static Profile newRawProfile(final String data) {
-        def parser = newParser(data)
-        parser.next()
-        return Profile.builder().build()
     }
 
     private static XmlPomBuilder newBuilder(final String data) {
