@@ -94,6 +94,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseLicenses()));
                 case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseDevelopers()));
                 case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseContributors()));
+                case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseMailingLists()));
             }
         });
     }
@@ -276,6 +277,21 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 roles.add(getCurrentTextContent());
         });
         return roles;
+    }
+
+    /**
+     * Handles the <b>&lt;mailingLists&gt;</b> tag in the document.
+     *
+     * @return the mailingLists
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<MailingList> parseMailingLists() throws BuilderException {
+        List<MailingList> mailingLists = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("mailingList"))
+                mailingLists.add(parseMailingList());
+        });
+        return mailingLists;
     }
 
     /**
