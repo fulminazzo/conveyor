@@ -26,5 +26,8 @@ public class PomMetadata {
     @Builder.Default
     @NotNull Set<License> licenses = new HashSet<>();
 
+    @Builder.Default
+    @NotNull Set<Developer> developers = new HashSet<>();
+
 
 }
