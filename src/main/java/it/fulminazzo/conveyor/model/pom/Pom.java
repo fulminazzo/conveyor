@@ -24,6 +24,8 @@ import java.util.Set;
 @ToString(callSuper = true)
 public final class Pom extends MavenModel implements PomLike {
     private final @NotNull Artifact project;
+    private final @Nullable String name;
+    private final @Nullable String description;
     private final @NotNull String packaging;
     private final @Nullable Artifact parent;
     private final @NotNull Set<Profile> profiles;
@@ -32,6 +34,8 @@ public final class Pom extends MavenModel implements PomLike {
      * Instantiates a new Pom.
      *
      * @param project              the project
+     * @param name                 the name
+     * @param description          the description
      * @param packaging            the packaging
      * @param parent               the parent
      * @param profiles             the profiles
@@ -41,6 +45,8 @@ public final class Pom extends MavenModel implements PomLike {
      * @param dependencies         the dependencies
      */
     Pom(final @NotNull Artifact project,
+        final @Nullable String name,
+        final @Nullable String description,
         final @NotNull String packaging,
         final @Nullable Artifact parent,
         final @NotNull Collection<Profile> profiles,
@@ -51,6 +57,8 @@ public final class Pom extends MavenModel implements PomLike {
     ) {
         super(properties, repositories, dependencyManagement, dependencies);
         this.project = project;
+        this.name = name;
+        this.description = description;
         this.packaging = packaging;
         this.parent = parent;
         this.profiles = Set.copyOf(profiles);
