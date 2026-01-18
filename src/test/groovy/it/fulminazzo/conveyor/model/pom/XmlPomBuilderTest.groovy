@@ -15,22 +15,22 @@ class XmlPomBuilderTest extends Specification {
 
     def 'test that build returns correct profile'() {
         given:
-        def expected = new Pom(
-                new Artifact(
+        def expected = Pom.builder()
+                .project(new Artifact(
                         'com.example.superapp',
                         'super-app-core',
                         '1.0.0-SNAPSHOT',
-                ),
-                'Super Application Core',
-                'The core logic for the Super Application suite.',
-                'https://www.example.com/superapp',
-                'war',
-                new Artifact(
+                ))
+                .name('Super Application Core')
+                .description('The core logic for the Super Application suite.')
+                .url('https://www.example.com/superapp')
+                .packaging('war')
+                .parent(new Artifact(
                         'com.example.superapp',
                         'super-app-parent',
                         '1.0.0-SNAPSHOT',
-                ),
-                [
+                ))
+                .profiles(Set.copyOf([
                         newRawProfile("""
                             <profile>
                                 <id>development</id>
@@ -75,14 +75,14 @@ class XmlPomBuilderTest extends Specification {
                                     </plugins>
                                 </build>
                             </profile>""")
-                ],
-                [
+                ]))
+                .properties([
                         'project.build.sourceEncoding': 'UTF-8',
                         'java.version'                : '17',
                         'spring.version'              : '6.0.0',
                         'junit.version'               : '5.9.2'
-                ],
-                [
+                ])
+                .repositories(Set.copyOf([
                         RawRepository.builder()
                                 .id('central')
                                 .name('Central Repository')
@@ -116,15 +116,15 @@ class XmlPomBuilderTest extends Specification {
                                                 .build()
                                 )
                                 .build()
-                ],
-                [
+                ]))
+                .dependencyManagement(Set.copyOf([
                         RawDependency.builder()
                                 .groupId('org.springframework')
                                 .artifactId('spring-core')
                                 .version('${spring.version}')
                                 .build()
-                ],
-                [
+                ]))
+                .dependencies(List.copyOf([
                         RawDependency.builder()
                                 .groupId('org.springframework')
                                 .artifactId('spring-context')
@@ -142,8 +142,8 @@ class XmlPomBuilderTest extends Specification {
                                 .version('4.0.1')
                                 .scope(Scope.PROVIDED.value())
                                 .build(),
-                ]
-        )
+                ]))
+                .build()
 
         and:
         def file = new File('build/resources/test/pom.xml')
