@@ -16,16 +16,16 @@ public class Notifier {
     @NotNull String type = "mail";
 
     @Builder.Default
-    boolean sendOnerror = true;
+    @NotNull String sendOnError = Boolean.TRUE.toString();
 
     @Builder.Default
-    boolean sendOnFailure = true;
+    @NotNull String sendOnFailure = Boolean.TRUE.toString();
 
     @Builder.Default
-    boolean sendOnSuccess = true;
+    @NotNull String sendOnSuccess = Boolean.TRUE.toString();
 
     @Builder.Default
-    boolean sendOnWarning = true;
+    @NotNull String sendOnWarning = Boolean.TRUE.toString();
 
     @Nullable String address;
 
