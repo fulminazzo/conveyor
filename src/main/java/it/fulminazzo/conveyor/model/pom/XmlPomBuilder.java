@@ -101,6 +101,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "ciManagement" -> this.pomMetadataBuilder.ciManagement(parseCiManagement());
                 case "pluginRepositories" -> this.pomMetadataBuilder.pluginRepositories(parseRepositories());
                 case "build" -> this.pomMetadataBuilder.build(parseBuild());
+                case "reporting" -> this.pomMetadataBuilder.reporting(parseReporting());
             }
         });
     }
@@ -594,6 +595,24 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("execution", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;reporting&gt;</b> tag in the document.
+     *
+     * @return the reporting
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Reporting parseReporting() throws BuilderException {
+        Reporting.ReportingBuilder builder = Reporting.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "excludeDefaults" -> builder.excludeDefaults(getCurrentTextContent());
+                case "outputDirectory" -> builder.outputDirectory(getCurrentTextContent());
+                case "plugins" -> builder.plugins(List.copyOf(parsePlugins()));
+            }
+        });
+        return buildObject("reporting", builder::build);
     }
 
     private @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
