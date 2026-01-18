@@ -98,6 +98,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
                 case "modules" -> this.pomMetadataBuilder.modules(parseStringList("module"));
                 case "issueManagement" -> this.pomMetadataBuilder.issueManagement(parseIssueManagement());
+                case "ciManagement" -> this.pomMetadataBuilder.ciManagement(parseCiManagement());
             }
         });
     }
@@ -353,6 +354,61 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("issueManagement", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;ciManagement&gt;</b> tag in the document.
+     *
+     * @return the ciManagement
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull PomMetadata.CiManagement parseCiManagement() throws BuilderException {
+        PomMetadata.CiManagement.CiManagementBuilder builder = PomMetadata.CiManagement.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "system" -> builder.system(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+                case "notifiers" -> builder.notifiers(List.copyOf(parseNotifiers()));
+            }
+        });
+        return buildObject("ciManagement", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;notifiers&gt;</b> tag in the document.
+     *
+     * @return the notifiers
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Collection<Notifier> parseNotifiers() throws BuilderException {
+        List<Notifier> notifiers = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("notifier"))
+                notifiers.add(parseNotifier());
+        });
+        return notifiers;
+    }
+
+    /**
+     * Handles the <b>&lt;notifier&gt;</b> tag in the document.
+     *
+     * @return the notifier
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull Notifier parseNotifier() throws BuilderException {
+        Notifier.NotifierBuilder builder = Notifier.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "type" -> builder.type(getCurrentTextContent());
+                case "sendOnError" -> builder.sendOnError(getCurrentTextContent());
+                case "sendOnFailure" -> builder.sendOnFailure(getCurrentTextContent());
+                case "sendOnSuccess" -> builder.sendOnSuccess(getCurrentTextContent());
+                case "sendOnWarning" -> builder.sendOnWarning(getCurrentTextContent());
+                case "address" -> builder.address(getCurrentTextContent());
+                case "configuration" -> builder.configuration(parseProperties());
+            }
+        });
+        return buildObject("notifier", builder::build);
     }
 
     private @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
