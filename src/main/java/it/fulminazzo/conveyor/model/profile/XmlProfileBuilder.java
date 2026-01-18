@@ -3,14 +3,18 @@ package it.fulminazzo.conveyor.model.profile;
 import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
+import it.fulminazzo.conveyor.model.profile.metadata.ProfileMetadata;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * A builder for creating {@link Profile} objects from <b>XML</b>.
  */
 public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
     private final @NotNull Profile.ProfileBuilder<?, ?> builder = Profile.builder();
+    private final @NotNull ProfileMetadata.ProfileMetadataBuilder<?, ?> profileMetadataBuilder = ProfileMetadata.builder();
 
     /**
      * Instantiates a new Profile builder.
@@ -24,7 +28,9 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
     @Override
     public @NotNull Profile build() throws BuilderException {
         parseDocument();
-        return buildObject("profile", this.builder::build);
+        return buildObject("profile", () -> this.builder
+                .metadata(this.profileMetadataBuilder.build())
+                .build());
     }
 
     @Override
@@ -37,6 +43,10 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
                 case "repositories" -> this.builder.repositories(parseRepositories());
                 case "dependencyManagement" -> this.builder.dependencyManagement(parseDependencyManagement());
                 case "dependencies" -> this.builder.dependencies(parseDependencies());
+                // METADATA
+                case "modules" -> this.profileMetadataBuilder.modules(List.copyOf(parseModules()));
+                case "pluginRepositories" -> this.profileMetadataBuilder.pluginRepositories(parseRepositories());
+                case "reporting" -> this.profileMetadataBuilder.reporting(parseReporting());
             }
         });
     }
