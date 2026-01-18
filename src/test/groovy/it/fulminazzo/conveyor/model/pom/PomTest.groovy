@@ -10,6 +10,7 @@ import it.fulminazzo.conveyor.model.pom.metadata.MailingList
 import it.fulminazzo.conveyor.model.pom.metadata.Notifier
 import it.fulminazzo.conveyor.model.pom.metadata.Organization
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata
+import it.fulminazzo.conveyor.model.repository.RawRepository
 import spock.lang.Specification
 
 class PomTest extends Specification {
@@ -161,6 +162,25 @@ class PomTest extends Specification {
                                 .optional('true')
                                 .build()
                 ])
+                .repositories([
+                        RawRepository.builder()
+                                .id('fulminazzo')
+                                .name('Fulminazzo repository')
+                                .url('https://repo.fulminazzo.it')
+                                .releases(RawRepository.Policy.builder()
+                                        .enabled('true')
+                                        .updatePolicy('always')
+                                        .checksumPolicy('fail')
+                                        .build())
+                                .snapshots(RawRepository.Policy.builder()
+                                        .enabled('true')
+                                        .updatePolicy('interval:60')
+                                        .checksumPolicy('warn')
+                                        .build())
+                                .layout('legacy')
+                                .uniqueVersion('false')
+                                .build()
+                ].toSet())
                 .build()
 
         when:
@@ -286,6 +306,17 @@ class PomTest extends Specification {
         'dependencies[0].exclusions[0].groupId'                         || 'it.fulminazzo.conveyor'
         'dependencies[0].exclusions[0].artifactId'                      || 'common'
         'dependencies[0].optional'                                      || 'true'
+        'repositories[0].uniqueVersion'                                 || 'false'
+        'repositories[0].id'                                            || 'fulminazzo'
+        'repositories[0].name'                                          || 'Fulminazzo repository'
+        'repositories[0].url'                                           || 'https://repo.fulminazzo.it'
+        'repositories[0].layout'                                        || 'legacy'
+        'repositories[0].releases.enabled'                              || 'true'
+        'repositories[0].releases.updatePolicy'                         || 'always'
+        'repositories[0].releases.checksumPolicy'                       || 'fail'
+        'repositories[0].snapshots.enabled'                             || 'true'
+        'repositories[0].snapshots.updatePolicy'                        || 'interval:60'
+        'repositories[0].snapshots.checksumPolicy'                      || 'warn'
     }
 
 }
