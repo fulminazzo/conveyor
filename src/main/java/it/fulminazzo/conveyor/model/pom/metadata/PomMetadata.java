@@ -44,7 +44,8 @@ public class PomMetadata {
     @Builder
     public static class Prerequisites {
 
-        @Nullable String maven;
+        @Builder.Default
+        @NotNull String maven = "2.0";
 
     }
 
