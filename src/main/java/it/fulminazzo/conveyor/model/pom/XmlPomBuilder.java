@@ -278,4 +278,19 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
         return roles;
     }
 
+    /**
+     * Handles the <b>&lt;otherArchives&gt;</b> tag in the document.
+     *
+     * @return the archives
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull List<String> parseOtherArchives() throws BuilderException {
+        List<String> archives = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("otherArchive"))
+                archives.add(getCurrentTextContent());
+        });
+        return archives;
+    }
+
 }
