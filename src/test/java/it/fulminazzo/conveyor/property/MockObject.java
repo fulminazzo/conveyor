@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,6 +18,11 @@ final class MockObject {
     int field2 = 10;
     boolean field3 = true;
     Object field4 = null;
+
+    List<String> indexed1 = Arrays.asList("Hello", "world");
+    Set<Integer> indexed2 = Set.of(1, 2, 3);
+    Collection<Boolean> indexed3 = List.of(true, false);
+    String[] indexed4 = new String[]{"Hello", "world"};
 
     public String method1() {
         return method1("world");
