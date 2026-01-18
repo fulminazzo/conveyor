@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.pom;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.profile.Profile;
+import it.fulminazzo.conveyor.property.DelegateProperties;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @SuperBuilder
 public final class Pom extends MavenModel implements PomLike {
+    @DelegateProperties
     private final @NotNull Artifact project;
     private final @Nullable String name;
     private final @Nullable String description;
