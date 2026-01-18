@@ -82,6 +82,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "name" -> this.builder.name(getCurrentTextContent());
                 case "description" -> this.builder.description(getCurrentTextContent());
                 case "url" -> this.builder.url(getCurrentTextContent());
+                case "inceptionYear" -> this.builder.inceptionYear(getCurrentTextContent());
                 case "packaging" -> this.builder.packaging(getCurrentTextContent());
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();

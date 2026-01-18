@@ -35,6 +35,7 @@ public final class Pom extends MavenModel implements PomLike {
     private final @Nullable String name;
     private final @Nullable String description;
     private final @Nullable String url;
+    private final @Nullable String inceptionYear;
 
     @Builder.Default
     private final @NotNull String packaging = "jar";
