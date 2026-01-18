@@ -6,9 +6,9 @@ import it.fulminazzo.conveyor.property.PropertyAccessible;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,28 +20,11 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode
 @ToString
+@SuperBuilder
 public abstract class MavenModel implements PropertyAccessible {
     private final @NotNull Map<String, String> properties;
     private final @NotNull Set<RawRepository> repositories;
     private final @NotNull Set<RawDependency> dependencyManagement;
     private final @NotNull List<RawDependency> dependencies;
-
-    /**
-     * Instantiates a new Maven model.
-     *
-     * @param properties           the properties
-     * @param repositories         the repositories
-     * @param dependencyManagement the dependency management
-     * @param dependencies         the dependencies
-     */
-    protected MavenModel(final @NotNull Map<String, String> properties,
-                         final @NotNull Collection<RawRepository> repositories,
-                         final @NotNull Collection<RawDependency> dependencyManagement,
-                         final @NotNull Collection<RawDependency> dependencies) {
-        this.properties = Map.copyOf(properties);
-        this.repositories = Set.copyOf(repositories);
-        this.dependencyManagement = Set.copyOf(dependencyManagement);
-        this.dependencies = List.copyOf(dependencies);
-    }
 
 }
