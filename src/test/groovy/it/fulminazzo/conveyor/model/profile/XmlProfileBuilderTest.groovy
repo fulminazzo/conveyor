@@ -7,7 +7,7 @@ import it.fulminazzo.conveyor.model.repository.RawRepository
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
 
-class ProfileBuilderTest extends Specification {
+class XmlProfileBuilderTest extends Specification {
     static final String ACTIVATION = """
     <activation>
         <activeByDefault>false</activeByDefault>
@@ -76,7 +76,7 @@ class ProfileBuilderTest extends Specification {
         parser.next()
 
         and:
-        def builder = new ProfileBuilder(parser)
+        def builder = new XmlProfileBuilder(parser)
 
         when:
         def actual = builder.build()

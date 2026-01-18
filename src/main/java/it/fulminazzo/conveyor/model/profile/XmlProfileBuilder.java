@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * A builder for creating {@link Profile} objects from <b>XML</b>.
  */
-public final class ProfileBuilder extends MavenModelBuilder<Profile> {
+public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
     private @Nullable String id;
     private @Nullable Activation activation;
 
@@ -21,7 +21,7 @@ public final class ProfileBuilder extends MavenModelBuilder<Profile> {
      *
      * @param parser the XML parser
      */
-    ProfileBuilder(final @NotNull XmlParser parser) {
+    XmlProfileBuilder(final @NotNull XmlParser parser) {
         super(parser);
     }
 
