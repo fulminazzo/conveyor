@@ -23,6 +23,7 @@ class PomBuilderTest extends Specification {
                 ),
                 'Super Application Core',
                 'The core logic for the Super Application suite.',
+                'https://www.example.com/superapp',
                 'war',
                 new Artifact(
                         'com.example.superapp',
