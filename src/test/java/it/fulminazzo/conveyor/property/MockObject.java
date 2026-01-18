@@ -16,6 +16,9 @@ final class MockObject {
     boolean field3 = true;
     Object field4 = null;
 
+    @DelegateProperties
+    DelegateObject delegateObject = new DelegateObject();
+
     List<String> indexed1 = Arrays.asList("Hello", "world");
     Set<Integer> indexed2 = new HashSet<>(Arrays.asList(1, 2, 3));
     Collection<Boolean> indexed3 = Arrays.asList(true, false);
@@ -76,6 +79,11 @@ final class MockObject {
 
         String field1;
 
+    }
+
+    @Data
+    static final class DelegateObject {
+        double field6 = 3.14;
     }
 
 }
