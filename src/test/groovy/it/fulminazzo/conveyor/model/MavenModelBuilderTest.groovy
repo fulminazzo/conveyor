@@ -22,12 +22,7 @@ class MavenModelBuilderTest extends Specification {
         XmlObjectBuilderUtils.getParser(builder).next()
 
         when:
-        builder.parseProperties()
-
-        and:
-        def field = MavenModelBuilder.getDeclaredField('properties')
-        field.accessible = true
-        def properties = field.get(builder)
+        def properties = builder.parseProperties()
 
         then:
         properties == [
@@ -68,15 +63,10 @@ class MavenModelBuilderTest extends Specification {
         ]
 
         when:
-        builder.parseRepositories()
-
-        and:
-        def field = MavenModelBuilder.getDeclaredField('repositories')
-        field.accessible = true
-        def repositories = field.get(builder)
+        def repositories = builder.parseRepositories()
 
         then:
-        repositories.values().sort() == expected.sort()
+        repositories.sort() == expected.sort()
     }
 
     def 'test that parseRepository returns correct repository'() {
@@ -165,15 +155,10 @@ class MavenModelBuilderTest extends Specification {
         ]
 
         when:
-        builder.parseDependencyManagement()
-
-        and:
-        def field = MavenModelBuilder.getDeclaredField('dependencyManagement')
-        field.accessible = true
-        def dependencies = field.get(builder)
+        def dependencyManagement = builder.parseDependencyManagement()
 
         then:
-        dependencies.values().sort() == expected.sort()
+        dependencyManagement.sort() == expected.sort()
     }
 
     def 'test that parseDependencies returns correct dependencies'() {
@@ -208,15 +193,10 @@ class MavenModelBuilderTest extends Specification {
         ]
 
         when:
-        builder.parseDependencies()
-
-        and:
-        def field = MavenModelBuilder.getDeclaredField('dependencies')
-        field.accessible = true
-        def dependencies = field.get(builder)
+        def dependencies = builder.parseDependencies()
 
         then:
-        dependencies.values().sort() == expected.sort()
+        dependencies == expected
     }
 
     def 'test that parseDependency returns correct dependency'() {
