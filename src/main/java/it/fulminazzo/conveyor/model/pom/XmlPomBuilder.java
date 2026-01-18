@@ -186,4 +186,19 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
         return buildObject("license", builder::build);
     }
 
+    /**
+     * Handles the <b>&lt;roles&gt;</b> tag in the document.
+     *
+     * @return the roles
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull List<String> parseRoles() throws BuilderException {
+        List<String> roles = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("role"))
+                roles.add(getCurrentTextContent());
+        });
+        return roles;
+    }
+
 }
