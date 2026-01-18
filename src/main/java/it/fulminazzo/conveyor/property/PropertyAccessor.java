@@ -49,7 +49,7 @@ final class PropertyAccessor {
      * @param rawIndex the raw index
      * @return the value
      */
-    static @Nullable String getIndexed(final @NotNull Object object,
+    static @Nullable Object getIndexed(final @NotNull Object object,
                                        final @NotNull String name,
                                        final @NotNull String rawIndex) {
         return getIndexed(object, name, Integer.parseInt(rawIndex));
@@ -65,13 +65,13 @@ final class PropertyAccessor {
      * @param index  the index
      * @return the value
      */
-    static @Nullable String getIndexed(final @NotNull Object object,
+    static @Nullable Object getIndexed(final @NotNull Object object,
                                        final @NotNull String name,
                                        final int index) {
         Object o = getObject(object, name);
         if (o instanceof Collection<?> collection) {
             List<?> list = List.of(collection);
-            return list.get(index).toString();
+            return list.get(index);
         }
         throw new IllegalArgumentException(String.format("Value '%s' with name '%s' is not a collection", o, name));
     }
@@ -86,7 +86,7 @@ final class PropertyAccessor {
      * @return the result object
      */
     static @Nullable Object getObject(final @NotNull Object object,
-                                     final @NotNull String name) {
+                                      final @NotNull String name) {
         Object obj = getField(object, name);
         if (obj == null) obj = invokeMethod(object, name);
         return obj;
