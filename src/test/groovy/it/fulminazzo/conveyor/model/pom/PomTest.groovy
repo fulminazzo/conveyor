@@ -12,7 +12,7 @@ import it.fulminazzo.conveyor.model.pom.metadata.Notifier
 import it.fulminazzo.conveyor.model.pom.metadata.Organization
 import it.fulminazzo.conveyor.model.pom.metadata.Plugin
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata
-import it.fulminazzo.conveyor.model.pom.metadata.Reporting
+import it.fulminazzo.conveyor.model.metadata.Reporting
 import it.fulminazzo.conveyor.model.repository.RawRepository
 import spock.lang.Specification
 

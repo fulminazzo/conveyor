@@ -1,7 +1,9 @@
 package it.fulminazzo.conveyor.model.pom.metadata;
 
-import it.fulminazzo.conveyor.model.repository.RawRepository;
+import it.fulminazzo.conveyor.model.metadata.MavenModelMetadata;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,9 +15,12 @@ import java.util.Set;
 /**
  * Represents the {@link it.fulminazzo.conveyor.model.pom.Pom} metadata.
  */
-@Value
-@Builder
-public class PomMetadata {
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@SuperBuilder
+public class PomMetadata extends MavenModelMetadata {
     @Nullable String modelVersion;
 
     @Nullable String name;
@@ -40,21 +45,12 @@ public class PomMetadata {
     @Builder.Default
     @NotNull Prerequisites prerequisites = new Prerequisites();
 
-    @Builder.Default
-    @NotNull List<String> modules = new LinkedList<>();
-
     @Nullable IssueManagement issueManagement;
 
     @Nullable CiManagement ciManagement;
 
     @Builder.Default
-    @NotNull Set<RawRepository> pluginRepositories = new HashSet<>();
-
-    @Builder.Default
     @NotNull Build build = Build.builder().build();
-
-    @Builder.Default
-    @NotNull Reporting reporting = Reporting.builder().build();
 
     @Data
     @Builder
