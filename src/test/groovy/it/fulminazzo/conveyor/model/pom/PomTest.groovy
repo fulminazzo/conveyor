@@ -136,6 +136,25 @@ class PomTest extends Specification {
                                                 .build(),
                                 ])
                                 .build())
+                        .pluginRepositories([
+                                RawRepository.builder()
+                                        .id('fulminazzo')
+                                        .name('Fulminazzo repository')
+                                        .url('https://repo.fulminazzo.it')
+                                        .releases(RawRepository.Policy.builder()
+                                                .enabled('true')
+                                                .updatePolicy('always')
+                                                .checksumPolicy('fail')
+                                                .build())
+                                        .snapshots(RawRepository.Policy.builder()
+                                                .enabled('true')
+                                                .updatePolicy('interval:60')
+                                                .checksumPolicy('warn')
+                                                .build())
+                                        .layout('legacy')
+                                        .uniqueVersion('false')
+                                        .build()
+                        ].toSet())
                         .build())
                 .properties(['java-version': '17'])
                 .dependencyManagement([
@@ -317,6 +336,17 @@ class PomTest extends Specification {
         'repositories[0].snapshots.enabled'                             || 'true'
         'repositories[0].snapshots.updatePolicy'                        || 'interval:60'
         'repositories[0].snapshots.checksumPolicy'                      || 'warn'
+        'pluginRepositories[0].uniqueVersion'                           || 'false'
+        'pluginRepositories[0].id'                                      || 'fulminazzo'
+        'pluginRepositories[0].name'                                    || 'Fulminazzo repository'
+        'pluginRepositories[0].url'                                     || 'https://repo.fulminazzo.it'
+        'pluginRepositories[0].layout'                                  || 'legacy'
+        'pluginRepositories[0].releases.enabled'                        || 'true'
+        'pluginRepositories[0].releases.updatePolicy'                   || 'always'
+        'pluginRepositories[0].releases.checksumPolicy'                 || 'fail'
+        'pluginRepositories[0].snapshots.enabled'                       || 'true'
+        'pluginRepositories[0].snapshots.updatePolicy'                  || 'interval:60'
+        'pluginRepositories[0].snapshots.checksumPolicy'                || 'warn'
     }
 
 }
