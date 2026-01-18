@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 final class PropertyAccessor {
-    private static final Pattern indexPattern = Pattern.compile("^([a-zA-Z_][a-zA-Z0-9\\-_]*)\\[(\\d+)]");
+    private static final Pattern indexPattern = Pattern.compile("^([a-zA-Z_][^.]*)\\[(\\d+)]");
 
     /**
      * Attempts to retrieve the property associated with the given key.
@@ -45,7 +45,7 @@ final class PropertyAccessor {
     private static @Nullable Object getObject(final @NotNull Object object,
                                               @NotNull String name) {
         Matcher matcher = indexPattern.matcher(name);
-        if (matcher.matches()) {
+        if (matcher.find()) {
             name = matcher.group(1);
             return getIndexed(object, name, matcher.group(2));
         }
