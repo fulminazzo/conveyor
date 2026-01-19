@@ -10,7 +10,6 @@ import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.resolver.ConveyorPomResolver;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.mode.PomResolverMode;
-import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import it.fulminazzo.conveyor.model.tree.DependenciesTreeBuilder;
 import it.fulminazzo.conveyor.model.tree.DependencyNode;
@@ -36,13 +35,12 @@ public final class Conveyor {
 
     private final @NotNull ConveyorArtifactResolver artifactResolver;
 
-    private Conveyor(final @NotNull ActivationContext context,
-                     final @NotNull File workingDir,
+    private Conveyor(final @NotNull File workingDir,
                      final @NotNull Logger logger) {
         this.repositoryManager = RepositoryManager.newManager(logger);
 
         this.pomResolver = ConveyorPomResolver.newResolver(this.repositoryManager, workingDir, logger);
-        this.dependenciesTreeBuilder = new DependenciesTreeBuilder(this.pomResolver, context);
+        this.dependenciesTreeBuilder = new DependenciesTreeBuilder(this.pomResolver, workingDir);
 
         this.artifactResolver = ConveyorArtifactResolver.newResolver(this.repositoryManager, workingDir, logger);
     }
@@ -143,15 +141,13 @@ public final class Conveyor {
     /**
      * Instantiates a new Conveyor.
      *
-     * @param context    the activation context
      * @param workingDir the directory where the repositories should be stored
      * @param logger     the logger
      * @return the conveyor
      */
-    public static @NotNull Conveyor newConveyor(final @NotNull ActivationContext context,
-                                                final @NotNull File workingDir,
+    public static @NotNull Conveyor newConveyor(final @NotNull File workingDir,
                                                 final @NotNull Logger logger) {
-        return new Conveyor(context, workingDir, logger)
+        return new Conveyor(workingDir, logger)
                 .setPomResolveMode(PomResolverMode.CHECKSUM)
                 .addRawRepositories(mavenCentralUrl)
                 .setScopesOfInterest(Scope.COMPILE, Scope.PROVIDED, Scope.RUNTIME)

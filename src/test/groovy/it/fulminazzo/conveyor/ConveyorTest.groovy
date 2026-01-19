@@ -2,7 +2,6 @@ package it.fulminazzo.conveyor
 
 import groovy.util.logging.Slf4j
 import it.fulminazzo.conveyor.model.artifact.Artifact
-import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
 import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
@@ -15,7 +14,6 @@ class ConveyorTest extends Specification {
 
         and:
         def conveyor = Conveyor.newConveyor(
-                ActivationContext.current(workDir),
                 workDir,
                 log
         ).addRawRepositories('repo.fulminazzo.it/releases')
@@ -59,7 +57,6 @@ class ConveyorTest extends Specification {
 
         and:
         def conveyor = Conveyor.newConveyor(
-                ActivationContext.current(workDir),
                 workDir,
                 log
         )
