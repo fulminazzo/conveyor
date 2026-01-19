@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.dependency;
 
 import it.fulminazzo.conveyor.model.artifact.Artifact;
+import it.fulminazzo.conveyor.property.DelegateProperties;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public final class Dependency extends Artifact implements DependencyLike {
     @Builder.Default
     private final boolean optional = false;
 
+    @DelegateProperties
     @Builder.Default
     private final @NotNull ExclusionsManager exclusionsManager = new ExclusionsManager();
 

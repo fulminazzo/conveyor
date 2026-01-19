@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.dependency;
 import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.RawObject;
 import it.fulminazzo.conveyor.model.artifact.ArtifactLike;
+import it.fulminazzo.conveyor.property.DelegateProperties;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,6 +37,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike,
     @Builder.Default
     private final @NotNull String optional = String.valueOf(Boolean.FALSE);
 
+    @DelegateProperties
     @Builder.Default
     private final @NotNull ExclusionsManager exclusionsManager = new ExclusionsManager();
 
