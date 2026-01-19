@@ -102,4 +102,16 @@ public class Artifact extends ArtifactLike {
                 getVersion();
     }
 
+    /**
+     * Gets the coordinates in "&lt;groupId&gt;:&lt;artifactId&gt;:&lt;version&gt;" form.
+     *
+     * @return the coordinates
+     */
+    public @NotNull String getGAVCoordinates() {
+        final String separator = ":";
+        return getGroupId() + separator +
+                getArtifactId() + separator +
+                getVersion();
+    }
+
 }
