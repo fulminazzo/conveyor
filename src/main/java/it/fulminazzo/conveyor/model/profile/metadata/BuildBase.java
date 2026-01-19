@@ -8,10 +8,7 @@ import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @EqualsAndHashCode
@@ -23,10 +20,10 @@ public class BuildBase {
     @Nullable String defaultGoal;
 
     @Builder.Default
-    @NotNull List<Resource> resources = new LinkedList<>();
+    @NotNull List<Resource> resources = List.of(Resource.builder().directory("src/main/resources").build());
 
     @Builder.Default
-    @NotNull List<Resource> testResources = new LinkedList<>();
+    @NotNull List<Resource> testResources = List.of(Resource.builder().directory("src/test/resources").build());
 
     @Builder.Default
     @NotNull String directory = "target";
