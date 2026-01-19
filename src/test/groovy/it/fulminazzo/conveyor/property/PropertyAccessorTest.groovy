@@ -56,7 +56,7 @@ class PropertyAccessorTest extends Specification {
         PropertyAccessor.getSubProperty(object, 'a', 'b')
 
         then:
-        thrown(NullPointerException)
+        thrown(PropertyAccessorException)
     }
 
     def 'test that getIndexed of #name with #index returns #expected'() {
@@ -89,7 +89,7 @@ class PropertyAccessorTest extends Specification {
         PropertyAccessor.getIndexed(object, 'field1', 0)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(PropertyAccessorException)
     }
 
     def 'test that getField of #name returns #expected'() {
