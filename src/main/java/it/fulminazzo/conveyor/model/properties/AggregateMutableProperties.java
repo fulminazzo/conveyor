@@ -3,6 +3,8 @@ package it.fulminazzo.conveyor.model.properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 /**
  * A special type of {@link MutableProperties} that supports properties aggregation.
  * It will first attempt to fetch the requested property from the stored properties.
@@ -40,6 +42,11 @@ final class AggregateMutableProperties extends BaseProperties implements Mutable
     public @NotNull MutableProperties clear() {
         this.mutable.clear();
         return this;
+    }
+
+    @Override
+    public @NotNull Map<String, String> toMap() {
+        return this.mutable.toMap();
     }
 
 }

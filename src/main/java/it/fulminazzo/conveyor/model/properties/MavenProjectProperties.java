@@ -38,6 +38,11 @@ public final class MavenProjectProperties implements MutableProperties {
     }
 
     @Override
+    public @NotNull MavenProjectProperties addAll(@NotNull MutableProperties properties) {
+        return (MavenProjectProperties) MutableProperties.super.addAll(properties);
+    }
+
+    @Override
     public @NotNull MavenProjectProperties addAll(final @NotNull Map<String, String> properties) {
         return (MavenProjectProperties) MutableProperties.super.addAll(properties);
     }
@@ -52,6 +57,11 @@ public final class MavenProjectProperties implements MutableProperties {
     public @NotNull MutableProperties clear() {
         this.delegate.clear();
         return this;
+    }
+
+    @Override
+    public @NotNull Map<String, String> toMap() {
+        return this.delegate.toMap();
     }
 
     @Override

@@ -12,6 +12,16 @@ public interface MutableProperties extends Properties {
     /**
      * Adds all the given properties to this object.
      *
+     * @param properties the mutable properties
+     * @return this object (for method chaining)
+     */
+    default @NotNull MutableProperties addAll(final @NotNull MutableProperties properties) {
+        return addAll(properties.toMap());
+    }
+
+    /**
+     * Adds all the given properties to this object.
+     *
      * @param properties the raw properties
      * @return this object (for method chaining)
      */
@@ -35,5 +45,12 @@ public interface MutableProperties extends Properties {
      * @return this object (for method chaining)
      */
     @NotNull MutableProperties clear();
+
+    /**
+     * Converts the current properties to a map
+     *
+     * @return the map
+     */
+    @NotNull Map<String, String> toMap();
 
 }
