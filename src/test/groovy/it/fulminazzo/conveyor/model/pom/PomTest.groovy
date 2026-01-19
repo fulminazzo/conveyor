@@ -6,6 +6,7 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.pom.metadata.Build
 import it.fulminazzo.conveyor.model.pom.metadata.Contributor
 import it.fulminazzo.conveyor.model.pom.metadata.Developer
+import it.fulminazzo.conveyor.model.pom.metadata.DistributionManagement
 import it.fulminazzo.conveyor.model.pom.metadata.License
 import it.fulminazzo.conveyor.model.pom.metadata.MailingList
 import it.fulminazzo.conveyor.model.pom.metadata.Notifier
@@ -178,6 +179,21 @@ class PomTest extends Specification {
                                                 .configuration(['active': 'false'])
                                                 .build(),
                                 ])
+                                .build())
+                        .distributionManagement(DistributionManagement.builder()
+                                .repository(repository)
+                                .site(DistributionManagement.Site.builder()
+                                        .id('fulminazzo')
+                                        .name('Fulminazzo website')
+                                        .url('fulminazzo.it')
+                                        .build())
+                                .downloadUrl('fulminazzo.it')
+                                .relocation(DistributionManagement.Relocation.builder()
+                                        .groupId('it.fulminazzo')
+                                        .artifactId('conveyor')
+                                        .version('1.0')
+                                        .message('Conveyor artifact')
+                                        .build())
                                 .build())
                         .pluginRepositories([repository].toSet())
                         .build(Build.builder()
@@ -409,6 +425,37 @@ class PomTest extends Specification {
         'reporting.plugins[0].dependencies[0].classifier'                    || 'sources'
         'reporting.plugins[0].dependencies[0].scope'                         || 'IMPORT'
         'profiles[0].id'                                                     || 'profile1'
+        'distributionManagement.repository.uniqueVersion'                    || 'false'
+        'distributionManagement.repository.id'                               || 'fulminazzo'
+        'distributionManagement.repository.name'                             || 'Fulminazzo repository'
+        'distributionManagement.repository.url'                              || 'https://repo.fulminazzo.it'
+        'distributionManagement.repository.layout'                           || 'legacy'
+        'distributionManagement.repository.releases.enabled'                 || 'true'
+        'distributionManagement.repository.releases.updatePolicy'            || 'always'
+        'distributionManagement.repository.releases.checksumPolicy'          || 'fail'
+        'distributionManagement.repository.snapshots.enabled'                || 'true'
+        'distributionManagement.repository.snapshots.updatePolicy'           || 'interval:60'
+        'distributionManagement.repository.snapshots.checksumPolicy'         || 'warn'
+        'distributionManagement.snapshotRepository.uniqueVersion'            || 'false'
+        'distributionManagement.snapshotRepository.id'                       || 'fulminazzo'
+        'distributionManagement.snapshotRepository.name'                     || 'Fulminazzo repository'
+        'distributionManagement.snapshotRepository.url'                      || 'https://repo.fulminazzo.it'
+        'distributionManagement.snapshotRepository.layout'                   || 'legacy'
+        'distributionManagement.snapshotRepository.releases.enabled'         || 'true'
+        'distributionManagement.snapshotRepository.releases.updatePolicy'    || 'always'
+        'distributionManagement.snapshotRepository.releases.checksumPolicy'  || 'fail'
+        'distributionManagement.snapshotRepository.snapshots.enabled'        || 'true'
+        'distributionManagement.snapshotRepository.snapshots.updatePolicy'   || 'interval:60'
+        'distributionManagement.snapshotRepository.snapshots.checksumPolicy' || 'warn'
+        'distributionManagement.site.id'                                     || 'fulminazzo'
+        'distributionManagement.site.name'                                   || 'Fulminazzo website'
+        'distributionManagement.site.url'                                    || 'fulminazzo.it'
+        'distributionManagement.downloadUrl'                                 || 'fulminazzo.it'
+        'distributionManagement.relocation.groupId'                          || 'it.fulminazzo'
+        'distributionManagement.relocation.artifactId'                       || 'conveyor'
+        'distributionManagement.relocation.version'                          || '1.0'
+        'distributionManagement.relocation.message'                          || 'Conveyor artifact'
+        'distributionManagement.status'                                      || 'none'
     }
 
 }
