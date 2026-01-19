@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.profile.activation.context;
 
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
+import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
 import it.fulminazzo.conveyor.model.properties.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,6 +96,16 @@ public interface ActivationContext {
      * @return the string
      */
     @NotNull String applyProperties(final @NotNull String string);
+
+    /**
+     * Gets a new activation context with the current environment variables and properties.
+     *
+     * @param properties the properties
+     * @return the activation context
+     */
+    static @NotNull ActivationContext current(final @NotNull MavenProjectProperties properties) {
+        return current(properties.toImmutable());
+    }
 
     /**
      * Gets a new activation context with the current environment variables and properties.
