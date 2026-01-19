@@ -9,7 +9,7 @@ class SystemPropertiesTest extends Specification {
         def properties = new SystemProperties()
 
         when:
-        def property = properties.get('os.name')
+        def property = properties['os.name']
 
         then:
         property != null

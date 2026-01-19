@@ -17,7 +17,7 @@ class PomPropertiesTest extends Specification {
         def properties = new PomProperties(pom, TestUtils.BASE_DIR)
 
         when:
-        def actual = properties.get(key)
+        def actual = properties[key]
 
         then:
         actual == expected

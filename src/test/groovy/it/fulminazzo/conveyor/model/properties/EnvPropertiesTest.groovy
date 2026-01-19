@@ -9,7 +9,7 @@ class EnvPropertiesTest extends Specification {
         def properties = new EnvProperties()
 
         when:
-        def property = properties.get('env.PATH')
+        def property = properties['env.PATH']
 
         then:
         property != null
@@ -23,7 +23,7 @@ class EnvPropertiesTest extends Specification {
         def properties = new EnvProperties()
 
         when:
-        def property = properties.get('PATH')
+        def property = properties['PATH']
 
         then:
         property == null
