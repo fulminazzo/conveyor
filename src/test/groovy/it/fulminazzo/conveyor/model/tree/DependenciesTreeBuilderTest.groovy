@@ -7,7 +7,7 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.pom.Pom
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver
-import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
+import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
 class DependenciesTreeBuilderTest extends Specification {
@@ -19,12 +19,12 @@ class DependenciesTreeBuilderTest extends Specification {
     void setup() {
         this.resolver = Mock(RepositoryPomResolver)
 
-        this.builder = new DependenciesTreeBuilder(artifact, this.resolver, Mock(ActivationContext))
+        this.builder = new DependenciesTreeBuilder(artifact, this.resolver, TestUtils.BASE_DIR)
     }
 
     def 'test that build returns the correct tree'() {
         given:
-        def builder = new DependenciesTreeBuilder(artifact, new MockResolver(), Mock(ActivationContext))
+        def builder = new DependenciesTreeBuilder(artifact, new MockResolver(), TestUtils.BASE_DIR)
 
         and:
         def expected = [
@@ -48,7 +48,7 @@ class DependenciesTreeBuilderTest extends Specification {
                 .groupId('it.fulminazzo')
                 .artifactId('problematic1')
                 .version('1.0')
-                .build(), new MockResolver(), Mock(ActivationContext))
+                .build(), new MockResolver(), TestUtils.BASE_DIR)
 
         and:
         def expected = [
