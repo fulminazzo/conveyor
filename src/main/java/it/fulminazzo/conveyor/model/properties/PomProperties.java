@@ -23,6 +23,8 @@ final class PomProperties extends BaseProperties {
 
     @Override
     public @Nullable String get(@NotNull String key) {
+        if (key.equals("maven.multiModuleProjectDirectory"))
+            return getPomDirectory().getAbsolutePath();
         for (String prefix : prefixes)
             if (key.startsWith(prefix)) {
                 key = key.substring(prefix.length());
