@@ -1,4 +1,4 @@
-package it.fulminazzo.conveyor.model.pom.metadata;
+package it.fulminazzo.conveyor.model.metadata;
 
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import lombok.Builder;

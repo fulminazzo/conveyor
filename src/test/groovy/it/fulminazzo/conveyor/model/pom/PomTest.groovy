@@ -10,7 +10,7 @@ import it.fulminazzo.conveyor.model.pom.metadata.License
 import it.fulminazzo.conveyor.model.pom.metadata.MailingList
 import it.fulminazzo.conveyor.model.pom.metadata.Notifier
 import it.fulminazzo.conveyor.model.pom.metadata.Organization
-import it.fulminazzo.conveyor.model.pom.metadata.Plugin
+import it.fulminazzo.conveyor.model.metadata.Plugin
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata
 import it.fulminazzo.conveyor.model.metadata.Reporting
 import it.fulminazzo.conveyor.model.repository.RawRepository

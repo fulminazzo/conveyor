@@ -1,6 +1,5 @@
 package it.fulminazzo.conveyor.model.metadata;
 
-import it.fulminazzo.conveyor.model.pom.metadata.Plugin;
 import lombok.Builder;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;

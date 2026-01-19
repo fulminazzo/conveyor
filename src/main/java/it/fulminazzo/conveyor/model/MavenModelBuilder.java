@@ -2,8 +2,8 @@ package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.metadata.Reporting;
-import it.fulminazzo.conveyor.model.pom.metadata.Plugin;
-import it.fulminazzo.conveyor.model.pom.metadata.Resource;
+import it.fulminazzo.conveyor.model.metadata.Plugin;
+import it.fulminazzo.conveyor.model.metadata.Resource;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;

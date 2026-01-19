@@ -1,7 +1,7 @@
 package it.fulminazzo.conveyor.model.profile.metadata;
 
-import it.fulminazzo.conveyor.model.pom.metadata.Plugin;
-import it.fulminazzo.conveyor.model.pom.metadata.Resource;
+import it.fulminazzo.conveyor.model.metadata.Plugin;
+import it.fulminazzo.conveyor.model.metadata.Resource;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
