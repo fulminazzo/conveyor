@@ -1,31 +1,18 @@
 package it.fulminazzo.conveyor.model.profile.activation.context;
 
-import lombok.Getter;
+import it.fulminazzo.conveyor.model.properties.Properties;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * An implementation of {@link ActivationContext} that represents the current environment.
  */
 @RequiredArgsConstructor
 final class CurrentActivationContext implements ActivationContext {
-    private static final Pattern propertiesRegex = Pattern.compile("\\$\\{([^}]+)}");
-    private static final @NotNull String envPropertyPrefix = "env.";
-    private static final @NotNull List<String> projectDirectoryPropertyNames = Arrays.asList(
-            "basedir", "project.basedir", "maven.multiModuleProjectDirectory"
-    );
-
-    @Getter
-    private final @NotNull File currentDir;
-    private @Nullable String packaging;
+    private final @NotNull Properties properties;
 
     /**
      * Gets the context JDK version.
@@ -68,43 +55,20 @@ final class CurrentActivationContext implements ActivationContext {
     }
 
     @Override
-    public @NotNull String applyProperties(@NotNull String string) {
-        Matcher matcher = propertiesRegex.matcher(string);
-        while (matcher.find()) {
-            String propertyName = matcher.group(1);
-            String propertyValue = getProperty(propertyName);
-            if (propertyValue != null) {
-                string = string.replace(String.format("${%s}", propertyName), propertyValue);
-                matcher = propertiesRegex.matcher(string);
-            }
-        }
-        return string;
-    }
-
-    @Override
-    public @Nullable String getProperty(@NotNull String name) {
-        if (projectDirectoryPropertyNames.contains(name)) return getCurrentDir().getAbsolutePath();
-        if (name.startsWith(envPropertyPrefix)) {
-            name = name.substring(envPropertyPrefix.length());
-            return System.getenv(name);
-        }
-        return System.getProperty(name);
-    }
-
-    @Override
-    public @NotNull ActivationContext copy() {
-        return new CurrentActivationContext(this.currentDir).setPackaging(this.packaging);
-    }
-
-    @Override
-    public @NotNull ActivationContext setPackaging(final @Nullable String packaging) {
-        this.packaging = packaging;
-        return this;
-    }
-
-    @Override
     public @NotNull String getPackaging() {
-        return Objects.requireNonNull(this.packaging, "packaging has not been set yet");
+        return Objects.requireNonNull(getProperty("project.packaging"), "Could not find project packaging");
+    }
+
+    @Override
+    public @Nullable String getProperty(final @NotNull String name) {
+        String value = this.properties.get(name);
+        if (value != null && value.isEmpty()) return Boolean.TRUE.toString();
+        else return value;
+    }
+
+    @Override
+    public @NotNull String applyProperties(final @NotNull String string) {
+        return this.properties.apply(string);
     }
 
 }
