@@ -1,9 +1,10 @@
 package it.fulminazzo.conveyor.model;
 
+import it.fulminazzo.conveyor.function.SupplierException;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.metadata.DistributionManagement;
-import it.fulminazzo.conveyor.model.metadata.Reporting;
 import it.fulminazzo.conveyor.model.metadata.Plugin;
+import it.fulminazzo.conveyor.model.metadata.Reporting;
 import it.fulminazzo.conveyor.model.metadata.Resource;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.xml.XmlParser;
@@ -291,40 +292,10 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
             switch (t) {
                 case "excludeDefaults" -> builder.excludeDefaults(getCurrentTextContent());
                 case "outputDirectory" -> builder.outputDirectory(getCurrentTextContent());
-                case "plugins" -> builder.plugins(List.copyOf(parsePlugins()));
+                case "plugins" -> builder.plugins(List.copyOf(parseList("plugin", this::parsePlugin)));
             }
         });
         return buildObject("reporting", builder::build);
-    }
-
-    /**
-     * Handles the <b>&lt;testResources&gt;</b> tag in the document.
-     *
-     * @return the resources
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    protected @NotNull Collection<Resource> parseTestResources() throws BuilderException {
-        List<Resource> testResources = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("testResource"))
-                testResources.add(parseResource());
-        });
-        return testResources;
-    }
-
-    /**
-     * Handles the <b>&lt;resources&gt;</b> tag in the document.
-     *
-     * @return the resources
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    protected @NotNull Collection<Resource> parseResources() throws BuilderException {
-        List<Resource> resources = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("resource"))
-                resources.add(parseResource());
-        });
-        return resources;
     }
 
     /**
@@ -357,22 +328,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
         List<Plugin> plugins = new LinkedList<>();
         onChildElements(t -> {
             if (t.equals("plugins"))
-                plugins.addAll(parsePlugins());
-        });
-        return plugins;
-    }
-
-    /**
-     * Handles the <b>&lt;plugins&gt;</b> tag in the document.
-     *
-     * @return the plugins
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    protected @NotNull Collection<Plugin> parsePlugins() throws BuilderException {
-        List<Plugin> plugins = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("plugin"))
-                plugins.add(parsePlugin());
+                plugins.addAll(parseList("plugin", this::parsePlugin));
         });
         return plugins;
     }
@@ -391,27 +347,12 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
                 case "artifactId" -> builder.artifactId(getCurrentTextContent());
                 case "version" -> builder.version(getCurrentTextContent());
                 case "extensions" -> builder.extensions(getCurrentTextContent());
-                case "executions" -> builder.executions(List.copyOf(parseExecutions()));
+                case "executions" -> builder.executions(List.copyOf(parseList("execution", this::parseExecution)));
                 case "dependencies" -> builder.dependencies(List.copyOf(parseDependencies()));
                 case "inherited" -> builder.inherited(getCurrentTextContent());
             }
         });
         return buildObject("plugin", builder::build);
-    }
-
-    /**
-     * Handles the <b>&lt;executions&gt;</b> tag in the document.
-     *
-     * @return the executions
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    protected @NotNull Collection<Plugin.Execution> parseExecutions() throws BuilderException {
-        List<Plugin.Execution> executions = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("execution"))
-                executions.add(parseExecution());
-        });
-        return executions;
     }
 
     /**
@@ -433,6 +374,10 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
         return buildObject("execution", builder::build);
     }
 
+    /*
+     * UTILS
+     */
+
     /**
      * Reads a general list of strings from input.
      *
@@ -441,10 +386,24 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
      * @throws BuilderException in case of reading or parsing errors
      */
     protected @NotNull List<String> parseStringList(final String tagName) throws BuilderException {
-        List<String> list = new LinkedList<>();
+        return parseList(tagName, this::getCurrentTextContent);
+    }
+
+    /**
+     * Reads a general list from input.
+     *
+     * @param <T>             the type of the built object
+     * @param tagName         the tag name
+     * @param builderFunction the builder function
+     * @return the list of objects
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    protected <T> @NotNull List<T> parseList(final @NotNull String tagName,
+                                             final @NotNull SupplierException<T, BuilderException> builderFunction) throws BuilderException {
+        List<T> list = new LinkedList<>();
         onChildElements(t -> {
             if (t.equals(tagName))
-                list.add(getCurrentTextContent());
+                list.add(builderFunction.get());
         });
         return list;
     }

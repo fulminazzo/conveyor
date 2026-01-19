@@ -91,10 +91,10 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "url" -> this.pomMetadataBuilder.url(getCurrentTextContent());
                 case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
                 case "organization" -> this.pomMetadataBuilder.organization(parseOrganization());
-                case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseLicenses()));
-                case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseDevelopers()));
-                case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseContributors()));
-                case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseMailingLists()));
+                case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseList("license", this::parseLicense)));
+                case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseList("developer", this::parseDeveloper)));
+                case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseList("contributor", this::parseContributor)));
+                case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseList("mailingList", this::parseMailingList)));
                 case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
                 case "modules" -> this.pomMetadataBuilder.modules(List.copyOf(parseModules()));
                 case "scm" -> this.pomMetadataBuilder.scm(parseSCManagement());
@@ -163,21 +163,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
     }
 
     /**
-     * Handles the <b>&lt;licenses&gt;</b> tag in the document.
-     *
-     * @return the licenses
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    @NotNull Collection<License> parseLicenses() throws BuilderException {
-        List<License> licenses = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("license"))
-                licenses.add(parseLicense());
-        });
-        return licenses;
-    }
-
-    /**
      * Handles the <b>&lt;license&gt;</b> tag in the document.
      *
      * @return the license
@@ -194,21 +179,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("license", builder::build);
-    }
-
-    /**
-     * Handles the <b>&lt;developers&gt;</b> tag in the document.
-     *
-     * @return the developers
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    @NotNull Collection<Developer> parseDevelopers() throws BuilderException {
-        List<Developer> developers = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("developer"))
-                developers.add(parseDeveloper());
-        });
-        return developers;
     }
 
     /**
@@ -233,21 +203,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             }
         });
         return buildObject("developer", builder::build);
-    }
-
-    /**
-     * Handles the <b>&lt;contributors&gt;</b> tag in the document.
-     *
-     * @return the contributors
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    @NotNull Collection<Contributor> parseContributors() throws BuilderException {
-        List<Contributor> contributors = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("contributor"))
-                contributors.add(parseContributor());
-        });
-        return contributors;
     }
 
     /**
@@ -281,21 +236,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
      */
     @NotNull List<String> parseRoles() throws BuilderException {
         return parseStringList("role");
-    }
-
-    /**
-     * Handles the <b>&lt;mailingLists&gt;</b> tag in the document.
-     *
-     * @return the mailingLists
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    @NotNull Collection<MailingList> parseMailingLists() throws BuilderException {
-        List<MailingList> mailingLists = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("mailingList"))
-                mailingLists.add(parseMailingList());
-        });
-        return mailingLists;
     }
 
     /**
@@ -392,25 +332,10 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
             switch (t) {
                 case "system" -> builder.system(getCurrentTextContent());
                 case "url" -> builder.url(getCurrentTextContent());
-                case "notifiers" -> builder.notifiers(List.copyOf(parseNotifiers()));
+                case "notifiers" -> builder.notifiers(List.copyOf(parseList("notifier", this::parseNotifier)));
             }
         });
         return buildObject("ciManagement", builder::build);
-    }
-
-    /**
-     * Handles the <b>&lt;notifiers&gt;</b> tag in the document.
-     *
-     * @return the notifiers
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    @NotNull Collection<Notifier> parseNotifiers() throws BuilderException {
-        List<Notifier> notifiers = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("notifier"))
-                notifiers.add(parseNotifier());
-        });
-        return notifiers;
     }
 
     /**
@@ -450,33 +375,18 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "testSourceDirectory" -> builder.testSourceDirectory(getCurrentTextContent());
                 case "outputDirectory" -> builder.outputDirectory(getCurrentTextContent());
                 case "testOutputDirectory" -> builder.testOutputDirectory(getCurrentTextContent());
-                case "extensions" -> builder.extensions(List.copyOf(parseExtensions()));
+                case "extensions" -> builder.extensions(List.copyOf(parseList("extension", this::parseExtension)));
                 case "defaultGoal" -> builder.defaultGoal(getCurrentTextContent());
-                case "resources" -> builder.resources(List.copyOf(parseResources()));
-                case "testResources" -> builder.testResources(List.copyOf(parseTestResources()));
+                case "resources" -> builder.resources(List.copyOf(parseList("resource", this::parseResource)));
+                case "testResources" -> builder.testResources(List.copyOf(parseList("testResource", this::parseResource)));
                 case "directory" -> builder.directory(getCurrentTextContent());
                 case "finalName" -> builder.finalName(getCurrentTextContent());
                 case "filters" -> builder.filters(parseStringList("filter"));
                 case "pluginManagement" -> builder.pluginManagement(Set.copyOf(parsePluginManagement()));
-                case "plugins" -> builder.plugins(List.copyOf(parsePlugins()));
+                case "plugins" -> builder.plugins(List.copyOf(parseList("plugin", this::parsePlugin)));
             }
         });
         return buildObject("build", builder::build);
-    }
-
-    /**
-     * Handles the <b>&lt;extensions&gt;</b> tag in the document.
-     *
-     * @return the extensions
-     * @throws BuilderException in case of reading or parsing errors
-     */
-    @NotNull Collection<Artifact> parseExtensions() throws BuilderException {
-        List<Artifact> extensions = new LinkedList<>();
-        onChildElements(t -> {
-            if (t.equals("extension"))
-                extensions.add(parseExtension());
-        });
-        return extensions;
     }
 
     /**

@@ -79,13 +79,13 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
         onChildElements(t -> {
             switch (t) {
                 case "defaultGoal" -> builder.defaultGoal(getCurrentTextContent());
-                case "resources" -> builder.resources(List.copyOf(parseResources()));
-                case "testResources" -> builder.testResources(List.copyOf(parseTestResources()));
+                case "resources" -> builder.resources(List.copyOf(parseList("resource", this::parseResource)));
+                case "testResources" -> builder.testResources(List.copyOf(parseList("testResource", this::parseResource)));
                 case "directory" -> builder.directory(getCurrentTextContent());
                 case "finalName" -> builder.finalName(getCurrentTextContent());
                 case "filters" -> builder.filters(parseStringList("filter"));
                 case "pluginManagement" -> builder.pluginManagement(Set.copyOf(parsePluginManagement()));
-                case "plugins" -> builder.plugins(List.copyOf(parsePlugins()));
+                case "plugins" -> builder.plugins(List.copyOf(parseList("plugin", this::parsePlugin)));
             }
         });
         return buildObject("build", builder::build);
