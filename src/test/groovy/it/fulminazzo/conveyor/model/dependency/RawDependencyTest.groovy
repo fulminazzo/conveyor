@@ -1,9 +1,42 @@
 package it.fulminazzo.conveyor.model.dependency
 
+import it.fulminazzo.conveyor.model.artifact.Artifact
+import it.fulminazzo.conveyor.model.pom.Pom
 import it.fulminazzo.conveyor.model.properties.Properties
+import it.fulminazzo.conveyor.util.TestUtils
 import spock.lang.Specification
 
 class RawDependencyTest extends Specification {
+
+    def 'test that applyProperties applies project properties'() {
+        given:
+        def properties = Properties.newProjectProperties(
+                Pom.builder()
+                        .project(new Artifact('it.fulminazzo', 'conveyor', '1.0'))
+                        .build(),
+                TestUtils.BASE_DIR
+        )
+
+        and:
+        def rawDependency = RawDependency.builder()
+                .groupId('${project.groupId}')
+                .artifactId('dependency')
+                .version('${project.version}')
+                .build()
+
+        and:
+        def expected = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dependency')
+                .version('1.0')
+                .build()
+
+        when:
+        def actual = rawDependency.applyProperties(properties)
+
+        then:
+        actual == expected
+    }
 
     def 'test that applyProperties correctly parses all properties'() {
         given:
