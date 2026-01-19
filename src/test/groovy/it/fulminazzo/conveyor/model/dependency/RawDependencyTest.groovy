@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model.dependency
 
-import it.fulminazzo.conveyor.model.properties.MavenProjectProperties
+import it.fulminazzo.conveyor.model.properties.Properties
 import spock.lang.Specification
 
 class RawDependencyTest extends Specification {
@@ -22,7 +22,7 @@ class RawDependencyTest extends Specification {
                 .add('${third.excluded.groupId}', '${third.excluded.artifactId}')
 
         and:
-        def properties = new MavenProjectProperties([
+        def properties = Properties.newProperties([
                 'groupId'                   : 'it.fulminazzo',
                 'artifactId'                : 'conveyor',
                 'classifier'                : 'sources',

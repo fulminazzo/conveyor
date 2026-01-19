@@ -98,7 +98,7 @@ class EffectivePomBuilderTest extends Specification {
 
         and:
         def parentBuilder = new EffectivePomBuilder(parentPom, Mock(RepositoryPomResolver), mockActivationContext())
-        getProperties(parentBuilder).putAll([
+        getProperties(parentBuilder).addAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'parent-dependency1',
                 'profile-artifactId': 'parent-profile-dependency1'
@@ -148,7 +148,7 @@ class EffectivePomBuilderTest extends Specification {
 
         when:
         def builder = new EffectivePomBuilder(pom, Mock(RepositoryPomResolver), mockActivationContext())
-        getProperties(builder).putAll([
+        getProperties(builder).addAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'dependency1',
                 'profile-artifactId': 'profile-dependency1'
@@ -632,7 +632,7 @@ class EffectivePomBuilderTest extends Specification {
 
         and:
         def parentBuilder = new EffectivePomBuilder(parentPom, pomResolver, mockActivationContext())
-        getProperties(parentBuilder).putAll([
+        getProperties(parentBuilder).addAll([
                 'parent.repository.id'         : 'parent-repository2',
                 'parent.repository.url'        : 'https://url2.com',
                 'parent.profile.repository.id' : 'parent-profile-repository2',
@@ -653,7 +653,7 @@ class EffectivePomBuilderTest extends Specification {
 
         when:
         def builder = new EffectivePomBuilder(pom, pomResolver, mockActivationContext())
-        getProperties(builder).putAll([
+        getProperties(builder).addAll([
                 'repository.id'         : 'repository2',
                 'repository.url'        : 'https://url6.com',
                 'profile.repository.id' : 'profile-repository2',
@@ -824,7 +824,7 @@ class EffectivePomBuilderTest extends Specification {
     def 'test that getDependency of #rawDependency returns #expected'() {
         given:
         def builder = new EffectivePomBuilder(Mock(Pom), Mock(RepositoryPomResolver), mockActivationContext())
-        getProperties(builder).putAll([
+        getProperties(builder).addAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'dependency',
                 'dependency.version': '0.0.1',
