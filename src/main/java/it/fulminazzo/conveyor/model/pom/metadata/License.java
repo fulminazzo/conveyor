@@ -9,9 +9,9 @@ import org.jetbrains.annotations.Nullable;
 @Builder
 public class License {
 
-    @NotNull String name;
+    @Nullable String name;
 
-    @NotNull String url;
+    @Nullable String url;
 
     @Nullable String distribution;
 
