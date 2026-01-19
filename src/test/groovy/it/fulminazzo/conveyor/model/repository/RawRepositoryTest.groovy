@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model.repository
 
-import it.fulminazzo.conveyor.model.Properties
+import it.fulminazzo.conveyor.model.properties.MavenProjectProperties
 import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy
 import spock.lang.Specification
 
@@ -25,7 +25,7 @@ class RawRepositoryTest extends Specification {
                 .build()
 
         and:
-        def properties = new Properties([
+        def properties = new MavenProjectProperties([
                 'id'                       : 'fulminazzo-repo',
                 'url'                      : 'https://repo.fulminazzo.it/',
                 'name'                     : 'Fulminazzo official repository',

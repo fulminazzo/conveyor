@@ -1,7 +1,6 @@
 package it.fulminazzo.conveyor.model.profile.activation.context;
 
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
-import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
 import it.fulminazzo.conveyor.model.properties.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

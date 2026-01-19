@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model.pom
 
-import it.fulminazzo.conveyor.model.Properties
+import it.fulminazzo.conveyor.model.properties.MavenProjectProperties
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.Dependency
 import it.fulminazzo.conveyor.model.dependency.RawDependency
@@ -1009,7 +1009,7 @@ class EffectivePomBuilderTest extends Specification {
         return new Artifact("it.fulminazzo", id, version)
     }
 
-    private static Properties getProperties(final Object object) {
+    private static MavenProjectProperties getProperties(final Object object) {
         def field = object.class.getDeclaredField('properties')
         field.accessible = true
         return field.get(object)

@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model.repository;
 
-import it.fulminazzo.conveyor.model.Properties;
+import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
 import it.fulminazzo.conveyor.model.RawObject;
 import it.fulminazzo.conveyor.model.repository.update.UpdatePolicy;
 import lombok.Builder;
@@ -35,7 +35,7 @@ public class RawRepository implements RepositoryLike, RawObject<Repository> {
     @NotNull String layout = "default";
 
     @Override
-    public @NotNull Repository applyProperties(final @NotNull Properties properties) {
+    public @NotNull Repository applyProperties(final @NotNull MavenProjectProperties properties) {
         String name = getName();
         return Repository.builder()
                 .id(properties.apply(getId()))
@@ -61,7 +61,7 @@ public class RawRepository implements RepositoryLike, RawObject<Repository> {
         @NotNull String checksumPolicy = ChecksumPolicy.WARN.value();
 
         @Override
-        public @NotNull Repository.Policy applyProperties(final @NotNull Properties properties) {
+        public @NotNull Repository.Policy applyProperties(final @NotNull MavenProjectProperties properties) {
             return Repository.Policy.builder()
                     .enabled(Boolean.parseBoolean(properties.apply(getEnabled())))
                     .updatePolicy(UpdatePolicy.of(properties.apply(getUpdatePolicy())))

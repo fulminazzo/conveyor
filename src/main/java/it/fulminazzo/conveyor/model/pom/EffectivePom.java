@@ -1,6 +1,6 @@
 package it.fulminazzo.conveyor.model.pom;
 
-import it.fulminazzo.conveyor.model.Properties;
+import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
@@ -20,7 +20,7 @@ public class EffectivePom implements PomLike {
     @NotNull Artifact project;
     @NotNull String packaging;
 
-    @NotNull Properties properties;
+    @NotNull MavenProjectProperties properties;
     @NotNull List<Dependency> dependencies;
 
     /**
@@ -33,7 +33,7 @@ public class EffectivePom implements PomLike {
      */
     public EffectivePom(final @NotNull Artifact project,
                         final @NotNull String packaging,
-                        final @NotNull Properties properties,
+                        final @NotNull MavenProjectProperties properties,
                         final @NotNull Collection<Dependency> dependencies) {
         this.project = project;
         this.packaging = packaging;

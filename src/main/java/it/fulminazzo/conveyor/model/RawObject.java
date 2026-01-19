@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model;
 
+import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,6 +19,6 @@ public interface RawObject<O> {
      * @param properties the properties
      * @return the completed object
      */
-    @NotNull O applyProperties(final @NotNull Properties properties);
+    @NotNull O applyProperties(final @NotNull MavenProjectProperties properties);
 
 }
