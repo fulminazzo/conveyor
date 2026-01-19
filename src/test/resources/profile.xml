@@ -68,6 +68,20 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources-prod</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <filters>
+            <filter>null</filter>
+        </filters>
+
+        <something>wrong</something>
+
     </build>
 
     <properties>
@@ -115,5 +129,7 @@
     <modules>
         <module>extra-module-for-prod</module>
     </modules>
+
+    <something>wrong</something>
 
 </profile>

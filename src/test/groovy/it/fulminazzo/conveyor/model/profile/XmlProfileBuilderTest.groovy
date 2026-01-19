@@ -112,6 +112,13 @@ class XmlProfileBuilderTest extends Specification {
                                                 .filtering('true')
                                                 .build()
                                 ])
+                                .testResources([
+                                        Resource.builder()
+                                                .directory('src/main/resources-prod')
+                                                .filtering('true')
+                                                .build()
+                                ])
+                                .filters(['null'])
                                 .build())
                         .build())
                 .build()
