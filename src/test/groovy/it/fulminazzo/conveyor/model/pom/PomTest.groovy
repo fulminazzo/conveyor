@@ -195,7 +195,7 @@ class PomTest extends Specification {
                 .dependencyManagement([dependency].toSet())
                 .dependencies([dependency])
                 .repositories([repository].toSet())
-                .profiles(Profile.builder().id('profile1').build())
+                .profiles([Profile.builder().id('profile1').build()].toSet())
                 .build()
 
         when:
