@@ -62,6 +62,6 @@ interface DependencyLike {
      *
      * @return the exclusions
      */
-    @NotNull Exclusions getExclusions();
+    @NotNull ExclusionsManager getExclusionsManager();
 
 }

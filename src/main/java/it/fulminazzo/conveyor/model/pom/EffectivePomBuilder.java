@@ -255,7 +255,7 @@ public final class EffectivePomBuilder {
                 .scope(dependency.getScope())
                 .optional(dependency.getOptional())
                 .build();
-        copy.getExclusions().addAll(dependency.getExclusions());
+        copy.getExclusionsManager().addAll(dependency.getExclusionsManager());
         return copy.applyProperties(this.properties);
     }
 

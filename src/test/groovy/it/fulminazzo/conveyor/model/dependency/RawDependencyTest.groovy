@@ -16,7 +16,7 @@ class RawDependencyTest extends Specification {
                 .scope('${scope}')
                 .optional('${optional}')
                 .build()
-        rawDependency.exclusions
+        rawDependency.exclusionsManager
                 .add('${first.excluded.groupId}', '${first.excluded.artifactId}')
                 .add('${second.excluded.groupId}', '${second.excluded.artifactId}')
                 .add('${third.excluded.groupId}', '${third.excluded.artifactId}')
@@ -47,7 +47,7 @@ class RawDependencyTest extends Specification {
                 .type('war')
                 .scope(Scope.TEST)
                 .optional(true)
-                .exclusions(new Exclusions()
+                .exclusionsManager(new ExclusionsManager()
                         .add('org.projectlombok', 'lombok')
                         .add('org.jetbrains', 'annotations')
                         .add('org.spockframework', 'spock-core')

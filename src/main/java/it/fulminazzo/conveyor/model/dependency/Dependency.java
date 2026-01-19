@@ -27,7 +27,7 @@ public final class Dependency extends Artifact implements DependencyLike {
     private final boolean optional = false;
 
     @Builder.Default
-    private final @NotNull Exclusions exclusions = new Exclusions();
+    private final @NotNull ExclusionsManager exclusionsManager = new ExclusionsManager();
 
     @Override
     public @NotNull String getCoordinates() {

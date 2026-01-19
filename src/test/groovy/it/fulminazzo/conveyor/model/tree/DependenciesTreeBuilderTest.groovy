@@ -2,7 +2,7 @@ package it.fulminazzo.conveyor.model.tree
 
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.Dependency
-import it.fulminazzo.conveyor.model.dependency.Exclusions
+import it.fulminazzo.conveyor.model.dependency.ExclusionsManager
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.pom.Pom
@@ -142,7 +142,7 @@ class DependenciesTreeBuilderTest extends Specification {
         def dependencies = this.builder.dependenciesToCheck
 
         when:
-        this.builder.addPomDependenciesToCheckList(pom, 1, new Exclusions())
+        this.builder.addPomDependenciesToCheckList(pom, 1, new ExclusionsManager())
 
         then:
         dependencies.size() == pom.dependencies.size()
@@ -163,7 +163,7 @@ class DependenciesTreeBuilderTest extends Specification {
                 .groupId('it.fulminazzo')
                 .artifactId('dep1')
                 .version('1.0')
-                .exclusions(new Exclusions().add('it.fulminazzo', 'dep3'))
+                .exclusionsManager(new ExclusionsManager().add('it.fulminazzo', 'dep3'))
                 .build()
 
         and:
@@ -172,8 +172,8 @@ class DependenciesTreeBuilderTest extends Specification {
                         .groupId('it.fulminazzo')
                         .artifactId('dep1')
                         .version('1.0')
-                        .exclusions(new Exclusions().add('it.fulminazzo', 'dep3'))
-                        .build(), 1, new Exclusions()
+                        .exclusionsManager(new ExclusionsManager().add('it.fulminazzo', 'dep3'))
+                        .build(), 1, new ExclusionsManager()
                         .add('it.fulminazzo', 'dep3')
                         .add('it.fulminazzo', 'dep4')
                 ),
@@ -181,8 +181,8 @@ class DependenciesTreeBuilderTest extends Specification {
                         .groupId('it.fulminazzo')
                         .artifactId('dep2')
                         .version('1.0')
-                        .exclusions(new Exclusions())
-                        .build(), 1, new Exclusions()
+                        .exclusionsManager(new ExclusionsManager())
+                        .build(), 1, new ExclusionsManager()
                         .add('it.fulminazzo', 'dep4')
                 )
         ]
@@ -206,7 +206,7 @@ class DependenciesTreeBuilderTest extends Specification {
         def dependencies = this.builder.dependenciesToCheck
 
         and:
-        def exclusions = new Exclusions().add('it.fulminazzo', 'dep4')
+        def exclusions = new ExclusionsManager().add('it.fulminazzo', 'dep4')
 
         when:
         this.builder.addPomDependenciesToCheckList(pom, 1, exclusions)
@@ -223,7 +223,7 @@ class DependenciesTreeBuilderTest extends Specification {
         def dependencies = this.builder.dependenciesToCheck
 
         when:
-        this.builder.setRequiredScopes(scope).addPomDependenciesToCheckList(pom, 1, new Exclusions())
+        this.builder.setRequiredScopes(scope).addPomDependenciesToCheckList(pom, 1, new ExclusionsManager())
 
         then:
         dependencies.size() == 1

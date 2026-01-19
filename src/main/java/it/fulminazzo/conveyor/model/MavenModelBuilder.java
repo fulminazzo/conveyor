@@ -186,7 +186,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
             }
         });
         RawDependency dependency = buildObject("dependency", builder::build);
-        exclusions.forEach(a -> dependency.getExclusions().add(a[0], a[1]));
+        exclusions.forEach(a -> dependency.getExclusionsManager().add(a[0], a[1]));
         return dependency;
     }
 

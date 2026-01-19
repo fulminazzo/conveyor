@@ -241,7 +241,7 @@ class MavenModelBuilderTest extends Specification {
                 .scope(Scope.PROVIDED.value())
                 .optional(true.toString())
                 .build()
-        expected.exclusions.add('org.projectlombok', 'lombok')
+        expected.exclusionsManager.add('org.projectlombok', 'lombok')
 
         when:
         def dependency = builder.parseDependency()

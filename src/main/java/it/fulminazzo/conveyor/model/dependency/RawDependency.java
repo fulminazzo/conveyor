@@ -15,7 +15,7 @@ import java.util.Objects;
 
 /**
  * Represents a raw {@link Dependency},
- * where all the fields (except {@link #exclusions})
+ * where all the fields (except {@link #exclusionsManager})
  * are initialized in their <b>XML</b> form.
  */
 @Getter
@@ -37,7 +37,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike,
     private final @NotNull String optional = String.valueOf(Boolean.FALSE);
 
     @Builder.Default
-    private final @NotNull Exclusions exclusions = new Exclusions();
+    private final @NotNull ExclusionsManager exclusionsManager = new ExclusionsManager();
 
     @Override
     public @NotNull Dependency applyProperties(final @NotNull Properties properties) {
@@ -50,7 +50,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike,
                 .type(properties.apply(getType()))
                 .scope(Scope.of(properties.apply(getScope())))
                 .optional(Boolean.parseBoolean(properties.apply(getOptional())))
-                .exclusions(getExclusions().applyProperties(properties))
+                .exclusionsManager(getExclusionsManager().applyProperties(properties))
                 .build();
     }
 

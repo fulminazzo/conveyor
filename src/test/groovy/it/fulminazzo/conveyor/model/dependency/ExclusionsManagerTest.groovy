@@ -1,13 +1,13 @@
 package it.fulminazzo.conveyor.model.dependency
 
-import it.fulminazzo.conveyor.model.dependency.Exclusions
+
 import spock.lang.Specification
 
-class ExclusionsTest extends Specification {
+class ExclusionsManagerTest extends Specification {
 
     def 'test that isExcluded returns #expected for #groupId and #artifactId (wildcard: #wildcard)'() {
         given:
-        def exclusions = new Exclusions()
+        def exclusions = new ExclusionsManager()
 
         and:
         exclusions.add('it.fulminazzo', 'first')

@@ -1,7 +1,7 @@
 package it.fulminazzo.conveyor.model.pom
 
 import it.fulminazzo.conveyor.model.artifact.Artifact
-import it.fulminazzo.conveyor.model.dependency.Exclusions
+import it.fulminazzo.conveyor.model.dependency.ExclusionsManager
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.pom.metadata.Build
 import it.fulminazzo.conveyor.model.pom.metadata.Contributor
@@ -43,7 +43,7 @@ class PomTest extends Specification {
             .type('war')
             .classifier('sources')
             .scope('IMPORT')
-            .exclusions(new Exclusions().add('it.fulminazzo.conveyor', 'common'))
+            .exclusionsManager(new ExclusionsManager().add('it.fulminazzo.conveyor', 'common'))
             .optional('true')
             .build()
     private static final Plugin plugin = Plugin.builder()

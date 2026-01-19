@@ -10,24 +10,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents the exclusions of a {@link Dependency}.
+ * Keeps track of all the exclusions of a dependency.
  */
 @ToString(includeFieldNames = false)
 @EqualsAndHashCode
-public final class Exclusions implements RawObject<Exclusions> {
+public final class ExclusionsManager implements RawObject<ExclusionsManager> {
     private static final @NotNull String wildcard = "*";
 
     private final @NotNull Set<ExclusionNode> exclusions = new HashSet<>();
 
     @Override
-    public @NotNull Exclusions applyProperties(final @NotNull Properties properties) {
-        Exclusions exclusions = new Exclusions();
+    public @NotNull ExclusionsManager applyProperties(final @NotNull Properties properties) {
+        ExclusionsManager exclusionsManager = new ExclusionsManager();
         for (ExclusionNode exclusion : this.exclusions)
-            exclusions.exclusions.add(new ExclusionNode(
+            exclusionsManager.exclusions.add(new ExclusionNode(
                     properties.apply(exclusion.groupId()),
                     properties.apply(exclusion.artifactId())
             ));
-        return exclusions;
+        return exclusionsManager;
     }
 
     /**
@@ -52,8 +52,8 @@ public final class Exclusions implements RawObject<Exclusions> {
      * @param artifactId the artifact id
      * @return this object for method chaining
      */
-    public @NotNull Exclusions add(final @NotNull String groupId,
-                                   final @NotNull String artifactId) {
+    public @NotNull ExclusionsManager add(final @NotNull String groupId,
+                                          final @NotNull String artifactId) {
         this.exclusions.add(new ExclusionNode(groupId, artifactId));
         return this;
     }
@@ -61,11 +61,11 @@ public final class Exclusions implements RawObject<Exclusions> {
     /**
      * Adds all the exclusions to the current list.
      *
-     * @param exclusions the exclusions
+     * @param exclusionsManager the exclusions
      * @return this object for method chaining
      */
-    public @NotNull Exclusions addAll(final @NotNull Exclusions exclusions) {
-        this.exclusions.addAll(exclusions.exclusions);
+    public @NotNull ExclusionsManager addAll(final @NotNull ExclusionsManager exclusionsManager) {
+        this.exclusions.addAll(exclusionsManager.exclusions);
         return this;
     }
 

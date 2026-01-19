@@ -2,7 +2,7 @@ package it.fulminazzo.conveyor.model.tree;
 
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
-import it.fulminazzo.conveyor.model.dependency.Exclusions;
+import it.fulminazzo.conveyor.model.dependency.ExclusionsManager;
 import it.fulminazzo.conveyor.model.dependency.Scope;
 import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
@@ -55,7 +55,7 @@ public final class DependenciesTreeBuilder {
         this.dependenciesToCheck.clear();
 
         Pom projectPom = this.resolver.resolve(this.project);
-        addPomDependenciesToCheckList(projectPom, 1, new Exclusions());
+        addPomDependenciesToCheckList(projectPom, 1, new ExclusionsManager());
         Dependency projectDependency = Dependency.builder()
                 .groupId(this.project.getGroupId())
                 .artifactId(this.project.getArtifactId())
@@ -87,7 +87,7 @@ public final class DependenciesTreeBuilder {
         this.dependenciesTree.put(coordinates, node);
 
         Pom pom = this.resolver.resolve(dependency);
-        addPomDependenciesToCheckList(pom, depth + 1, node.exclusions());
+        addPomDependenciesToCheckList(pom, depth + 1, node.exclusionsManager());
     }
 
     /**
@@ -98,19 +98,19 @@ public final class DependenciesTreeBuilder {
      *
      * @param pom        the pom
      * @param depth      the depth of the dependencies
-     * @param exclusions the exclusions of the dependency that generated the pom
+     * @param exclusionsManager the exclusions of the dependency that generated the pom
      * @throws PomResolverException in case of any errors during pom construction
      */
     void addPomDependenciesToCheckList(final @NotNull Pom pom,
                                        final int depth,
-                                       final @NotNull Exclusions exclusions) throws PomResolverException {
+                                       final @NotNull ExclusionsManager exclusionsManager) throws PomResolverException {
         EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.context).build();
 
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
-            if (exclusions.isExcluded(transitiveDep.getGroupId(), transitiveDep.getArtifactId())) continue;
+            if (exclusionsManager.isExcluded(transitiveDep.getGroupId(), transitiveDep.getArtifactId())) continue;
             if (!this.scopes.isEmpty() && !this.scopes.contains(transitiveDep.getScope())) continue;
             DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth);
-            transitiveNode.exclusions().addAll(exclusions).addAll(transitiveDep.getExclusions());
+            transitiveNode.exclusionsManager().addAll(exclusionsManager).addAll(transitiveDep.getExclusionsManager());
             this.dependenciesToCheck.offer(transitiveNode);
         }
     }
