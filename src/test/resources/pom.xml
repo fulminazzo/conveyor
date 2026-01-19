@@ -227,6 +227,18 @@
         <module>extra-module-for-prod</module>
     </modules>
 
+    <reporting>
+        <excludeDefaults>false</excludeDefaults>
+        <outputDirectory>${project.basedir}/target</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
         <scriptSourceDirectory>${project.basedir}/src/main/groovy</scriptSourceDirectory>
@@ -256,6 +268,9 @@
                     <include>**/*.xml</include>
                     <include>**/*.properties</include>
                 </includes>
+                <excludes>
+                    <exclude>**/*.yml</exclude>
+                </excludes>
             </resource>
         </resources>
 
@@ -265,6 +280,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.10.1</version>
+
+                    <extensions>conveyor</extensions>
+
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
@@ -287,6 +305,8 @@
     </build>
 
     <distributionManagement>
+        <downloadUrl>https://example.com</downloadUrl>
+        <status>verified</status>
         <repository>
             <id>internal-releases</id>
             <name>Internal Releases</name>
@@ -299,8 +319,15 @@
         </snapshotRepository>
         <site>
             <id>website</id>
+            <name>Website name</name>
             <url>scp://www.example.com/www/docs/project/</url>
         </site>
+        <relocation>
+            <groupId>it.fulminazzo</groupId>
+            <artifactId>conveyor</artifactId>
+            <version>1.0</version>
+            <message>Relocating to conveyor</message>
+        </relocation>
     </distributionManagement>
 
     <profiles>
@@ -341,6 +368,7 @@
                                 <goals>
                                     <goal>proguard</goal>
                                 </goals>
+                                <inherited>false</inherited>
                             </execution>
                         </executions>
                     </plugin>

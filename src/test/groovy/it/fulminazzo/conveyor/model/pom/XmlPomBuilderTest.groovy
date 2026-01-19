@@ -6,6 +6,7 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
 import it.fulminazzo.conveyor.model.metadata.DistributionManagement
 import it.fulminazzo.conveyor.model.metadata.Plugin
+import it.fulminazzo.conveyor.model.metadata.Reporting
 import it.fulminazzo.conveyor.model.metadata.Resource
 import it.fulminazzo.conveyor.model.pom.metadata.Build
 import it.fulminazzo.conveyor.model.pom.metadata.Contributor
@@ -139,6 +140,17 @@ class XmlPomBuilderTest extends Specification {
                                         .url('https://repo.maven.apache.org/maven2')
                                         .build()
                         ].toSet())
+                        .reporting(Reporting.builder()
+                                .excludeDefaults('false')
+                                .outputDirectory('${project.basedir}/target')
+                                .plugins([
+                                        Plugin.builder()
+                                                .groupId('org.apache.maven.plugins')
+                                                .artifactId('maven-compiler-plugin')
+                                                .version('3.10.1')
+                                                .build()
+                                ])
+                                .build())
                         .build(Build.builder()
                                 .sourceDirectory('${project.basedir}/src/main/java')
                                 .scriptSourceDirectory('${project.basedir}/src/main/groovy')
@@ -156,6 +168,7 @@ class XmlPomBuilderTest extends Specification {
                                                 .directory('src/main/resources')
                                                 .filtering('true')
                                                 .includes(['**/*.xml', '**/*.properties'])
+                                                .excludes(['**/*.yml'])
                                                 .build()
                                 ])
                                 .pluginManagement([
@@ -163,6 +176,7 @@ class XmlPomBuilderTest extends Specification {
                                                 .groupId('org.apache.maven.plugins')
                                                 .artifactId('maven-compiler-plugin')
                                                 .version('3.10.1')
+                                                .extensions('conveyor')
                                                 .build()
                                 ].toSet())
                                 .plugins([
@@ -178,6 +192,8 @@ class XmlPomBuilderTest extends Specification {
                                 ])
                                 .build())
                         .distributionManagement(DistributionManagement.builder()
+                                .downloadUrl('https://example.com')
+                                .status('verified')
                                 .repository(RawRepository.builder()
                                         .id('internal-releases')
                                         .name('Internal Releases')
@@ -190,7 +206,14 @@ class XmlPomBuilderTest extends Specification {
                                         .build())
                                 .site(DistributionManagement.Site.builder()
                                         .id('website')
+                                        .name('Website name')
                                         .url('scp://www.example.com/www/docs/project/')
+                                        .build())
+                                .relocation(DistributionManagement.Relocation.builder()
+                                        .groupId('it.fulminazzo')
+                                        .artifactId('conveyor')
+                                        .version('1.0')
+                                        .message('Relocating to conveyor')
                                         .build())
                                 .build())
                         .modules(['extra-module-for-prod'])
@@ -231,6 +254,7 @@ class XmlPomBuilderTest extends Specification {
                                                                         Plugin.Execution.builder()
                                                                                 .phase('package')
                                                                                 .goals(['proguard'])
+                                                                                .inherited('false')
                                                                                 .build()
                                                                 ])
                                                                 .build()
