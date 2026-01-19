@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model;
 
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
+import it.fulminazzo.conveyor.model.metadata.DistributionManagement;
 import it.fulminazzo.conveyor.model.metadata.Reporting;
 import it.fulminazzo.conveyor.model.metadata.Plugin;
 import it.fulminazzo.conveyor.model.metadata.Resource;
@@ -200,6 +201,64 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
      */
     protected @NotNull Collection<String> parseModules() throws BuilderException {
         return parseStringList("module");
+    }
+
+    /**
+     * Handles the <b>&lt;distributionManagement&gt;</b> tag in the document.
+     *
+     * @return the distribution management
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    protected @NotNull DistributionManagement parseDistributionManagement() throws BuilderException {
+        DistributionManagement.DistributionManagementBuilder builder = DistributionManagement.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "repository" -> builder.repository(parseRepository());
+                case "snapshotRepository" -> builder.snapshotRepository(parseRepository());
+                case "site" -> builder.site(parseSite());
+                case "downloadUrl" -> builder.downloadUrl(getCurrentTextContent());
+                case "relocation" -> builder.relocation(parseRelocation());
+                case "status" -> builder.status(getCurrentTextContent());
+            }
+        });
+        return buildObject("distributionManagement", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;site&gt;</b> tag in the document.
+     *
+     * @return the site
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull DistributionManagement.Site parseSite() throws BuilderException {
+        DistributionManagement.Site.SiteBuilder builder = DistributionManagement.Site.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "id" -> builder.id(getCurrentTextContent());
+                case "name" -> builder.name(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+            }
+        });
+        return buildObject("site", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;relocation&gt;</b> tag in the document.
+     *
+     * @return the relocation
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull DistributionManagement.Relocation parseRelocation() throws BuilderException {
+        DistributionManagement.Relocation.RelocationBuilder builder = DistributionManagement.Relocation.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "groupId" -> builder.groupId(getCurrentTextContent());
+                case "artifactId" -> builder.artifactId(getCurrentTextContent());
+                case "version" -> builder.version(getCurrentTextContent());
+                case "message" -> builder.message(getCurrentTextContent());
+            }
+        });
+        return buildObject("relocation", builder::build);
     }
 
     /**
