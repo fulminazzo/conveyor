@@ -155,6 +155,11 @@ class PomTest extends Specification {
                         ])
                         .prerequisites(new PomMetadata.Prerequisites('2.1.0'))
                         .modules(['first', 'second', 'third'])
+                        .scm(PomMetadata.SCManagement.builder()
+                                .connection('fulminazzo')
+                                .developerConnection('fulminazzo')
+                                .url('fulminazzo.it')
+                                .build())
                         .issueManagement(new PomMetadata.IssueManagement('fulminazzo', 'fulminazzo.it'))
                         .ciManagement(PomMetadata.CiManagement.builder()
                                 .system('fulminazzo')
@@ -298,6 +303,10 @@ class PomTest extends Specification {
         'modules[0]'                                                         || 'first'
         'modules[1]'                                                         || 'second'
         'modules[2]'                                                         || 'third'
+        'scm.connection'                                                     || 'fulminazzo'
+        'scm.developerConnection'                                            || 'fulminazzo'
+        'scm.tag'                                                            || 'HEAD'
+        'scm.url'                                                            || 'fulminazzo.it'
         'issueManagement.system'                                             || 'fulminazzo'
         'issueManagement.url'                                                || 'fulminazzo.it'
         'ciManagement.system'                                                || 'fulminazzo'
