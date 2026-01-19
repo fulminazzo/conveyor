@@ -39,12 +39,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
 
     @Override
     public Pom build() throws BuilderException {
-        try {
-            XmlParser parser = getParser();
-            if (parser.hasNext()) parser.next();
-        } catch (XmlParserException e) {
-            throw new BuilderException(e);
-        }
         parseDocument();
         if (this.parent != null) {
             if (this.groupId == null) this.groupId = this.parent.getGroupId();
@@ -69,40 +63,47 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
      * @throws BuilderException in case of any errors
      */
     protected void parseDocument() throws BuilderException {
-        onChildElements(t -> {
-            switch (t) {
-                case "groupId" -> this.groupId = getCurrentTextContent();
-                case "artifactId" -> this.artifactId = getCurrentTextContent();
-                case "version" -> this.version = getCurrentTextContent();
-                case "packaging" -> this.builder.packaging(getCurrentTextContent());
-                case "parent" -> this.parent = parseParent();
-                case "profiles" -> parseProfiles();
-                case "properties" -> this.builder.properties(parseProperties());
-                case "repositories" -> this.builder.repositories(parseRepositories());
-                case "dependencyManagement" -> this.builder.dependencyManagement(parseDependencyManagement());
-                case "dependencies" -> this.builder.dependencies(parseDependencies());
-                // METADATA
-                case "modelVersion" -> this.pomMetadataBuilder.modelVersion(getCurrentTextContent());
-                case "name" -> this.pomMetadataBuilder.name(getCurrentTextContent());
-                case "description" -> this.pomMetadataBuilder.description(getCurrentTextContent());
-                case "url" -> this.pomMetadataBuilder.url(getCurrentTextContent());
-                case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
-                case "organization" -> this.pomMetadataBuilder.organization(parseOrganization());
-                case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseList("license", this::parseLicense)));
-                case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseList("developer", this::parseDeveloper)));
-                case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseList("contributor", this::parseContributor)));
-                case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseList("mailingList", this::parseMailingList)));
-                case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
-                case "modules" -> this.pomMetadataBuilder.modules(List.copyOf(parseModules()));
-                case "scm" -> this.pomMetadataBuilder.scm(parseSCManagement());
-                case "issueManagement" -> this.pomMetadataBuilder.issueManagement(parseIssueManagement());
-                case "ciManagement" -> this.pomMetadataBuilder.ciManagement(parseCiManagement());
-                case "distributionManagement" -> this.pomMetadataBuilder.distributionManagement(parseDistributionManagement());
-                case "pluginRepositories" -> this.pomMetadataBuilder.pluginRepositories(parsePluginRepositories());
-                case "build" -> this.pomMetadataBuilder.build(parseBuild());
-                case "reporting" -> this.pomMetadataBuilder.reporting(parseReporting());
-            }
-        });
+        try {
+            XmlParser parser = getParser();
+            if (parser.hasNext()) parser.next();
+            onChildElements(t -> {
+                switch (t) {
+                    case "groupId" -> this.groupId = getCurrentTextContent();
+                    case "artifactId" -> this.artifactId = getCurrentTextContent();
+                    case "version" -> this.version = getCurrentTextContent();
+                    case "packaging" -> this.builder.packaging(getCurrentTextContent());
+                    case "parent" -> this.parent = parseParent();
+                    case "profiles" -> parseProfiles();
+                    case "properties" -> this.builder.properties(parseProperties());
+                    case "repositories" -> this.builder.repositories(parseRepositories());
+                    case "dependencyManagement" -> this.builder.dependencyManagement(parseDependencyManagement());
+                    case "dependencies" -> this.builder.dependencies(parseDependencies());
+                    // METADATA
+                    case "modelVersion" -> this.pomMetadataBuilder.modelVersion(getCurrentTextContent());
+                    case "name" -> this.pomMetadataBuilder.name(getCurrentTextContent());
+                    case "description" -> this.pomMetadataBuilder.description(getCurrentTextContent());
+                    case "url" -> this.pomMetadataBuilder.url(getCurrentTextContent());
+                    case "inceptionYear" -> this.pomMetadataBuilder.inceptionYear(getCurrentTextContent());
+                    case "organization" -> this.pomMetadataBuilder.organization(parseOrganization());
+                    case "licenses" -> this.pomMetadataBuilder.licenses(Set.copyOf(parseList("license", this::parseLicense)));
+                    case "developers" -> this.pomMetadataBuilder.developers(Set.copyOf(parseList("developer", this::parseDeveloper)));
+                    case "contributors" -> this.pomMetadataBuilder.contributors(Set.copyOf(parseList("contributor", this::parseContributor)));
+                    case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseList("mailingList", this::parseMailingList)));
+                    case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
+                    case "modules" -> this.pomMetadataBuilder.modules(List.copyOf(parseModules()));
+                    case "scm" -> this.pomMetadataBuilder.scm(parseSCManagement());
+                    case "issueManagement" -> this.pomMetadataBuilder.issueManagement(parseIssueManagement());
+                    case "ciManagement" -> this.pomMetadataBuilder.ciManagement(parseCiManagement());
+                    case "distributionManagement" -> this.pomMetadataBuilder.distributionManagement(parseDistributionManagement());
+                    case "pluginRepositories" -> this.pomMetadataBuilder.pluginRepositories(parsePluginRepositories());
+                    case "build" -> this.pomMetadataBuilder.build(parseBuild());
+                    case "reporting" -> this.pomMetadataBuilder.reporting(parseReporting());
+                }
+            });
+            parser.close();
+        } catch (XmlParserException e) {
+            throw new BuilderException(e);
+        }
     }
 
     /**
