@@ -52,7 +52,7 @@ public final class EffectivePomBuilder {
         this.pomResolver = pomResolver;
         this.workingDir = workingDir;
 
-        this.logger = LoggerFactory.getLogger(String.format("EffectivePOMBuilder(%s)", startingPom.getProject().getCoordinates()));
+        this.logger = LoggerFactory.getLogger(String.format("EffectivePOMBuilder(%s)", startingPom.getProject().getGAVCoordinates()));
 
         this.properties = Properties.newProjectProperties(startingPom, workingDir);
     }
@@ -155,7 +155,7 @@ public final class EffectivePomBuilder {
         for (final RawDependency raw : dependencyManagement) {
             Dependency dependency = raw.applyProperties(this.properties);
             if (dependency.getScope() == Scope.IMPORT) {
-                this.logger.debug("Resolving dependency with scope IMPORT '{}'", dependency.getCoordinates());
+                this.logger.debug("Resolving dependency with scope IMPORT '{}'", dependency.getGAVCoordinates());
                 Pom dependencyPom = this.pomResolver.resolve(dependency);
                 EffectivePomBuilder dependencyPomBuilder = newBuilder(dependencyPom).buildIncomplete();
                 this.dependencyManagement.putAll(dependencyPomBuilder.dependencyManagement);
@@ -230,12 +230,12 @@ public final class EffectivePomBuilder {
         this.parentEffectivePomBuilder = null;
         Artifact parent = this.startingPom.getParent();
         if (parent != null) {
-            this.logger.debug("Resolving parent '{}'", parent.getCoordinates());
+            this.logger.debug("Resolving parent '{}'", parent.getGAVCoordinates());
             Pom parentPom = this.pomResolver.resolve(parent);
             this.parentEffectivePomBuilder = newBuilder(parentPom)
                     .buildIncomplete()
                     .populateDependencies();
-            this.logger.debug("Resolved parent '{}'", parentPom.getProject().getCoordinates());
+            this.logger.debug("Resolved parent '{}'", parentPom.getProject().getGAVCoordinates());
         }
         return this;
     }

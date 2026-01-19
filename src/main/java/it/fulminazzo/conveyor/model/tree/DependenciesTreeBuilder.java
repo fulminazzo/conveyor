@@ -56,7 +56,7 @@ public final class DependenciesTreeBuilder {
         this.dependenciesTree.clear();
         this.dependenciesToCheck.clear();
 
-        log.debug("Resolving POM for main project '{}'", this.project.getCoordinates());
+        log.debug("Resolving POM for main project '{}'", this.project.getGAVCoordinates());
         Pom projectPom = this.resolver.resolve(this.project);
         addPomDependenciesToCheckList(projectPom, 1, new ExclusionsManager());
         Dependency projectDependency = Dependency.builder()
@@ -92,11 +92,11 @@ public final class DependenciesTreeBuilder {
         Artifact requester = node.requester();
         if (requester != null)
             log.debug("Resolving POM for dependency '{}' (requested from '{}')",
-                    dependency.getCoordinates(),
-                    requester.getCoordinates()
+                    dependency.getGAVCoordinates(),
+                    requester.getGAVCoordinates()
             );
         else
-            log.debug("Resolving POM for dependency '{}'", dependency.getCoordinates());
+            log.debug("Resolving POM for dependency '{}'", dependency.getGAVCoordinates());
         Pom pom = this.resolver.resolve(dependency);
         addPomDependenciesToCheckList(pom, depth + 1, node.exclusionsManager());
     }
