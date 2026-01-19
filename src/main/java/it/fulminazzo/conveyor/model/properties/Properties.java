@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * A basic object to replace keys in a certain format with values.
@@ -26,6 +27,16 @@ public interface Properties {
      * @return the value
      */
     @Nullable String get(final @NotNull String key);
+
+    /**
+     * Instantiates a new Mutable properties.
+     *
+     * @param properties the properties
+     * @return the mutable properties
+     */
+    static @NotNull MutableProperties newProperties(final @NotNull Map<String, String> properties) {
+        return new BaseMutableProperties().addAll(properties);
+    }
 
     /**
      * Instantiates a new Properties with support for Maven models properties.
