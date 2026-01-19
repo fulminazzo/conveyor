@@ -4,7 +4,6 @@ import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModel;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
-import it.fulminazzo.conveyor.model.metadata.DistributionManagement;
 import it.fulminazzo.conveyor.model.pom.metadata.*;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.xml.XmlParser;
@@ -454,7 +453,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "extensions" -> builder.extensions(List.copyOf(parseExtensions()));
                 case "defaultGoal" -> builder.defaultGoal(getCurrentTextContent());
                 case "resources" -> builder.resources(List.copyOf(parseResources()));
-                case "testResources" -> builder.testResources(List.copyOf(parseResources()));
+                case "testResources" -> builder.testResources(List.copyOf(parseTestResources()));
                 case "directory" -> builder.directory(getCurrentTextContent());
                 case "finalName" -> builder.finalName(getCurrentTextContent());
                 case "filters" -> builder.filters(parseStringList("filter"));

@@ -80,7 +80,7 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
             switch (t) {
                 case "defaultGoal" -> builder.defaultGoal(getCurrentTextContent());
                 case "resources" -> builder.resources(List.copyOf(parseResources()));
-                case "testResources" -> builder.testResources(List.copyOf(parseResources()));
+                case "testResources" -> builder.testResources(List.copyOf(parseTestResources()));
                 case "directory" -> builder.directory(getCurrentTextContent());
                 case "finalName" -> builder.finalName(getCurrentTextContent());
                 case "filters" -> builder.filters(parseStringList("filter"));

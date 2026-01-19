@@ -298,6 +298,21 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     }
 
     /**
+     * Handles the <b>&lt;testResources&gt;</b> tag in the document.
+     *
+     * @return the resources
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    protected @NotNull Collection<Resource> parseTestResources() throws BuilderException {
+        List<Resource> testResources = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("testResource"))
+                testResources.add(parseResource());
+        });
+        return testResources;
+    }
+
+    /**
      * Handles the <b>&lt;resources&gt;</b> tag in the document.
      *
      * @return the resources
