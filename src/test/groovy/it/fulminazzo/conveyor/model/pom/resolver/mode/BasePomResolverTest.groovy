@@ -12,6 +12,28 @@ import spock.lang.Specification
 @Slf4j
 class BasePomResolverTest extends Specification {
 
+    def 'test that resolve does not include classifier in the artifactPath'() {
+        given:
+        def artifact = Artifact.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('conveyor')
+                .classifier('sources')
+                .version('1.0')
+                .build()
+
+        and:
+        def artifactPath = 'it/fulminazzo/conveyor/1.0/conveyor-1.0.pom'
+
+        and:
+        def resolver = Spy(MockPomResolver, constructorArgs: [Mock(RepositoryManager)])
+
+        when:
+        resolver.resolve(artifact)
+
+        then:
+        1 * resolver.resolve(artifactPath, _)
+    }
+
     def 'test that resolve correctly reroutes requests to repositories'() {
         given:
         def repositoryManager = Mock(RepositoryManager)
