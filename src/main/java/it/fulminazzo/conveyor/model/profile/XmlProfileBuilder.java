@@ -3,11 +3,13 @@ package it.fulminazzo.conveyor.model.profile;
 import it.fulminazzo.conveyor.model.BuilderException;
 import it.fulminazzo.conveyor.model.MavenModelBuilder;
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
+import it.fulminazzo.conveyor.model.profile.metadata.BuildBase;
 import it.fulminazzo.conveyor.model.profile.metadata.ProfileMetadata;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * A builder for creating {@link Profile} objects from <b>XML</b>.
@@ -47,6 +49,7 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
                 case "modules" -> this.profileMetadataBuilder.modules(List.copyOf(parseModules()));
                 case "pluginRepositories" -> this.profileMetadataBuilder.pluginRepositories(parseRepositories());
                 case "reporting" -> this.profileMetadataBuilder.reporting(parseReporting());
+                case "build" -> this.profileMetadataBuilder.build(parseBuild());
             }
         });
     }
@@ -58,6 +61,33 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
      */
     void parseActivation() throws BuilderException {
         this.builder.activation(Activation.builder(getParser()).build());
+    }
+
+    /*
+     * METADATA
+     */
+
+    /**
+     * Handles the <b>&lt;build&gt;</b> tag in the document.
+     *
+     * @return the build
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull BuildBase parseBuild() throws BuilderException {
+        BuildBase.BuildBaseBuilder<?, ?> builder = BuildBase.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "defaultGoal" -> builder.defaultGoal(getCurrentTextContent());
+                case "resources" -> builder.resources(List.copyOf(parseResources()));
+                case "testResources" -> builder.testResources(List.copyOf(parseResources()));
+                case "directory" -> builder.directory(getCurrentTextContent());
+                case "finalName" -> builder.finalName(getCurrentTextContent());
+                case "filters" -> builder.filters(parseStringList("filter"));
+                case "pluginManagement" -> builder.pluginManagement(Set.copyOf(parsePluginManagement()));
+                case "plugins" -> builder.plugins(List.copyOf(parsePlugins()));
+            }
+        });
+        return buildObject("build", builder::build);
     }
 
 }
