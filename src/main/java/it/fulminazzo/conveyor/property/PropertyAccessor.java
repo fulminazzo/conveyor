@@ -69,13 +69,14 @@ final class PropertyAccessor {
      * @param name            the name
      * @param subPropertyName the sub property name
      * @return the value
+     * @throws PropertyAccessorException if the object to get the property from is <code>null</code>
      */
     static @Nullable Object getSubProperty(final @NotNull Object object,
                                            final @NotNull String name,
-                                           final @NotNull String subPropertyName) {
+                                           final @NotNull String subPropertyName) throws PropertyAccessorException {
         Object obj = getObject(object, name);
         if (obj == null)
-            throw new NullPointerException(String.format("Could not get '%s' from %s.%s", subPropertyName, object, name));
+            throw new PropertyAccessorException(String.format("Could not get '%s' from %s.%s", subPropertyName, object, name));
         return getObject(obj, subPropertyName);
     }
 
@@ -104,14 +105,15 @@ final class PropertyAccessor {
      * @param name   the name
      * @param index  the index
      * @return the value
+     * @throws PropertyAccessorException if the requested object is not indexable
      */
     static @Nullable Object getIndexed(final @NotNull Object object,
                                        final @NotNull String name,
-                                       final int index) {
+                                       final int index) throws PropertyAccessorException {
         Object o = getObject(object, name);
         if (o != null && o.getClass().isArray()) return Array.get(o, index);
         if (o instanceof Collection<?> collection) return collection.stream().toList().get(index);
-        throw new IllegalArgumentException(String.format("Property %s.%s = %s is not an indexable object", object, name, o));
+        throw new PropertyAccessorException(String.format("Property %s.%s = %s is not an indexable object", object, name, o));
     }
 
     /**
