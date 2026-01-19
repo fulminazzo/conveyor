@@ -251,7 +251,7 @@ public final class EffectivePomBuilder {
     @NotNull Dependency getDependency(final @NotNull RawDependency dependency) {
         String version = dependency.getVersion();
         if (version == null)
-            version = this.dependencyManagement.get(dependency.getCoordinates());
+            version = this.dependencyManagement.get(this.properties.apply(dependency.getCoordinates()));
         RawDependency copy = RawDependency.builder()
                 .groupId(dependency.getGroupId())
                 .artifactId(dependency.getArtifactId())
