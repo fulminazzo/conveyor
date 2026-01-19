@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -21,13 +22,23 @@ import java.util.*;
 @ToString
 @SuperBuilder
 public abstract class MavenModel implements PropertyAccessible {
+
     @Builder.Default
     private final @NotNull Map<String, String> properties = new HashMap<>();
+
     @Builder.Default
     private final @NotNull Set<RawRepository> repositories = new HashSet<>();
+
     @Builder.Default
     private final @NotNull Set<RawDependency> dependencyManagement = new HashSet<>();
+
     @Builder.Default
     private final @NotNull List<RawDependency> dependencies = new ArrayList<>();
+
+    @Override
+    public @Nullable String getProperty(@NotNull String key) {
+        key = key.replace("dependencyManagement.dependencies", "dependencyManagement");
+        return PropertyAccessible.super.getProperty(key);
+    }
 
 }
