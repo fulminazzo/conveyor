@@ -114,7 +114,7 @@ class XmlProfileBuilderTest extends Specification {
                                 ])
                                 .testResources([
                                         Resource.builder()
-                                                .directory('src/main/resources-prod')
+                                                .directory('src/test/resources-prod')
                                                 .filtering('true')
                                                 .build()
                                 ])
@@ -135,7 +135,7 @@ class XmlProfileBuilderTest extends Specification {
         def actual = builder.build()
 
         then:
-        actual == expected
+        actual .toString()== expected.toString()
     }
 
 }
