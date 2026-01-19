@@ -188,19 +188,23 @@ class DependenciesTreeBuilderTest extends Specification {
         ]
 
         and:
-        def pom = new Pom(artifact, 'packaging', null, [], [:], [], [], [
-                dep,
-                RawDependency.builder()
-                        .groupId('it.fulminazzo')
-                        .artifactId('dep2')
-                        .version('1.0')
-                        .build(),
-                RawDependency.builder()
-                        .groupId('it.fulminazzo')
-                        .artifactId('dep4')
-                        .version('1.0')
-                        .build()
-        ])
+        def pom = Pom.builder()
+                .project(artifact)
+                .packaging('packaging')
+                .dependencies([
+                        dep,
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dep2')
+                                .version('1.0')
+                                .build(),
+                        RawDependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dep4')
+                                .version('1.0')
+                                .build()
+                ])
+                .build()
 
         and:
         def dependencies = this.builder.dependenciesToCheck
@@ -239,15 +243,18 @@ class DependenciesTreeBuilderTest extends Specification {
     }
 
     private static Pom createFullDependenciesPom(final String groupId, final String artifactId) {
-        return new Pom(new Artifact(groupId, artifactId, '1.0'),
-                'packaging', null, [], [:], [], [], Scope.values().collect {
-            RawDependency.builder()
-                    .groupId('it.fulminazzo')
-                    .artifactId("dependency-${it.value()}")
-                    .version('1.0')
-                    .scope(it.value())
-                    .build()
-        })
+        return Pom.builder()
+                .project(new Artifact(groupId, artifactId, '1.0'))
+                .packaging('packaging')
+                .dependencies(Scope.values().collect {
+                    RawDependency.builder()
+                            .groupId('it.fulminazzo')
+                            .artifactId("dependency-${it.value()}")
+                            .version('1.0')
+                            .scope(it.value())
+                            .build()
+                })
+                .build()
     }
 
 }

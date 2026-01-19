@@ -7,9 +7,9 @@ import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * main:1.0 -> {dep1:1.0, dep2:1.0}
@@ -59,23 +59,10 @@ class MockResolver implements RepositoryPomResolver {
     private static @NotNull Pom newPom(final @NotNull String artifactId,
                                        final @NotNull String version,
                                        final RawDependency @NotNull ... dependencies) {
-        try {
-            Artifact artifact = newArtifact(artifactId, version);
-            Constructor<?> constructor = Pom.class.getDeclaredConstructors()[0];
-            constructor.setAccessible(true);
-            return (Pom) constructor.newInstance(
-                    artifact,
-                    "jar",
-                    null,
-                    new ArrayList<>(),
-                    new HashMap<>(),
-                    new ArrayList<>(),
-                    new ArrayList<>(),
-                    Arrays.asList(dependencies)
-            );
-        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException(e);
-        }
+        return Pom.builder()
+                .project(newArtifact(artifactId, version))
+                .dependencies(Arrays.asList(dependencies))
+                .build();
     }
 
     private static @NotNull RawDependency newDependency(final @NotNull String artifactId,
