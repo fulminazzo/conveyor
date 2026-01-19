@@ -14,6 +14,8 @@ import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -26,6 +28,8 @@ public final class EffectivePomBuilder {
     private final @NotNull Pom startingPom;
     private final @NotNull RepositoryPomResolver pomResolver;
     private final @NotNull File workingDir;
+
+    private final @NotNull Logger logger;
 
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();
     private final @NotNull MavenProjectProperties properties;
@@ -47,6 +51,8 @@ public final class EffectivePomBuilder {
         this.startingPom = startingPom;
         this.pomResolver = pomResolver;
         this.workingDir = workingDir;
+
+        this.logger = LoggerFactory.getLogger(String.format("EffectivePOMBuilder(%s)", startingPom.getProject().getCoordinates()));
 
         this.properties = Properties.newProjectProperties(startingPom, workingDir);
     }
@@ -74,6 +80,7 @@ public final class EffectivePomBuilder {
      * @return this builder
      */
     @NotNull EffectivePomBuilder populateDependencies() {
+        this.logger.debug("Loading dependencies");
         this.dependencies.clear();
 
         if (this.parentEffectivePomBuilder != null)
@@ -82,6 +89,7 @@ public final class EffectivePomBuilder {
         populateDependenciesSingle(this.startingPom.getDependencies());
         for (Profile profile : this.activeProfiles)
             populateDependenciesSingle(profile.getDependencies());
+        this.logger.debug("Loaded {} dependencies", this.dependencies.size());
 
         return this;
     }
@@ -128,6 +136,7 @@ public final class EffectivePomBuilder {
      * @throws PomResolverException in case of any errors during pom construction
      */
     @NotNull EffectivePomBuilder populateDependencyManagement() throws PomResolverException {
+        this.logger.debug("Loading dependency management dependencies");
         this.dependencyManagement.clear();
 
         if (this.parentEffectivePomBuilder != null)
@@ -137,6 +146,7 @@ public final class EffectivePomBuilder {
         for (Profile profile : this.activeProfiles)
             populateDependencyManagementSingle(profile.getDependencyManagement());
 
+        this.logger.debug("Loaded {} dependencies in dependency management", this.dependencyManagement.size());
         return this;
     }
 
@@ -145,6 +155,7 @@ public final class EffectivePomBuilder {
         for (final RawDependency raw : dependencyManagement) {
             Dependency dependency = raw.applyProperties(this.properties);
             if (dependency.getScope() == Scope.IMPORT) {
+                this.logger.debug("Resolving dependency with scope IMPORT '{}'", dependency.getCoordinates());
                 Pom dependencyPom = this.pomResolver.resolve(dependency);
                 EffectivePomBuilder dependencyPomBuilder = newBuilder(dependencyPom).buildIncomplete();
                 this.dependencyManagement.putAll(dependencyPomBuilder.dependencyManagement);
@@ -160,9 +171,11 @@ public final class EffectivePomBuilder {
      * @return this builder
      */
     @NotNull EffectivePomBuilder populateRepositories() {
+        this.logger.debug("Parsing and storing new repositories");
         if (this.parentEffectivePomBuilder != null)
             this.pomResolver.addRepositories(this.parentEffectivePomBuilder.getRepositories());
         this.pomResolver.addRepositories(getRepositories());
+        this.logger.debug("Stored repositories in POM resolver");
         return this;
     }
 
@@ -194,13 +207,13 @@ public final class EffectivePomBuilder {
      * @return this builder
      */
     @NotNull EffectivePomBuilder populateProperties() {
+        this.logger.debug("Loading properties");
         this.properties.clear();
         if (this.parentEffectivePomBuilder != null)
             this.properties.addAll(this.parentEffectivePomBuilder.properties);
         this.properties.addAll(this.startingPom.getProperties());
-        this.activeProfiles.forEach(p ->
-                this.properties.addAll(p.getProperties())
-        );
+        this.activeProfiles.forEach(p -> this.properties.addAll(p.getProperties()));
+        this.logger.debug("Loaded {} properties", this.properties.size());
         return this;
     }
 
@@ -217,10 +230,12 @@ public final class EffectivePomBuilder {
         this.parentEffectivePomBuilder = null;
         Artifact parent = this.startingPom.getParent();
         if (parent != null) {
+            this.logger.debug("Resolving parent '{}'", parent.getCoordinates());
             Pom parentPom = this.pomResolver.resolve(parent);
             this.parentEffectivePomBuilder = newBuilder(parentPom)
                     .buildIncomplete()
                     .populateDependencies();
+            this.logger.debug("Resolved parent '{}'", parentPom.getProject().getCoordinates());
         }
         return this;
     }
@@ -232,11 +247,13 @@ public final class EffectivePomBuilder {
      * @return this builder
      */
     @NotNull EffectivePomBuilder populateActiveProfiles() {
+        this.logger.debug("Preparing active profiles");
         this.activeProfiles.clear();
         final ActivationContext context = ActivationContext.current(this.properties);
         this.startingPom.getProfiles().stream()
                 .filter(p -> p.getActivation().isEnabled(context))
                 .forEach(this.activeProfiles::add);
+        this.logger.debug("Verified and activated {} profiles", this.activeProfiles.size());
         return this;
     }
 

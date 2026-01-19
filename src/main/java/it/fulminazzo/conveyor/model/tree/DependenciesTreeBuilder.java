@@ -10,6 +10,7 @@ import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +22,7 @@ import java.util.*;
  */
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Slf4j(topic = "DependenciesTreeBuilder")
 public final class DependenciesTreeBuilder {
     private final @NotNull Map<String, DependencyNode> dependenciesTree = new LinkedHashMap<>();
     private final @NotNull Queue<DependencyNode> dependenciesToCheck = new LinkedList<>();
@@ -54,6 +56,7 @@ public final class DependenciesTreeBuilder {
         this.dependenciesTree.clear();
         this.dependenciesToCheck.clear();
 
+        log.debug("Resolving POM for main project '{}'", this.project.getCoordinates());
         Pom projectPom = this.resolver.resolve(this.project);
         addPomDependenciesToCheckList(projectPom, 1, new ExclusionsManager());
         Dependency projectDependency = Dependency.builder()
@@ -86,6 +89,7 @@ public final class DependenciesTreeBuilder {
         if (prevNode != null && prevNode.depth() <= depth) return;
         this.dependenciesTree.put(coordinates, node);
 
+        log.debug("Resolving POM for dependency '{}'", dependency.getCoordinates());
         Pom pom = this.resolver.resolve(dependency);
         addPomDependenciesToCheckList(pom, depth + 1, node.exclusionsManager());
     }
