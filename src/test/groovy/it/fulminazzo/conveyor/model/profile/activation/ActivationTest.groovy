@@ -1,6 +1,10 @@
 package it.fulminazzo.conveyor.model.profile.activation
 
+import it.fulminazzo.conveyor.model.artifact.Artifact
+import it.fulminazzo.conveyor.model.pom.Pom
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext
+import it.fulminazzo.conveyor.model.profile.activation.context.CurrentActivationContext
+import it.fulminazzo.conveyor.model.properties.Properties
 import spock.lang.Specification
 
 class ActivationTest extends Specification {
@@ -267,12 +271,20 @@ class ActivationTest extends Specification {
         return context
     }
 
-    private static ActivationContext newContext() {
+    private ActivationContext newContext() {
         return newContext(new File('.').absoluteFile)
     }
 
-    private static ActivationContext newContext(final File currentDir) {
-        return ActivationContext.current(currentDir).setPackaging('jar')
+    private ActivationContext newContext(final File currentDir) {
+        def artifact = Mock(Artifact)
+        artifact.getFullPath(_) >> 'src'
+        def pom = Pom.builder()
+                .project(artifact)
+                .packaging('jar')
+                .build()
+        def activation = Spy(CurrentActivationContext, constructorArgs: [Properties.newProjectProperties(pom, currentDir)])
+        activation.projectDir >> currentDir
+        return activation
     }
 
 }
