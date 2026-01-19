@@ -13,6 +13,7 @@ import it.fulminazzo.conveyor.model.pom.metadata.Organization
 import it.fulminazzo.conveyor.model.metadata.Plugin
 import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata
 import it.fulminazzo.conveyor.model.metadata.Reporting
+import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.repository.RawRepository
 import spock.lang.Specification
 
@@ -194,6 +195,7 @@ class PomTest extends Specification {
                 .dependencyManagement([dependency].toSet())
                 .dependencies([dependency])
                 .repositories([repository].toSet())
+                .profiles(Profile.builder().id('profile1').build())
                 .build()
 
         when:
@@ -406,6 +408,7 @@ class PomTest extends Specification {
         'reporting.plugins[0].dependencies[0].type'                          || 'war'
         'reporting.plugins[0].dependencies[0].classifier'                    || 'sources'
         'reporting.plugins[0].dependencies[0].scope'                         || 'IMPORT'
+        'profiles[0].id'                                                     || 'profile1'
     }
 
 }
