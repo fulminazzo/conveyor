@@ -27,6 +27,10 @@ final class PomProperties extends BaseProperties {
                 break; // avoid invalid chaining of prefixes
             }
         try {
+            // invalid prefix
+            for (String prefix : prefixes)
+                if (key.startsWith(prefix))
+                    return null;
             return this.pom.getProperty(key);
         } catch (PropertyAccessorException e) {
             return null;
