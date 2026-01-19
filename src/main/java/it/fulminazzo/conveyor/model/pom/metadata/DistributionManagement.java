@@ -12,8 +12,7 @@ public class DistributionManagement {
 
     @Nullable RawRepository repository;
 
-    @Builder.Default
-    @Nullable RawRepository snapshotRepository = this.repository;
+    @Nullable RawRepository snapshotRepository;
 
     @Nullable Site site;
 
@@ -23,6 +22,20 @@ public class DistributionManagement {
 
     @Builder.Default
     @NotNull String status = "none";
+
+    public DistributionManagement(final @Nullable RawRepository repository,
+                                  final @Nullable RawRepository snapshotRepository,
+                                  final @Nullable Site site,
+                                  final @Nullable String downloadUrl,
+                                  final @Nullable Relocation relocation,
+                                  final @NotNull String status) {
+        this.repository = repository;
+        this.snapshotRepository = snapshotRepository == null ? repository : snapshotRepository;
+        this.site = site;
+        this.downloadUrl = downloadUrl;
+        this.relocation = relocation;
+        this.status = status;
+    }
 
     @Value
     @Builder
