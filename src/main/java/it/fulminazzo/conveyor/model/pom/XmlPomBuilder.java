@@ -421,7 +421,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
      * @throws BuilderException in case of reading or parsing errors
      */
     @NotNull Build parseBuild() throws BuilderException {
-        Build.BuildBuilder builder = Build.builder();
+        Build.BuildBuilder<?, ?> builder = Build.builder();
         onChildElements(t -> {
             switch (t) {
                 case "sourceDirectory" -> builder.sourceDirectory(getCurrentTextContent());
