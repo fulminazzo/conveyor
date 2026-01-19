@@ -49,6 +49,12 @@ public final class MavenProjectProperties implements MutableProperties {
     }
 
     @Override
+    public @NotNull MutableProperties clear() {
+        this.delegate.clear();
+        return this;
+    }
+
+    @Override
     public @NotNull String apply(final @NotNull String string) {
         return this.delegate.apply(string);
     }

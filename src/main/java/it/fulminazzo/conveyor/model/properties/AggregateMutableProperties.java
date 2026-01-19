@@ -36,4 +36,10 @@ final class AggregateMutableProperties extends BaseProperties implements Mutable
         return this;
     }
 
+    @Override
+    public @NotNull MutableProperties clear() {
+        this.mutable.clear();
+        return this;
+    }
+
 }
