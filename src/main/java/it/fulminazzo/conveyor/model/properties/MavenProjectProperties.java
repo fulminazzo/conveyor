@@ -1,17 +1,17 @@
 package it.fulminazzo.conveyor.model.properties;
 
 import it.fulminazzo.conveyor.model.pom.Pom;
-import lombok.experimental.Delegate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * An implementation of {@link MutableProperties} for a Maven project.
  * Supports all types of properties, with addition of custom ones.
  */
 public final class MavenProjectProperties implements MutableProperties {
-    @Delegate
     private final @NotNull AggregateMutableProperties delegate;
 
     /**
@@ -35,6 +35,27 @@ public final class MavenProjectProperties implements MutableProperties {
      */
     public @NotNull Properties toImmutable() {
         return this.delegate.delegate;
+    }
+
+    @Override
+    public @NotNull MavenProjectProperties addAll(final @NotNull Map<String, String> properties) {
+        return (MavenProjectProperties) MutableProperties.super.addAll(properties);
+    }
+
+    @Override
+    public @NotNull MavenProjectProperties add(final @NotNull String key, final @NotNull String value) {
+        this.delegate.add(key, value);
+        return this;
+    }
+
+    @Override
+    public @NotNull String apply(final @NotNull String string) {
+        return this.delegate.apply(string);
+    }
+
+    @Override
+    public @Nullable String get(final @NotNull String key) {
+        return this.delegate.get(key);
     }
 
 }
