@@ -2,7 +2,13 @@ package it.fulminazzo.conveyor.model.profile
 
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
+import it.fulminazzo.conveyor.model.metadata.DistributionManagement
+import it.fulminazzo.conveyor.model.metadata.Plugin
+import it.fulminazzo.conveyor.model.metadata.Reporting
+import it.fulminazzo.conveyor.model.metadata.Resource
 import it.fulminazzo.conveyor.model.profile.activation.Activation
+import it.fulminazzo.conveyor.model.profile.metadata.BuildBase
+import it.fulminazzo.conveyor.model.profile.metadata.ProfileMetadata
 import it.fulminazzo.conveyor.model.repository.RawRepository
 import it.fulminazzo.conveyor.xml.XmlParser
 import spock.lang.Specification
@@ -68,6 +74,46 @@ class XmlProfileBuilderTest extends Specification {
                                 .version('42.5.0')
                                 .build()
                 ]))
+                .metadata(ProfileMetadata.builder()
+                        .modules(['extra-module-for-prod'])
+                        .pluginRepositories([
+                                RawRepository.builder()
+                                        .id('enterprise-plugin-repo')
+                                        .url('https://nexus.company.it/repository/maven-plugins/')
+                                        .build()
+                        ].toSet())
+                        .distributionManagement(DistributionManagement.builder()
+                                .repository(RawRepository.builder()
+                                        .id('prod-release')
+                                        .url('https://nexus.company.it/repository/maven-releases/')
+                                        .build())
+                                .build())
+                        .reporting(Reporting.builder()
+                                .plugins([Plugin.builder()
+                                                  .groupId('org.apache.maven.plugins')
+                                                  .artifactId('maven-javadoc-plugin')
+                                                  .version('3.4.1')
+                                                  .build()
+                                ])
+                                .build())
+                        .build(BuildBase.builder()
+                                .defaultGoal('install')
+                                .finalName('${project.artifactId}-${project.version}-PROD')
+                                .directory('target/production-build')
+                                .plugins([
+                                        Plugin.builder()
+                                                .groupId('org.apache.maven.plugins')
+                                                .artifactId('maven-compiler-plugin')
+                                                .build()
+                                ])
+                                .resources([
+                                        Resource.builder()
+                                                .directory('src/main/resources-prod')
+                                                .filtering('true')
+                                                .build()
+                                ])
+                                .build())
+                        .build())
                 .build()
 
         and:
