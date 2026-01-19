@@ -1,10 +1,9 @@
 package it.fulminazzo.conveyor.model.profile.activation.context;
 
 import it.fulminazzo.conveyor.model.profile.activation.Activation;
+import it.fulminazzo.conveyor.model.properties.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 /**
  * Represents the current context where an {@link Activation} is checked.
@@ -40,25 +39,11 @@ public interface ActivationContext {
     @NotNull String getOsVersion();
 
     /**
-     * Applies all the properties of the current context to the given string.
-     * <br>
-     * Supports three types:
-     * <ol>
-     *     <li>system properties (provided by the <b>JVM</b>), like <code>${user.home}</code>;</li>
-     *     <li>environment properties with the prefix <code>env.</code>, like <code>${env.JAVA_HOME}</code>;</li>
-     *     <li>three maven special properties:
-     *          <ul>
-     *              <li><code>${basedir}</code></li>
-     *              <li><code>${project.basedir}</code></li>
-     *              <li><code>${maven.multiModuleProjectDirectory}</code></li>
-     *          </ul>
-     *     </li>
-     * </ol>
+     * Gets the packaging defined in the associated <b>pom.xml</b> file.
      *
-     * @param string the string
-     * @return the string
+     * @return the packaging
      */
-    @NotNull String applyProperties(final @NotNull String string);
+    @NotNull String getPackaging();
 
     /**
      * Gets the value of a property.
@@ -82,42 +67,34 @@ public interface ActivationContext {
     @Nullable String getProperty(final @NotNull String name);
 
     /**
-     * Creates a copy of the current context.
+     * Applies all the properties of the current context to the given string.
+     * <br>
+     * Supports three types:
+     * <ol>
+     *     <li>system properties (provided by the <b>JVM</b>), like <code>${user.home}</code>;</li>
+     *     <li>environment properties with the prefix <code>env.</code>, like <code>${env.JAVA_HOME}</code>;</li>
+     *     <li>three maven special properties:
+     *          <ul>
+     *              <li><code>${basedir}</code></li>
+     *              <li><code>${project.basedir}</code></li>
+     *              <li><code>${maven.multiModuleProjectDirectory}</code></li>
+     *          </ul>
+     *     </li>
+     * </ol>
      *
-     * @return the copy
+     * @param string the string
+     * @return the string
      */
-    @NotNull ActivationContext copy();
-
-    /**
-     * Sets the packaging defined in the associated <b>pom.xml</b> file.
-     *
-     * @param packaging the packaging
-     * @return this context
-     */
-    @NotNull ActivationContext setPackaging(final @Nullable String packaging);
-
-    /**
-     * Gets the packaging defined in the associated <b>pom.xml</b> file.
-     *
-     * @return the packaging
-     */
-    @NotNull String getPackaging();
-
-    /**
-     * Gets the base directory of the context.
-     *
-     * @return the current dir
-     */
-    @NotNull File getCurrentDir();
+    @NotNull String applyProperties(final @NotNull String string);
 
     /**
      * Gets a new activation context with the current environment variables and properties.
      *
-     * @param workingDir the working dir
+     * @param properties the properties
      * @return the activation context
      */
-    static @NotNull ActivationContext current(final @NotNull File workingDir) {
-        return new CurrentActivationContext(workingDir);
+    static @NotNull ActivationContext current(final @NotNull Properties properties) {
+        return new CurrentActivationContext(properties);
     }
 
 }
