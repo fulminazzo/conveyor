@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  */
 final class AggregateMutableProperties extends BaseProperties implements MutableProperties {
     private final @NotNull MutableProperties mutable = new BaseMutableProperties();
-    private final @NotNull AggregateProperties delegate = new AggregateProperties();
+    final @NotNull AggregateProperties delegate = new AggregateProperties();
 
     /**
      * Aggregates a new properties object to this aggregate.
