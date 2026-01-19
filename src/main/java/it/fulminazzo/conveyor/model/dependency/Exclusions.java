@@ -16,15 +16,17 @@ import java.util.Set;
 @EqualsAndHashCode
 public final class Exclusions implements RawObject<Exclusions> {
     private static final @NotNull String wildcard = "*";
-    private static final @NotNull String separator = ":";
 
-    private final @NotNull Set<String> exclusions = new HashSet<>();
+    private final @NotNull Set<ExclusionNode> exclusions = new HashSet<>();
 
     @Override
     public @NotNull Exclusions applyProperties(final @NotNull Properties properties) {
         Exclusions exclusions = new Exclusions();
-        for (String exclusion : this.exclusions)
-            exclusions.exclusions.add(properties.apply(exclusion));
+        for (ExclusionNode exclusion : this.exclusions)
+            exclusions.exclusions.add(new ExclusionNode(
+                    properties.apply(exclusion.groupId()),
+                    properties.apply(exclusion.artifactId())
+            ));
         return exclusions;
     }
 
@@ -37,10 +39,10 @@ public final class Exclusions implements RawObject<Exclusions> {
      */
     public boolean isExcluded(final @NotNull String groupId,
                               final @NotNull String artifactId) {
-        if (this.exclusions.contains(getIdentifier(groupId, artifactId))) return true;
-        else if (this.exclusions.contains(getIdentifier(groupId, wildcard))) return true;
-        else if (this.exclusions.contains(getIdentifier(wildcard, artifactId))) return true;
-        else return this.exclusions.contains(getIdentifier(wildcard, wildcard));
+        if (this.exclusions.contains(new ExclusionNode(groupId, artifactId))) return true;
+        else if (this.exclusions.contains(new ExclusionNode(groupId, wildcard))) return true;
+        else if (this.exclusions.contains(new ExclusionNode(wildcard, artifactId))) return true;
+        else return this.exclusions.contains(new ExclusionNode(wildcard, wildcard));
     }
 
     /**
@@ -52,7 +54,7 @@ public final class Exclusions implements RawObject<Exclusions> {
      */
     public @NotNull Exclusions add(final @NotNull String groupId,
                                    final @NotNull String artifactId) {
-        this.exclusions.add(getIdentifier(groupId, artifactId));
+        this.exclusions.add(new ExclusionNode(groupId, artifactId));
         return this;
     }
 
@@ -67,8 +69,7 @@ public final class Exclusions implements RawObject<Exclusions> {
         return this;
     }
 
-    private @NotNull String getIdentifier(final @NotNull String groupId, final @NotNull String artifactId) {
-        return groupId + separator + artifactId;
+    private record ExclusionNode(String groupId, String artifactId) {
     }
 
 }
