@@ -4,10 +4,23 @@ import it.fulminazzo.conveyor.model.XmlObjectBuilderUtils
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.dependency.Scope
+import it.fulminazzo.conveyor.model.metadata.DistributionManagement
+import it.fulminazzo.conveyor.model.metadata.Plugin
+import it.fulminazzo.conveyor.model.metadata.Resource
+import it.fulminazzo.conveyor.model.pom.metadata.Build
+import it.fulminazzo.conveyor.model.pom.metadata.Contributor
+import it.fulminazzo.conveyor.model.pom.metadata.Developer
+import it.fulminazzo.conveyor.model.pom.metadata.License
+import it.fulminazzo.conveyor.model.pom.metadata.MailingList
+import it.fulminazzo.conveyor.model.pom.metadata.Notifier
+import it.fulminazzo.conveyor.model.pom.metadata.Organization
+import it.fulminazzo.conveyor.model.pom.metadata.PomMetadata
 import it.fulminazzo.conveyor.model.profile.Profile
 import it.fulminazzo.conveyor.model.profile.activation.AndActivation
 import it.fulminazzo.conveyor.model.profile.activation.BooleanActivation
 import it.fulminazzo.conveyor.model.profile.activation.PropertyActivation
+import it.fulminazzo.conveyor.model.profile.metadata.BuildBase
+import it.fulminazzo.conveyor.model.profile.metadata.ProfileMetadata
 import it.fulminazzo.conveyor.model.repository.ChecksumPolicy
 import it.fulminazzo.conveyor.model.repository.RawRepository
 import it.fulminazzo.conveyor.util.TestUtils
@@ -24,9 +37,156 @@ class XmlPomBuilderTest extends Specification {
                         'super-app-core',
                         '1.0.0-SNAPSHOT',
                 ))
-                .name('Super Application Core')
-                .description('The core logic for the Super Application suite.')
-                .url('https://www.example.com/superapp')
+                .metadata(PomMetadata.builder()
+                        .modelVersion('4.0.0')
+                        .name('Super Application Core')
+                        .description('The core logic for the Super Application suite.')
+                        .url('https://www.example.com/superapp')
+                        .inceptionYear('2024')
+                        .organization(Organization.builder()
+                                .name('Example Corp')
+                                .url('https://www.example.com')
+                                .build())
+                        .licenses([
+                                License.builder()
+                                        .name('Apache License, Version 2.0')
+                                        .url('https://www.apache.org/licenses/LICENSE-2.0.txt')
+                                        .distribution('repo')
+                                        .comments('Apache license')
+                                        .build()
+                        ].toSet())
+                        .developers([
+                                Developer.builder()
+                                        .id('jdoe')
+                                        .name('John Doe')
+                                        .email('jdoe@example.com')
+                                        .roles(['Architect', 'Developer'])
+                                        .timezone('America/New_York')
+                                        .url('https://www.example.com')
+                                        .organization('Example Corp')
+                                        .organizationUrl('https://www.example.com')
+                                        .properties(['hello': 'world'])
+                                        .build()
+                        ].toSet())
+                        .contributors([
+                                Contributor.builder()
+                                        .name('Jane Smith')
+                                        .email('jsmith@example.com')
+                                        .url('https://github.com/jsmith')
+                                        .organization('Freelance')
+                                        .organizationUrl('https://www.jsmith.com')
+                                        .roles(['Tester', 'Documentation'])
+                                        .timezone('Europe/London')
+                                        .properties(['contribution-type': 'UI/UX Design'])
+                                        .build(),
+                                Contributor.builder()
+                                        .name('Mario Rossi')
+                                        .roles(['Translator'])
+                                        .timezone('Europe/Rome')
+                                        .build()
+                        ].toSet())
+                        .mailingLists([
+                                MailingList.builder()
+                                        .name('SuperApp User List')
+                                        .subscribe('users-subscribe@example.com')
+                                        .unsubscribe('users-unsubscribe@example.com')
+                                        .post('users@example.com')
+                                        .archive('https://mail-archives.example.com/users/')
+                                        .otherArchives(['https://www.mail-archive.com/users@example.com/'])
+                                        .build(),
+                                MailingList.builder()
+                                        .name('SuperApp Developer List')
+                                        .subscribe('dev-subscribe@example.com')
+                                        .unsubscribe('dev-unsubscribe@example.com')
+                                        .post('dev@example.com')
+                                        .archive('https://mail-archives.example.com/dev/')
+                                        .build()
+                        ])
+                        .prerequisites(new PomMetadata.Prerequisites('3.6.0'))
+                        .scm(PomMetadata.SCManagement.builder()
+                                .connection('scm:git:git://github.com/example/superapp.git')
+                                .developerConnection('scm:git:ssh://github.com:example/superapp.git')
+                                .url('https://github.com/example/superapp/tree/master')
+                                .tag('HEAD')
+                                .build())
+                        .issueManagement(PomMetadata.IssueManagement.builder()
+                                .system('JIRA')
+                                .url('https://jira.example.com/browse/SUPERAPP')
+                                .build())
+                        .ciManagement(PomMetadata.CiManagement.builder()
+                                .system('Jenkins')
+                                .url('https://jenkins.example.com/job/superapp')
+                                .notifiers([
+                                        Notifier.builder()
+                                                .type('mail')
+                                                .sendOnError('true')
+                                                .sendOnFailure('true')
+                                                .sendOnSuccess('false')
+                                                .sendOnWarning('false')
+                                                .address('build-alerts@example.com')
+                                                .configuration(['prefix': '[BUILD-REPORT]'])
+                                                .build(),
+                                        Notifier.builder()
+                                                .type('irc')
+                                                .sendOnFailure('true')
+                                                .address('irc.freenode.net:6667 #superapp-devs')
+                                                .build()
+                                ])
+                                .build())
+                        .pluginRepositories([
+                                RawRepository.builder()
+                                        .id('central')
+                                        .url('https://repo.maven.apache.org/maven2')
+                                        .build()
+                        ].toSet())
+                        .build(Build.builder()
+                                .sourceDirectory('${project.basedir}/src/main/java')
+                                .testSourceDirectory('${project.basedir}/src/test/java')
+                                .outputDirectory('${project.basedir}/target/classes')
+                                .finalName('${project.artifactId}-${project.version}')
+                                .resources([
+                                        Resource.builder()
+                                                .directory('src/main/resources')
+                                                .filtering('true')
+                                                .includes(['**/*.xml', '**/*.properties'])
+                                                .build()
+                                ])
+                                .pluginManagement([
+                                        Plugin.builder()
+                                                .groupId('org.apache.maven.plugins')
+                                                .artifactId('maven-compiler-plugin')
+                                                .version('3.10.1')
+                                                .build()
+                                ].toSet())
+                                .plugins([
+                                        Plugin.builder()
+                                                .groupId('org.apache.maven.plugins')
+                                                .artifactId('maven-compiler-plugin')
+                                                .build(),
+                                        Plugin.builder()
+                                                .groupId('org.apache.maven.plugins')
+                                                .artifactId('maven-surefire-plugin')
+                                                .version('3.0.0-M7')
+                                                .build()
+                                ])
+                                .build())
+                        .distributionManagement(DistributionManagement.builder()
+                                .repository(RawRepository.builder()
+                                        .id('internal-releases')
+                                        .name('Internal Releases')
+                                        .url('https://repo.example.com/releases')
+                                        .build())
+                                .snapshotRepository(RawRepository.builder()
+                                        .id('internal-snapshots')
+                                        .name('Internal Snapshots')
+                                        .url('https://repo.example.com/snapshots')
+                                        .build())
+                                .site(DistributionManagement.Site.builder()
+                                        .id('website')
+                                        .url('scp://www.example.com/www/docs/project/')
+                                        .build())
+                                .build())
+                        .build())
                 .packaging('war')
                 .parent(new Artifact(
                         'com.example.superapp',
@@ -52,6 +212,23 @@ class XmlPomBuilderTest extends Specification {
                                 .properties([
                                         'db.url': 'jdbc:mysql://prod-db:3306/prod_db'
                                 ])
+                                .metadata(ProfileMetadata.builder()
+                                        .build(BuildBase.builder()
+                                                .plugins([
+                                                        Plugin.builder()
+                                                                .groupId('com.github.wvengen')
+                                                                .artifactId('proguard-maven-plugin')
+                                                                .version('2.5.3')
+                                                                .executions([
+                                                                        Plugin.Execution.builder()
+                                                                                .phase('package')
+                                                                                .goals(['proguard'])
+                                                                                .build()
+                                                                ])
+                                                                .build()
+                                                ])
+                                                .build())
+                                        .build())
                                 .build()
                 ]))
                 .properties([
