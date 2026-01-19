@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
 import it.fulminazzo.conveyor.model.metadata.Reporting;
 import it.fulminazzo.conveyor.model.pom.metadata.Plugin;
+import it.fulminazzo.conveyor.model.pom.metadata.Resource;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.xml.XmlParser;
 import org.jetbrains.annotations.NotNull;
@@ -217,6 +218,56 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
             }
         });
         return buildObject("reporting", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;resources&gt;</b> tag in the document.
+     *
+     * @return the resources
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    protected @NotNull Collection<Resource> parseResources() throws BuilderException {
+        List<Resource> resources = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("resource"))
+                resources.add(parseResource());
+        });
+        return resources;
+    }
+
+    /**
+     * Handles the <b>&lt;resource&gt;</b> tag in the document.
+     *
+     * @return the resource
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    protected @NotNull Resource parseResource() throws BuilderException {
+        Resource.ResourceBuilder builder = Resource.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "targetPath" -> builder.targetPath(getCurrentTextContent());
+                case "filtering" -> builder.filtering(getCurrentTextContent());
+                case "directory" -> builder.directory(getCurrentTextContent());
+                case "includes" -> builder.includes(parseStringList("include"));
+                case "excludes" -> builder.excludes(parseStringList("exclude"));
+            }
+        });
+        return buildObject("resource", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;pluginManagement&gt;</b> tag in the document.
+     *
+     * @return the pluginManagement
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    protected @NotNull Collection<Plugin> parsePluginManagement() throws BuilderException {
+        List<Plugin> plugins = new LinkedList<>();
+        onChildElements(t -> {
+            if (t.equals("plugins"))
+                plugins.addAll(parsePlugins());
+        });
+        return plugins;
     }
 
     /**
