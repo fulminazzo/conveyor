@@ -44,12 +44,8 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     protected @NotNull Map<String, String> parseProperties() throws BuilderException {
         final @NotNull Map<String, String> properties = new HashMap<>();
         onChildElements(t -> {
-            String value;
-            try {
-                value = getCurrentTextContent();
-            } catch (BuilderException e) {
-                value = "";
-            }
+            String value = getCurrentTextContent();
+            if (value == null) value = "";
             properties.put(t, value);
         });
         return properties;
