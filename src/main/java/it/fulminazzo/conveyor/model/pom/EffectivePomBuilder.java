@@ -1,6 +1,5 @@
 package it.fulminazzo.conveyor.model.pom;
 
-import it.fulminazzo.conveyor.model.Properties;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.dependency.Dependency;
 import it.fulminazzo.conveyor.model.dependency.RawDependency;
@@ -9,11 +8,14 @@ import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
 import it.fulminazzo.conveyor.model.profile.Profile;
 import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
+import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
+import it.fulminazzo.conveyor.model.properties.Properties;
 import it.fulminazzo.conveyor.model.repository.RawRepository;
 import it.fulminazzo.conveyor.model.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,10 +25,10 @@ import java.util.stream.Collectors;
 public final class EffectivePomBuilder {
     private final @NotNull Pom startingPom;
     private final @NotNull RepositoryPomResolver pomResolver;
-    private final @NotNull ActivationContext context;
+    private final @NotNull File workingDir;
 
     private final @NotNull Set<Profile> activeProfiles = new HashSet<>();
-    private final @NotNull Properties properties = new Properties();
+    private final @NotNull MavenProjectProperties properties;
     private final @NotNull Map<String, String> dependencyManagement = new HashMap<>();
     private final @NotNull Map<String, Dependency> dependencies = new LinkedHashMap<>();
 
@@ -37,14 +39,16 @@ public final class EffectivePomBuilder {
      *
      * @param startingPom the starting pom
      * @param pomResolver the pom resolver
-     * @param context     the context
+     * @param workingDir  the working directory
      */
     EffectivePomBuilder(final @NotNull Pom startingPom,
                         final @NotNull RepositoryPomResolver pomResolver,
-                        final @NotNull ActivationContext context) {
+                        final @NotNull File workingDir) {
         this.startingPom = startingPom;
         this.pomResolver = pomResolver;
-        this.context = context.setPackaging(startingPom.getPackaging());
+        this.workingDir = workingDir;
+
+        this.properties = Properties.newProjectProperties(startingPom, workingDir);
     }
 
     /**
@@ -192,10 +196,10 @@ public final class EffectivePomBuilder {
     @NotNull EffectivePomBuilder populateProperties() {
         this.properties.clear();
         if (this.parentEffectivePomBuilder != null)
-            this.properties.putAll(this.parentEffectivePomBuilder.properties);
-        this.properties.putAll(this.startingPom.getProperties());
+            this.properties.addAll(this.parentEffectivePomBuilder.properties);
+        this.properties.addAll(this.startingPom.getProperties());
         this.activeProfiles.forEach(p ->
-                this.properties.putAll(p.getProperties())
+                this.properties.addAll(p.getProperties())
         );
         return this;
     }
@@ -229,8 +233,9 @@ public final class EffectivePomBuilder {
      */
     @NotNull EffectivePomBuilder populateActiveProfiles() {
         this.activeProfiles.clear();
+        final ActivationContext context = ActivationContext.current(this.properties);
         this.startingPom.getProfiles().stream()
-                .filter(p -> p.getActivation().isEnabled(this.context))
+                .filter(p -> p.getActivation().isEnabled(context))
                 .forEach(this.activeProfiles::add);
         return this;
     }
@@ -260,7 +265,7 @@ public final class EffectivePomBuilder {
     }
 
     private @NotNull EffectivePomBuilder newBuilder(final @NotNull Pom pom) {
-        return new EffectivePomBuilder(pom, this.pomResolver, this.context);
+        return new EffectivePomBuilder(pom, this.pomResolver, this.workingDir);
     }
 
 }
