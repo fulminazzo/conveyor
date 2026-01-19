@@ -14,41 +14,21 @@ import java.util.Objects;
 final class CurrentActivationContext implements ActivationContext {
     private final @NotNull Properties properties;
 
-    /**
-     * Gets the context JDK version.
-     *
-     * @return the jdk version
-     */
     @Override
     public @NotNull String getJdkVersion() {
         return Objects.requireNonNull(getProperty("java.version"), "Could not find JDK version");
     }
 
-    /**
-     * Gets the context Operating System name.
-     *
-     * @return the os name
-     */
     @Override
     public @NotNull String getOsName() {
         return Objects.requireNonNull(getProperty("os.name"), "Could not find OS name");
     }
 
-    /**
-     * Gets the context Operating System arch.
-     *
-     * @return the os arch
-     */
     @Override
     public @NotNull String getOsArch() {
         return Objects.requireNonNull(getProperty("os.arch"), "Could not find OS arch");
     }
 
-    /**
-     * Gets the context Operating System version.
-     *
-     * @return the os version
-     */
     @Override
     public @NotNull String getOsVersion() {
         return Objects.requireNonNull(getProperty("os.version"), "Could not find OS version");
