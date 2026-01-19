@@ -8,12 +8,12 @@ import it.fulminazzo.conveyor.model.pom.EffectivePom;
 import it.fulminazzo.conveyor.model.pom.Pom;
 import it.fulminazzo.conveyor.model.pom.resolver.PomResolverException;
 import it.fulminazzo.conveyor.model.pom.resolver.RepositoryPomResolver;
-import it.fulminazzo.conveyor.model.profile.activation.context.ActivationContext;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -29,7 +29,7 @@ public final class DependenciesTreeBuilder {
 
     private @Nullable Artifact project;
     private final @NotNull RepositoryPomResolver resolver;
-    private final @NotNull ActivationContext context;
+    private final @NotNull File workingDir;
 
     /**
      * Builds the dependencies tree.
@@ -104,7 +104,7 @@ public final class DependenciesTreeBuilder {
     void addPomDependenciesToCheckList(final @NotNull Pom pom,
                                        final int depth,
                                        final @NotNull ExclusionsManager exclusionsManager) throws PomResolverException {
-        EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.context).build();
+        EffectivePom effectivePom = EffectivePom.builder(pom, this.resolver, this.workingDir).build();
 
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
             if (exclusionsManager.isExcluded(transitiveDep.getGroupId(), transitiveDep.getArtifactId())) continue;
