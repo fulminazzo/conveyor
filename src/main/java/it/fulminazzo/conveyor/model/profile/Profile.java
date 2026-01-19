@@ -27,7 +27,8 @@ public final class Profile extends MavenModel {
     private final @NotNull Activation activation = Activation.alwaysFalse();
 
     @Delegate
-    private final @NotNull ProfileMetadata metadata;
+    @Builder.Default
+    private final @NotNull ProfileMetadata metadata = ProfileMetadata.builder().build();
 
     /**
      * Instantiates a new builder to create a {@link Profile} object.

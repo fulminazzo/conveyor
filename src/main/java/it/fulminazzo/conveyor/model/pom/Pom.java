@@ -31,8 +31,9 @@ public final class Pom extends MavenModel implements PomLike {
     @DelegateProperties
     private final @NotNull Artifact project;
 
+    @Builder.Default
     @DelegateProperties
-    private final @NotNull PomMetadata metadata;
+    private final @NotNull PomMetadata metadata = PomMetadata.builder().build();
 
     @Builder.Default
     private final @NotNull String packaging = "jar";
