@@ -339,7 +339,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
         PomMetadata.Prerequisites.PrerequisitesBuilder builder = PomMetadata.Prerequisites.builder();
         onChildElements(t -> {
             if (t.equals("maven"))
-                builder.maven(getCurrentTag());
+                builder.maven(getCurrentTextContent());
         });
         return buildObject("prerequisites", builder::build);
     }
