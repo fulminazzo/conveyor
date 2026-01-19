@@ -34,12 +34,9 @@ public interface Properties {
      * @param workingDir the current working directory (for reference of the pom file)
      * @return the properties
      */
-    static @NotNull MutableProperties newProjectProperties(final @NotNull Pom pom,
-                                                           final @NotNull File workingDir) {
-        return new AggregateMutableProperties()
-                .addProperties(new PomProperties(pom, workingDir))
-                .addProperties(new EnvProperties())
-                .addProperties(new SystemProperties());
+    static @NotNull MavenProjectProperties newProjectProperties(final @NotNull Pom pom,
+                                                                final @NotNull File workingDir) {
+        return new MavenProjectProperties(pom, workingDir);
     }
 
 }

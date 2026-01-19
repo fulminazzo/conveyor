@@ -20,8 +20,8 @@ public final class MavenProjectProperties implements MutableProperties {
      * @param pom        the pom
      * @param workingDir the working dir
      */
-    public MavenProjectProperties(final @NotNull Pom pom,
-                                  final @NotNull File workingDir) {
+    MavenProjectProperties(final @NotNull Pom pom,
+                           final @NotNull File workingDir) {
         this.delegate = new AggregateMutableProperties()
                 .addProperties(new PomProperties(pom, workingDir))
                 .addProperties(new EnvProperties())
