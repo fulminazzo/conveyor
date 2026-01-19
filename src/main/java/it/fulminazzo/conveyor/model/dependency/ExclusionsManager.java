@@ -1,7 +1,7 @@
 package it.fulminazzo.conveyor.model.dependency;
 
-import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
 import it.fulminazzo.conveyor.model.RawObject;
+import it.fulminazzo.conveyor.model.properties.Properties;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public final class ExclusionsManager implements RawObject<ExclusionsManager> {
     private final @NotNull Set<ExclusionNode> exclusions = new HashSet<>();
 
     @Override
-    public @NotNull ExclusionsManager applyProperties(final @NotNull MavenProjectProperties properties) {
+    public @NotNull ExclusionsManager applyProperties(final @NotNull Properties properties) {
         ExclusionsManager exclusionsManager = new ExclusionsManager();
         for (ExclusionNode exclusion : this.exclusions)
             exclusionsManager.exclusions.add(new ExclusionNode(

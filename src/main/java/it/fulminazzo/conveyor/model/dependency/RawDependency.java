@@ -1,8 +1,8 @@
 package it.fulminazzo.conveyor.model.dependency;
 
-import it.fulminazzo.conveyor.model.properties.MavenProjectProperties;
 import it.fulminazzo.conveyor.model.RawObject;
 import it.fulminazzo.conveyor.model.artifact.ArtifactLike;
+import it.fulminazzo.conveyor.model.properties.Properties;
 import it.fulminazzo.conveyor.property.DelegateProperties;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -42,7 +42,7 @@ public final class RawDependency extends ArtifactLike implements DependencyLike,
     private final @NotNull ExclusionsManager exclusionsManager = new ExclusionsManager();
 
     @Override
-    public @NotNull Dependency applyProperties(final @NotNull MavenProjectProperties properties) {
+    public @NotNull Dependency applyProperties(final @NotNull Properties properties) {
         final String classifier = getClassifier();
         return Dependency.builder()
                 .groupId(properties.apply(getGroupId()))
