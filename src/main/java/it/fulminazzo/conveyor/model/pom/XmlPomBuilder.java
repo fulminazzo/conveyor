@@ -97,6 +97,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "mailingLists" -> this.pomMetadataBuilder.mailingLists(List.copyOf(parseMailingLists()));
                 case "prerequisites" -> this.pomMetadataBuilder.prerequisites(parsePrerequisites());
                 case "modules" -> this.pomMetadataBuilder.modules(List.copyOf(parseModules()));
+                case "scm" -> this.pomMetadataBuilder.scm(parseSCManagement());
                 case "issueManagement" -> this.pomMetadataBuilder.issueManagement(parseIssueManagement());
                 case "ciManagement" -> this.pomMetadataBuilder.ciManagement(parseCiManagement());
                 case "distributionManagement" -> this.pomMetadataBuilder.distributionManagement(parseDistributionManagement());
@@ -341,6 +342,25 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 builder.maven(getCurrentTag());
         });
         return buildObject("prerequisites", builder::build);
+    }
+
+    /**
+     * Handles the <b>&lt;scm&gt;</b> tag in the document.
+     *
+     * @return the sc management
+     * @throws BuilderException in case of reading or parsing errors
+     */
+    @NotNull PomMetadata.SCManagement parseSCManagement() throws BuilderException {
+        PomMetadata.SCManagement.SCManagementBuilder builder = PomMetadata.SCManagement.builder();
+        onChildElements(t -> {
+            switch (t) {
+                case "connection" -> builder.connection(getCurrentTextContent());
+                case "developerConnection" -> builder.developerConnection(getCurrentTextContent());
+                case "tag" -> builder.tag(getCurrentTextContent());
+                case "url" -> builder.url(getCurrentTextContent());
+            }
+        });
+        return buildObject("scm", builder::build);
     }
 
     /**
