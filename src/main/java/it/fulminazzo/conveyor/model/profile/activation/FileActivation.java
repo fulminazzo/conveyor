@@ -20,7 +20,7 @@ record FileActivation(@Nullable String exists, @Nullable String missing) impleme
 
     @Override
     public boolean isEnabled(final @NotNull ActivationContext context) {
-        File workDir = context.getCurrentDir();
+        File workDir = context.getProjectDir();
         if (this.exists != null) {
             File first = new File(workDir, context.applyProperties(this.exists));
             if (!first.exists()) return false;
