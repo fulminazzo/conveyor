@@ -102,7 +102,7 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "issueManagement" -> this.pomMetadataBuilder.issueManagement(parseIssueManagement());
                 case "ciManagement" -> this.pomMetadataBuilder.ciManagement(parseCiManagement());
                 case "distributionManagement" -> this.pomMetadataBuilder.distributionManagement(parseDistributionManagement());
-                case "pluginRepositories" -> this.pomMetadataBuilder.pluginRepositories(parseRepositories());
+                case "pluginRepositories" -> this.pomMetadataBuilder.pluginRepositories(parsePluginRepositories());
                 case "build" -> this.pomMetadataBuilder.build(parseBuild());
                 case "reporting" -> this.pomMetadataBuilder.reporting(parseReporting());
             }

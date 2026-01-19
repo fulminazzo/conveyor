@@ -194,6 +194,24 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
      */
 
     /**
+     * Handles the <b>&lt;pluginRepositories&gt;</b> tag in the document.
+     *
+     * @return the plugin repositories
+     * @throws BuilderException in case of any errors
+     */
+    protected @NotNull Set<RawRepository> parsePluginRepositories() throws BuilderException {
+        final @NotNull Map<String, RawRepository> repositories = new LinkedHashMap<>();
+        onChildElements(t -> {
+            if (t.equals("pluginRepository")) {
+                RawRepository repository = parseRepository();
+                String key = repository.getId();
+                repositories.put(key, repository);
+            }
+        });
+        return Set.copyOf(repositories.values());
+    }
+
+    /**
      * Handles the <b>&lt;modules&gt;</b> tag in the document.
      *
      * @return the modules

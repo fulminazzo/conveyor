@@ -48,7 +48,7 @@ public final class XmlProfileBuilder extends MavenModelBuilder<Profile> {
                 // METADATA
                 case "modules" -> this.profileMetadataBuilder.modules(List.copyOf(parseModules()));
                 case "distributionManagement" -> this.profileMetadataBuilder.distributionManagement(parseDistributionManagement());
-                case "pluginRepositories" -> this.profileMetadataBuilder.pluginRepositories(parseRepositories());
+                case "pluginRepositories" -> this.profileMetadataBuilder.pluginRepositories(parsePluginRepositories());
                 case "reporting" -> this.profileMetadataBuilder.reporting(parseReporting());
                 case "build" -> this.profileMetadataBuilder.build(parseBuild());
             }
