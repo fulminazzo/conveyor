@@ -66,7 +66,7 @@ public final class DependenciesTreeBuilder {
                 .version(this.project.getVersion())
                 .type(projectPom.getPackaging())
                 .build();
-        this.dependenciesTree.put(projectDependency.getCoordinates(), new DependencyNode(projectDependency, 0));
+        this.dependenciesTree.put(projectDependency.getCoordinates(), new DependencyNode(null, projectDependency, 0));
 
         while (!this.dependenciesToCheck.isEmpty())
             populateTree(this.dependenciesToCheck.poll());
@@ -89,7 +89,14 @@ public final class DependenciesTreeBuilder {
         if (prevNode != null && prevNode.depth() <= depth) return;
         this.dependenciesTree.put(coordinates, node);
 
-        log.debug("Resolving POM for dependency '{}'", dependency.getCoordinates());
+        Artifact requester = node.requester();
+        if (requester != null)
+            log.debug("Resolving POM for dependency '{}' (requested from '{}')",
+                    dependency.getCoordinates(),
+                    requester.getCoordinates()
+            );
+        else
+            log.debug("Resolving POM for dependency '{}'", dependency.getCoordinates());
         Pom pom = this.resolver.resolve(dependency);
         addPomDependenciesToCheckList(pom, depth + 1, node.exclusionsManager());
     }
@@ -100,8 +107,8 @@ public final class DependenciesTreeBuilder {
      * If their {@link Scope} is not in {@link #scopes}, or the list is not empty,
      * they are ignored.
      *
-     * @param pom        the pom
-     * @param depth      the depth of the dependencies
+     * @param pom               the pom
+     * @param depth             the depth of the dependencies
      * @param exclusionsManager the exclusions of the dependency that generated the pom
      * @throws PomResolverException in case of any errors during pom construction
      */
@@ -113,7 +120,7 @@ public final class DependenciesTreeBuilder {
         for (Dependency transitiveDep : effectivePom.getDependencies()) {
             if (exclusionsManager.isExcluded(transitiveDep.getGroupId(), transitiveDep.getArtifactId())) continue;
             if (!this.scopes.isEmpty() && !this.scopes.contains(transitiveDep.getScope())) continue;
-            DependencyNode transitiveNode = new DependencyNode(transitiveDep, depth);
+            DependencyNode transitiveNode = new DependencyNode(pom.getProject(), transitiveDep, depth);
             transitiveNode.exclusionsManager().addAll(exclusionsManager).addAll(transitiveDep.getExclusionsManager());
             this.dependenciesToCheck.offer(transitiveNode);
         }
