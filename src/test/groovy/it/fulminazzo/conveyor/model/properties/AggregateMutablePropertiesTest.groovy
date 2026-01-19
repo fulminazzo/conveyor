@@ -2,9 +2,9 @@ package it.fulminazzo.conveyor.model.properties
 
 import spock.lang.Specification
 
-class AggregatePropertiesTest extends Specification {
+class AggregateMutablePropertiesTest extends Specification {
 
-    private final AggregateProperties properties = new AggregateProperties()
+    private final AggregateMutableProperties properties = new AggregateMutableProperties()
 
     def 'test that AggregateProperties prioritizes delegate'() {
         given:

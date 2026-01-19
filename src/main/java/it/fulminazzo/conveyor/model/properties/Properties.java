@@ -36,7 +36,7 @@ public interface Properties {
      */
     static @NotNull MutableProperties newProjectProperties(final @NotNull Pom pom,
                                                            final @NotNull File workingDir) {
-        return new AggregateProperties()
+        return new AggregateMutableProperties()
                 .addProperties(new PomProperties(pom, workingDir))
                 .addProperties(new EnvProperties())
                 .addProperties(new SystemProperties());
