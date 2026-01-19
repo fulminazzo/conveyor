@@ -19,6 +19,11 @@ final class BaseMutableProperties extends BaseProperties implements MutablePrope
     }
 
     @Override
+    public int size() {
+        return this.map.size();
+    }
+
+    @Override
     public @Nullable String get(final @NotNull String key) {
         return this.map.get(key);
     }

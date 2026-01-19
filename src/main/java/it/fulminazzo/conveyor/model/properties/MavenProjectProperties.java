@@ -54,6 +54,11 @@ public final class MavenProjectProperties implements MutableProperties {
     }
 
     @Override
+    public int size() {
+        return this.delegate.size();
+    }
+
+    @Override
     public @NotNull MutableProperties clear() {
         this.delegate.clear();
         return this;

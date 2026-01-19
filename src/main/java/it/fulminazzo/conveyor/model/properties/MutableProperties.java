@@ -40,6 +40,13 @@ public interface MutableProperties extends Properties {
     @NotNull MutableProperties add(final @NotNull String key, final @NotNull String value);
 
     /**
+     * Gets the number of stored properties.
+     *
+     * @return the size
+     */
+    int size();
+
+    /**
      * Clears all the previously stored properties.
      *
      * @return this object (for method chaining)
