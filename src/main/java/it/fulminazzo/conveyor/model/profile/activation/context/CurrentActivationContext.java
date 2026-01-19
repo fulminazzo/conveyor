@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Objects;
 
 /**
@@ -13,6 +14,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 final class CurrentActivationContext implements ActivationContext {
     private final @NotNull Properties properties;
+
+    @Override
+    public @NotNull File getProjectDir() {
+        return new File(Objects.requireNonNull(getProperty("project.basedir"), "Could not find project directory"));
+    }
 
     @Override
     public @NotNull String getJdkVersion() {

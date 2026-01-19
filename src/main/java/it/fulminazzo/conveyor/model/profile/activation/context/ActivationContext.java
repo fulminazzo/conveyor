@@ -5,10 +5,19 @@ import it.fulminazzo.conveyor.model.properties.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+
 /**
  * Represents the current context where an {@link Activation} is checked.
  */
 public interface ActivationContext {
+
+    /**
+     * Gets the directory of the current project.
+     *
+     * @return the current dir
+     */
+    @NotNull File getProjectDir();
 
     /**
      * Gets the context JDK version.
