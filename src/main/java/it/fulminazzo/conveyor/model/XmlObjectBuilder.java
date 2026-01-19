@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A special type of builder that uses <b>XML</b> documents to create objects.
@@ -76,15 +77,16 @@ public abstract class XmlObjectBuilder<O> {
 
     /**
      * Gets the latest text content read from the parser.
+     * If not available, returns <code>null</code>.
      *
      * @return the current text content
      * @throws BuilderException in case of any errors
      */
-    protected @NotNull String getCurrentTextContent() throws BuilderException {
+    protected @Nullable String getCurrentTextContent() throws BuilderException {
         try {
             return this.parser.getCurrentContent();
         } catch (XmlParserException e) {
-            throw new BuilderException(e);
+            return null;
         }
     }
 
