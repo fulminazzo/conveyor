@@ -733,6 +733,7 @@ class EffectivePomBuilderTest extends Specification {
         parentPom.dependencyManagement >> []
         parentPom.dependencies >> []
         parentPom.profiles >> []
+        parentPom.project >> new Artifact('it.fulminazzo', 'parent', '1.0')
 
         and:
         def resolver = Mock(RepositoryPomResolver)
@@ -744,6 +745,7 @@ class EffectivePomBuilderTest extends Specification {
         pom.profiles >> []
         pom.dependencyManagement >> []
         pom.dependencies >> []
+        pom.project >> new Artifact('it.fulminazzo', 'conveyor', '1.0')
 
         and:
         def builder = new EffectivePomBuilder(pom, resolver, TestUtils.BASE_DIR)
@@ -760,8 +762,7 @@ class EffectivePomBuilderTest extends Specification {
 
     def 'test that resolveParentEffectivePom does not throw on missing parent'() {
         given:
-        def pom = Mock(Pom)
-        pom.profiles >> []
+        def pom = newPom([], [])
 
         and:
         def builder = new EffectivePomBuilder(pom, Mock(RepositoryPomResolver), TestUtils.BASE_DIR)
@@ -823,7 +824,7 @@ class EffectivePomBuilderTest extends Specification {
 
     def 'test that getDependency of #rawDependency returns #expected'() {
         given:
-        def builder = new EffectivePomBuilder(Mock(Pom), Mock(RepositoryPomResolver), TestUtils.BASE_DIR)
+        def builder = new EffectivePomBuilder(newPom([], []), Mock(RepositoryPomResolver), TestUtils.BASE_DIR)
         getProperties(builder).addAll([
                 'groupId'           : 'it.fulminazzo',
                 'artifactId'        : 'dependency',
@@ -979,6 +980,7 @@ class EffectivePomBuilderTest extends Specification {
     private Pom newPom(final List<Profile> activeProfiles, final List<Profile> inactiveProfiles) {
         def pom = Mock(Pom)
         pom.profiles >> [*activeProfiles, *inactiveProfiles]
+        pom.project >> new Artifact('it.fulminazzo', 'conveyor', '1.0')
         return pom
     }
 

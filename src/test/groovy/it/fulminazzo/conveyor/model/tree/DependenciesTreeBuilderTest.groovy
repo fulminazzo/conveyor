@@ -27,12 +27,39 @@ class DependenciesTreeBuilderTest extends Specification {
         def builder = new DependenciesTreeBuilder(artifact, new MockResolver(), TestUtils.BASE_DIR)
 
         and:
+        def main = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('main')
+                .version('1.0')
+                .build()
+        def dep1 = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dep1')
+                .version('1.0')
+                .build()
+        def dep2 = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dep2')
+                .version('1.0')
+                .build()
+        def dep3 = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dep3')
+                .version('2.0')
+                .build()
+        def dep4 = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('dep4')
+                .version('3.0')
+                .build()
+
+        and:
         def expected = [
-                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('main').version('1.0').build(), 0),
-                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep1').version('1.0').build(), 1),
-                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep2').version('1.0').build(), 1),
-                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep3').version('2.0').build(), 2),
-                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('dep4').version('3.0').build(), 2)
+                new DependencyNode(null, main, 0),
+                new DependencyNode(artifact, dep1, 1),
+                new DependencyNode(artifact, dep2, 1),
+                new DependencyNode(dep1.toArtifact(), dep3, 2),
+                new DependencyNode(dep2.toArtifact(), dep4, 2)
         ]
 
         when:
@@ -51,9 +78,21 @@ class DependenciesTreeBuilderTest extends Specification {
                 .build(), new MockResolver(), TestUtils.BASE_DIR)
 
         and:
+        def dep1 = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('problematic1')
+                .version('1.0')
+                .build()
+        def dep2 = Dependency.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('problematic2')
+                .version('1.0')
+                .build()
+
+        and:
         def expected = [
-                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('problematic1').version('1.0').build(), 0),
-                new DependencyNode(Dependency.builder().groupId('it.fulminazzo').artifactId('problematic2').version('1.0').build(), 1)
+                new DependencyNode(null, dep1, 0),
+                new DependencyNode(dep1.toArtifact(), dep2, 1)
         ]
 
         when:
@@ -69,7 +108,7 @@ class DependenciesTreeBuilderTest extends Specification {
         this.resolver.resolve(_) >> pom
 
         and:
-        def dependencyNode = new DependencyNode(
+        def dependencyNode = new DependencyNode(artifact,
                 Dependency.builder()
                         .groupId('it.fulminazzo')
                         .artifactId('main')
@@ -106,7 +145,7 @@ class DependenciesTreeBuilderTest extends Specification {
         this.resolver.resolve(_) >> pom
 
         and:
-        def dependencyNode = new DependencyNode(
+        def dependencyNode = new DependencyNode(artifact,
                 Dependency.builder()
                         .groupId('it.fulminazzo')
                         .artifactId('main')
@@ -118,7 +157,7 @@ class DependenciesTreeBuilderTest extends Specification {
         and:
         this.builder.dependenciesTree.put(
                 dependencyNode.dependency().coordinates,
-                new DependencyNode(dependencyNode.dependency(), 1)
+                new DependencyNode(artifact, dependencyNode.dependency(), 1)
         )
 
         and:
@@ -168,21 +207,23 @@ class DependenciesTreeBuilderTest extends Specification {
 
         and:
         def expected = [
-                new DependencyNode(Dependency.builder()
-                        .groupId('it.fulminazzo')
-                        .artifactId('dep1')
-                        .version('1.0')
-                        .exclusionsManager(new ExclusionsManager().add('it.fulminazzo', 'dep3'))
-                        .build(), 1, new ExclusionsManager()
+                new DependencyNode(artifact,
+                        Dependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dep1')
+                                .version('1.0')
+                                .exclusionsManager(new ExclusionsManager().add('it.fulminazzo', 'dep3'))
+                                .build(), 1, new ExclusionsManager()
                         .add('it.fulminazzo', 'dep3')
                         .add('it.fulminazzo', 'dep4')
                 ),
-                new DependencyNode(Dependency.builder()
-                        .groupId('it.fulminazzo')
-                        .artifactId('dep2')
-                        .version('1.0')
-                        .exclusionsManager(new ExclusionsManager())
-                        .build(), 1, new ExclusionsManager()
+                new DependencyNode(artifact,
+                        Dependency.builder()
+                                .groupId('it.fulminazzo')
+                                .artifactId('dep2')
+                                .version('1.0')
+                                .exclusionsManager(new ExclusionsManager())
+                                .build(), 1, new ExclusionsManager()
                         .add('it.fulminazzo', 'dep4')
                 )
         ]
