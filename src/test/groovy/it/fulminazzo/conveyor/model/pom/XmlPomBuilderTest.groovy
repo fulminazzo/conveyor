@@ -141,9 +141,16 @@ class XmlPomBuilderTest extends Specification {
                         ].toSet())
                         .build(Build.builder()
                                 .sourceDirectory('${project.basedir}/src/main/java')
+                                .scriptSourceDirectory('${project.basedir}/src/main/groovy')
                                 .testSourceDirectory('${project.basedir}/src/test/java')
                                 .outputDirectory('${project.basedir}/target/classes')
+                                .testOutputDirectory('${project.basedir}/target/test/classes')
                                 .finalName('${project.artifactId}-${project.version}')
+                                .directory('${project.basedir}/target')
+                                .filters(['**/*.xml'])
+                                .extensions([
+                                        new Artifact('it.fulminazzo', 'conveyor', '1.0')
+                                ])
                                 .resources([
                                         Resource.builder()
                                                 .directory('src/main/resources')
@@ -186,6 +193,7 @@ class XmlPomBuilderTest extends Specification {
                                         .url('scp://www.example.com/www/docs/project/')
                                         .build())
                                 .build())
+                        .modules(['extra-module-for-prod'])
                         .build())
                 .packaging('war')
                 .parent(new Artifact(

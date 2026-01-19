@@ -223,11 +223,30 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <modules>
+        <module>extra-module-for-prod</module>
+    </modules>
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+        <scriptSourceDirectory>${project.basedir}/src/main/groovy</scriptSourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
         <outputDirectory>${project.basedir}/target/classes</outputDirectory>
+        <testOutputDirectory>${project.basedir}/target/test/classes</testOutputDirectory>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <directory>${project.basedir}/target</directory>
+
+        <filters>
+            <filter>**/*.xml</filter>
+        </filters>
+
+        <extensions>
+            <extension>
+                <groupId>it.fulminazzo</groupId>
+                <artifactId>conveyor</artifactId>
+                <version>1.0</version>
+            </extension>
+        </extensions>
 
         <resources>
             <resource>
