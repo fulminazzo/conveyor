@@ -27,7 +27,9 @@ abstract class BasePomResolver implements PomResolver {
     @Override
     public @NotNull Pom resolve(final @NotNull Artifact artifact) throws PomResolverException {
         try {
-            final String artifactPath = artifact.getFullPath("pom");
+            final String artifactPath = artifact.getPath() +
+                    artifact.getArtifactId() + "-" +
+                    artifact.getVersion() + ".pom";
             boolean snapshots = artifact.getVersion().endsWith("-SNAPSHOT");
             InputStream pomData = resolve(artifactPath, snapshots ?
                     this.repositoryManager.getSnapshotsRepositories() :
