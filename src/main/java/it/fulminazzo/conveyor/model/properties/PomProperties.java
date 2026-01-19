@@ -1,6 +1,7 @@
 package it.fulminazzo.conveyor.model.properties;
 
 import it.fulminazzo.conveyor.model.pom.Pom;
+import it.fulminazzo.conveyor.property.PropertyAccessorException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,11 @@ final class PomProperties extends BaseProperties {
                 key = key.substring(prefix.length());
                 break; // avoid invalid chaining of prefixes
             }
-        return this.pom.getProperty(key);
+        try {
+            return this.pom.getProperty(key);
+        } catch (PropertyAccessorException e) {
+            return null;
+        }
     }
 
 }
