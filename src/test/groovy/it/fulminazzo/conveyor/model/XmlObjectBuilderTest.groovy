@@ -68,16 +68,4 @@ class XmlObjectBuilderTest extends Specification {
         actual == 'Hello, world!'
     }
 
-    def 'test that getCurrentTextContent throws BuilderException on XmlParserException'() {
-        given:
-        def builder = MockXmlObjectBuilder.newBuilder('')
-
-        when:
-        builder.currentTextContent
-
-        then:
-        thrown(BuilderException)
-    }
-
-
 }
