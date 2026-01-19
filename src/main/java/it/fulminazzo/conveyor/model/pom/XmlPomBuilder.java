@@ -22,7 +22,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
 
     private @Nullable String groupId;
     private @Nullable String artifactId;
-    private @Nullable String classifier;
     private @Nullable String version;
 
     private @Nullable Artifact parent;
@@ -56,7 +55,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                         .groupId(Objects.requireNonNull(this.groupId, "groupId is marked non-null but is null"))
                         .artifactId(Objects.requireNonNull(this.artifactId, "artifactId is marked non-null but is null"))
                         .version(Objects.requireNonNull(this.version, "version is marked non-null but is null"))
-                        .classifier(this.classifier)
                         .build())
                 .metadata(this.pomMetadataBuilder.build())
                 .parent(this.parent)
@@ -76,7 +74,6 @@ public final class XmlPomBuilder extends MavenModelBuilder<MavenModel> {
                 case "groupId" -> this.groupId = getCurrentTextContent();
                 case "artifactId" -> this.artifactId = getCurrentTextContent();
                 case "version" -> this.version = getCurrentTextContent();
-                case "classifier" -> this.classifier = getCurrentTextContent();
                 case "packaging" -> this.builder.packaging(getCurrentTextContent());
                 case "parent" -> this.parent = parseParent();
                 case "profiles" -> parseProfiles();
