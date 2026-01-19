@@ -45,6 +45,8 @@ public final class PomMetadata extends MavenModelMetadata {
     @Builder.Default
     @NotNull Prerequisites prerequisites = new Prerequisites();
 
+    @Nullable SCManagement scm;
+
     @Nullable IssueManagement issueManagement;
 
     @Nullable CiManagement ciManagement;
@@ -62,6 +64,23 @@ public final class PomMetadata extends MavenModelMetadata {
 
         @Builder.Default
         @NotNull String maven = "2.0";
+
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SCManagement {
+
+        @Nullable String connection;
+
+        @Nullable String developerConnection;
+
+        @Builder.Default
+        @NotNull String tag = "HEAD";
+
+        @Nullable String url;
 
     }
 
