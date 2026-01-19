@@ -51,8 +51,6 @@ public final class PomMetadata extends MavenModelMetadata {
 
     @Nullable CiManagement ciManagement;
 
-    @Nullable DistributionManagement distributionManagement;
-
     @Builder.Default
     @NotNull Build build = Build.builder().build();
 

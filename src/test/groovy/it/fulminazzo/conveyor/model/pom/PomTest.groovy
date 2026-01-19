@@ -6,7 +6,7 @@ import it.fulminazzo.conveyor.model.dependency.RawDependency
 import it.fulminazzo.conveyor.model.pom.metadata.Build
 import it.fulminazzo.conveyor.model.pom.metadata.Contributor
 import it.fulminazzo.conveyor.model.pom.metadata.Developer
-import it.fulminazzo.conveyor.model.pom.metadata.DistributionManagement
+import it.fulminazzo.conveyor.model.metadata.DistributionManagement
 import it.fulminazzo.conveyor.model.pom.metadata.License
 import it.fulminazzo.conveyor.model.pom.metadata.MailingList
 import it.fulminazzo.conveyor.model.pom.metadata.Notifier
