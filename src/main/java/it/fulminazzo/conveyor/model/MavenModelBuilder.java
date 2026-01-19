@@ -408,7 +408,7 @@ public abstract class MavenModelBuilder<O extends MavenModel> extends XmlObjectB
     protected @NotNull Collection<Plugin.Execution> parseExecutions() throws BuilderException {
         List<Plugin.Execution> executions = new LinkedList<>();
         onChildElements(t -> {
-            if (t.equals("executions"))
+            if (t.equals("execution"))
                 executions.add(parseExecution());
         });
         return executions;
