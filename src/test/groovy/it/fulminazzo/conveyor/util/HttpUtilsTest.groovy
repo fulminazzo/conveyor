@@ -81,9 +81,15 @@ class HttpUtilsTest extends Specification {
         }
 
         where:
-        url                     | redirect       | resourcePath                 || expectedUrl                 | expectedPath
-        'https://fulminazzo.it' | '/it/conveyor' | '/it/fulminazzo/conveyor'    || 'https://fulminazzo.it/it'  | '/conveyor'
-        'https://fulminazzo.it' | '/it/conveyor' | '/it/fulminazzo/theconveyor' || 'https://fulminazzo.it/it/' | 'conveyor'
+        url                                    | redirect         | resourcePath                 || expectedUrl                 | expectedPath
+        // RELATIVE FOUND SUFFIX
+        'https://fulminazzo.it'                | '/it/conveyor'   | '/it/fulminazzo/conveyor'    || 'https://fulminazzo.it/it'  | '/conveyor'
+        'https://fulminazzo.it'                | '/it/conveyor'   | '/it/fulminazzo/theconveyor' || 'https://fulminazzo.it/it/' | 'conveyor'
+        // RELATIVE NOT FOUND SUFFIX
+        'https://fulminazzo.it'                | '/maven/project' | '/it/fulminazzo/conveyor'    || 'https://fulminazzo.it'     | '/maven/project'
+        'https://fulminazzo.it/'               | '/maven/project' | 'it/fulminazzo/conveyor'     || 'https://fulminazzo.it'     | '/maven/project'
+        'https://fulminazzo.it/it/fulminazzo'  | '/maven/project' | '/conveyor'                  || 'https://fulminazzo.it'     | '/maven/project'
+        'https://fulminazzo.it/it/fulminazzo/' | '/maven/project' | 'conveyor'                   || 'https://fulminazzo.it'     | '/maven/project'
     }
 
     def 'test that extractUrl of #url returns #expected'() {
