@@ -4,14 +4,14 @@ import it.fulminazzo.conveyor.downloader.DownloadSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * A basic implementation for {@link DownloadSourceManager}.
  */
 final class DownloadSourceManagerImpl implements DownloadSourceManager {
-    private final @NotNull Set<DownloadSource> downloadSources = new HashSet<>();
+    private final @NotNull Set<DownloadSource> downloadSources = new LinkedHashSet<>();
 
     @Override
     public @NotNull DownloadSourceManager addDownloadSources(final @NotNull Collection<DownloadSource> sources) {
