@@ -82,13 +82,20 @@ public final class HttpUtils {
     }
 
     /**
-     * Handle redirect input stream.
+     * Handles the redirection of the requested resource.
+     * <ul>
+     *     <li>if it is a <b>relative</b> redirect, it will attempt to extract the common part from
+     *     <code>resourcePath</code> and <code>redirect</code> and it will update the <code>url</code> accordingly;</li>
+     *     <li>if it is an <b>absolute</b> redirect, and it is able to extract a common part from
+     *     <code>resourcePath</code> and <code>redirect</code>, it will store and update the {@link RedirectInfo}
+     *     of the given URL (to allow for redirection caching).</li>
+     * </ul>
      *
      * @param url          the url
      * @param redirect     the redirect
      * @param resourcePath the resource path
-     * @return the input stream
-     * @throws IOException the io exception
+     * @return the data
+     * @throws IOException in case of any errors (usually connection or not found)
      */
     static @NotNull InputStream handleRedirect(@NotNull String url,
                                                final @NotNull String redirect,
