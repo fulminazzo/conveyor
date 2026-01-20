@@ -11,7 +11,7 @@ import java.util.Map;
  * An implementation of {@link MutableProperties} for a Maven project.
  * Supports all types of properties, with addition of custom ones.
  */
-public final class MavenProjectProperties implements MutableProperties {
+public final class MavenProjectProperties extends BaseProperties implements MutableProperties {
     private final @NotNull AggregateMutableProperties delegate;
     /**
      * The properties related to the <a href="https://github.com/trustin/os-maven-plugin/">OS Maven Plugin</a>.
@@ -82,11 +82,6 @@ public final class MavenProjectProperties implements MutableProperties {
     @Override
     public @NotNull Map<String, String> toMap() {
         return this.delegate.toMap();
-    }
-
-    @Override
-    public @NotNull String apply(final @NotNull String string) {
-        return this.delegate.apply(string);
     }
 
     @Override
