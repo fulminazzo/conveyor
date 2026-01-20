@@ -51,7 +51,7 @@ class ConveyorTest extends Specification {
         ]
     }
 
-    def 'buildDependenciesTree integration tests'() {
+    def 'buildDependenciesTree integration tests with #artifact'() {
         given:
         def workDir = new File(TestUtils.BASE_DIR, 'conveyor')
 
@@ -59,15 +59,21 @@ class ConveyorTest extends Specification {
         def conveyor = Conveyor.newConveyor(
                 workDir,
                 log
-        )
+        ).addRawRepositories('repo.fulminazzo.it/releases')
 
         when:
-        conveyor.buildDependenciesTree(
-                new Artifact('org.springframework', 'spring-core', '7.0.3')
-        )
+        def files = conveyor.buildDependenciesTree(artifact)
 
         then:
-        noExceptionThrown()
+        files.size() > 0
+
+        where:
+        artifact << [
+                new Artifact('org.springframework', 'spring-core', '7.0.3'),
+                new Artifact('it.fulminazzo', 'FulmiCollection', '1.8.2'),
+                new Artifact('it.fulminazzo', 'Configurations', '1.6.4'),
+                new Artifact('it.fulminazzo', 'yagl', '5.2')
+        ]
     }
 
     def 'test that testing environment works'() {
