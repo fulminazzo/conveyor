@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 /**
@@ -36,6 +35,7 @@ public final class HttpUtils {
      */
     static final int MAX_REDIRECTS = 5;
 
+    private static final String protocolRegex = "^([a-zA-Z][a-zA-Z0-9+.-]*)://(.*)$";
     private static final @NotNull Map<String, RedirectInfo> redirects = new HashMap<>();
 
     /**
@@ -79,6 +79,25 @@ public final class HttpUtils {
         connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
         connection.setReadTimeout(CONNECT_READ_TIMEOUT);
         return connection;
+    }
+
+    /**
+     * Attempts to complete the URL if protocol or leading slash are missing.
+     *
+     * @param url the URL
+     * @return the formatted URL
+     * @throws MalformedURLException in case of invalid URL
+     */
+    public static @NotNull String formatUrl(final @NotNull String url) throws MalformedURLException {
+        String modifiedUrl = url;
+        if (!modifiedUrl.matches(protocolRegex)) modifiedUrl = "https://" + modifiedUrl;
+        if (!modifiedUrl.endsWith("/")) modifiedUrl += "/";
+        try {
+            new URI(modifiedUrl);
+        } catch (URISyntaxException e) {
+            throw new MalformedURLException(String.format("Invalid URL '%s'", url));
+        }
+        return modifiedUrl;
     }
 
     /**
