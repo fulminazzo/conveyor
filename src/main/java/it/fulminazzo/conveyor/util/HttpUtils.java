@@ -50,7 +50,7 @@ public final class HttpUtils {
     public static @NotNull InputStream openHttpConnection(final @NotNull String website,
                                                           @NotNull String resource) throws IOException {
         final String url = formatUrl(website);
-        if (resource.startsWith("/")) resource = resource.substring(1);
+        if (!resource.startsWith("/")) resource = "/" + resource;
 
         RedirectInfo info = redirects.get(url);
         if (info != null && info.getRedirects() > MAX_REDIRECTS) {
@@ -108,7 +108,7 @@ public final class HttpUtils {
     public static @NotNull String formatUrl(final @NotNull String url) throws MalformedURLException {
         String modifiedUrl = url;
         if (!modifiedUrl.matches(protocolRegex)) modifiedUrl = "https://" + modifiedUrl;
-        if (!modifiedUrl.endsWith("/")) modifiedUrl += "/";
+        if (modifiedUrl.endsWith("/")) modifiedUrl = modifiedUrl.substring(0, modifiedUrl.length() - 1);
         try {
             new URI(modifiedUrl);
         } catch (URISyntaxException e) {
