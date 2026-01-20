@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.downloader;
 
+import it.fulminazzo.conveyor.util.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -78,13 +79,38 @@ public final class DownloadSource {
                     status == HttpURLConnection.HTTP_MOVED_TEMP ||
                     status == 307 || status == 308) {
                 String newUrl = connection.getHeaderField("Location");
+                connection.disconnect();
                 this.logger.debug("Redirected to {}", newUrl);
-                //TODO: handle redirect
+                return handleRedirect(newUrl, resourcePath);
             }
             return connection.getInputStream();
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Unreachable code");
         }
+    }
+
+    /**
+     * Given the URL and the requested resource path,
+     * extracts the resource path from the URL and creates a new {@link DownloadSource} from it.
+     * Then, it tries to resolve the requested resource.
+     *
+     * @param url          the url
+     * @param resourcePath the resource path
+     * @return the data
+     * @throws IOException in case of any errors (usually connection or not found)
+     */
+    static @NotNull InputStream handleRedirect(final @NotNull String url,
+                                               @NotNull String resourcePath) throws IOException {
+        int idx = StringUtils.findCommonSuffix(url, resourcePath);
+        final String finalUrl;
+        if (idx > -1 && idx < url.length()) {
+            finalUrl = url.substring(0, idx);
+            resourcePath = url.substring(idx);
+        } else {
+            finalUrl = url;
+            resourcePath = "";
+        }
+        return new DownloadSource(finalUrl).resolveResource(resourcePath);
     }
 
     /**
