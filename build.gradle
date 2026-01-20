@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'groovy'
     id 'jacoco-report-aggregation'
+    alias libs.plugins.buildconfig
 }
 
 group = 'it.fulminazzo'
@@ -35,4 +36,9 @@ testCodeCoverageReport {
         xml.required = true
         csv.required = true
     }
+}
+
+buildConfig {
+    buildConfigField('String', 'NAME', "$project.name")
+    buildConfigField('String', 'VERSION', "$project.version")
 }
