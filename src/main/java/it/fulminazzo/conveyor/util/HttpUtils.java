@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.util;
 
+import it.fulminazzo.conveyor.BuildConfig;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,7 @@ public final class HttpUtils {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
         connection.setReadTimeout(CONNECT_READ_TIMEOUT);
+        connection.setRequestProperty("User-Agent", String.format("%s/%s", BuildConfig.NAME, BuildConfig.VERSION));
         return connection;
     }
 
