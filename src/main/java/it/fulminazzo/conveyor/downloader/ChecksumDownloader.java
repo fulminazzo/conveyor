@@ -48,7 +48,7 @@ final class ChecksumDownloader implements Downloader {
     public @NotNull File resolveToFile(final @NotNull String resourcePath,
                                        final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
         File resourceFile = getResourceFile(resourcePath);
-        if (resourceFile.exists()) {
+        if (resourceFile.exists() && resourceFile.length() > 0) {
             if (verifyChecksum(resourcePath, downloadSources))
                 return resourceFile;
         }
