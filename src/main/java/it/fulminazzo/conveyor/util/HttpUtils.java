@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -30,6 +29,14 @@ public final class HttpUtils {
             307,
             308
     );
+    /**
+     * If in the last {@link RedirectInfo#REDIRECT_LIFE_TIME} milliseconds,
+     * there have been more than the specified redirects for the current URL,
+     * it will be automatically redirected to the redirect URL.
+     */
+    static final int MAX_REDIRECTS = 5;
+
+    private static final @NotNull Map<String, RedirectInfo> redirects = new HashMap<>();
 
     /**
      * Opens a new connection to the website for the requested resource,
@@ -42,21 +49,35 @@ public final class HttpUtils {
      */
     public static @NotNull InputStream openConnection(final @NotNull String website,
                                                       @NotNull String resource) throws IOException {
-        try {
-            if (resource.startsWith("/")) resource = resource.substring(1);
-            HttpURLConnection connection = (HttpURLConnection) new URL(website + resource).openConnection();
-            connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
-            connection.setReadTimeout(CONNECT_READ_TIMEOUT);
-            int status = connection.getResponseCode();
-            if (REDIRECTS_STATUSES.contains(status)) {
-                String newUrl = connection.getHeaderField("Location");
-                connection.disconnect();
-                throw new IOException("Redirected to: " + newUrl);
-            }
-            return connection.getInputStream();
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+        if (resource.startsWith("/")) resource = resource.substring(1);
+
+        RedirectInfo info = redirects.get(website);
+        if (info != null && info.getRedirects() > MAX_REDIRECTS) {
+            return openConnection(info.getUrl(), resource);
         }
+
+        HttpURLConnection connection = openConnection(website + resource);
+        int status = connection.getResponseCode();
+        if (REDIRECTS_STATUSES.contains(status)) {
+            String newUrl = connection.getHeaderField("Location");
+            connection.disconnect();
+            throw new IOException("Redirected to: " + newUrl);
+        }
+        return connection.getInputStream();
+    }
+
+    /**
+     * Opens an HTTP connection to the given url.
+     *
+     * @param url the url
+     * @return the connection
+     * @throws IOException in case of any errors (usually connection or not found)
+     */
+    static @NotNull HttpURLConnection openConnection(final @NotNull String url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
+        connection.setReadTimeout(CONNECT_READ_TIMEOUT);
+        return connection;
     }
 
     /**
