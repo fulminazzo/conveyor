@@ -4,9 +4,9 @@ import spock.lang.Specification
 
 class HttpUtilsTest extends Specification {
 
-    def 'test that openConnection of #resourcePath does not throw'() {
+    def 'test that openHttpConnection of #resourcePath does not throw'() {
         when:
-        def data = HttpUtils.openConnection(website, resourcePath)
+        def data = HttpUtils.openHttpConnection(website, resourcePath)
 
         then:
         noExceptionThrown()
@@ -25,9 +25,9 @@ class HttpUtilsTest extends Specification {
         "/$TestUtils.LOMBOK_PATH" | "https://$TestUtils.MAVEN_CENTRAL_URL/"
     }
 
-    def 'test that openConnection throws IOException on not found'() {
+    def 'test that openHttpConnection throws IOException on not found'() {
         when:
-        HttpUtils.openConnection("https://$TestUtils.MAVEN_CENTRAL_URL/", 'path')
+        HttpUtils.openHttpConnection("https://$TestUtils.MAVEN_CENTRAL_URL/", 'path')
 
         then:
         thrown(IOException)
