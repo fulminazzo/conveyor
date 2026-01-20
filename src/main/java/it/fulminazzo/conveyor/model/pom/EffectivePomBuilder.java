@@ -213,6 +213,7 @@ public final class EffectivePomBuilder {
             this.properties.addAll(this.parentEffectivePomBuilder.properties);
         this.properties.addAll(this.startingPom.getProperties());
         this.activeProfiles.forEach(p -> this.properties.addAll(p.getProperties()));
+        this.properties.updateOSMavenProperties();
         this.logger.debug("Loaded {} properties", this.properties.size());
         return this;
     }
