@@ -67,6 +67,15 @@ public final class HttpUtils {
         return connection.getInputStream();
     }
 
+    /**
+     * Handle redirect input stream.
+     *
+     * @param url          the url
+     * @param redirect     the redirect
+     * @param resourcePath the resource path
+     * @return the input stream
+     * @throws IOException the io exception
+     */
     static @NotNull InputStream handleRedirect(@NotNull String url,
                                                final @NotNull String redirect,
                                                @NotNull String resourcePath) throws IOException {
@@ -96,6 +105,26 @@ public final class HttpUtils {
         connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
         connection.setReadTimeout(CONNECT_READ_TIMEOUT);
         return connection;
+    }
+
+    /**
+     * Given a URL, attempts to retrieve only the link to the website,
+     * removing any leading resource path.
+     *
+     * @param url the url
+     * @return the extracted url
+     * @throws MalformedURLException in case of invalid URL
+     */
+    static @NotNull String extractUrl(final @NotNull String url) throws MalformedURLException {
+        try {
+            URI uri = new URI(url);
+            String website = uri.getScheme() + "://" + uri.getHost();
+            int port = uri.getPort();
+            if (port != -1) website += ":" + port;
+            return formatUrl(website);
+        } catch (URISyntaxException e) {
+            throw new MalformedURLException(String.format("Invalid URL '%s'", url));
+        }
     }
 
     /**
