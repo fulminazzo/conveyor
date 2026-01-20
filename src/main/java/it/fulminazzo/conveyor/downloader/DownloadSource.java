@@ -26,6 +26,8 @@ public final class DownloadSource {
      */
     static final int CONNECT_READ_TIMEOUT = 10000;
 
+    private static final String protocolRegex = "^[a-zA-Z][a-zA-Z0-9+.-]*://.*$";
+
     @Getter
     private final @NotNull String url;
     @EqualsAndHashCode.Exclude
@@ -49,7 +51,7 @@ public final class DownloadSource {
      */
     public DownloadSource(final @NotNull String url) throws MalformedURLException {
         String modifiedUrl = url;
-        if (!modifiedUrl.matches("^[a-zA-Z][a-zA-Z0-9+.-]*://.*$")) modifiedUrl = "https://" + modifiedUrl;
+        if (!modifiedUrl.matches(protocolRegex)) modifiedUrl = "https://" + modifiedUrl;
         if (!modifiedUrl.endsWith("/")) modifiedUrl += "/";
         try {
             new URI(modifiedUrl);
@@ -103,13 +105,13 @@ public final class DownloadSource {
                                                @NotNull String resourcePath) throws IOException {
         int idx = StringUtils.findCommonSuffix(url, resourcePath);
         final String finalUrl;
-        if (idx > -1 && idx < url.length()) {
-            finalUrl = url.substring(0, idx);
-            resourcePath = url.substring(idx);
-        } else {
-            finalUrl = url;
-            resourcePath = "";
+        if (idx <= -1 || idx >= url.length()) {
+            if (url.matches(protocolRegex))
+                idx = url.indexOf("/", url.indexOf(":") + 3);
+            else idx = url.indexOf("/");
         }
+        finalUrl = url.substring(0, idx);
+        resourcePath = url.substring(idx);
         return new DownloadSource(finalUrl).resolveResource(resourcePath);
     }
 
