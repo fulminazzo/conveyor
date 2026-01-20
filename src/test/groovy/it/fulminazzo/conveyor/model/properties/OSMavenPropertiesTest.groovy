@@ -149,6 +149,29 @@ class OSMavenPropertiesTest extends Specification {
         null    | 'a'        | null    || '32'
     }
 
+    def 'test that os-detected-version property with #value returns #expected'() {
+        given:
+        def mavenProperties = OSMavenProperties
+                .builder(mockSystemProperties('os.version', value))
+                .build()
+
+        expect:
+        mavenProperties.get('os.detected.version') == expected
+
+        and:
+        mavenProperties.get('os.detected.version.major') == expectedMajor
+
+        and:
+        mavenProperties.get('os.detected.version.minor') == expectedMinor
+
+        where:
+        value           || expected | expectedMajor | expectedMinor
+        null            || null     | null          | null
+        'SNAPSHOT'      || null     | null          | null
+        '1.10'          || '1.10'   | '1'           | '10'
+        '1.10-SNAPSHOT' || '1.10'   | '1'           | '10'
+    }
+
     private Properties mockSystemProperties(final String... properties) {
         def propertiesObject = Mock(Properties)
         propertiesObject.get(_) >> { a ->

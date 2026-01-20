@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * An implementation of {@link Properties} that supports all
@@ -42,6 +44,8 @@ final class OSMavenProperties extends BaseProperties {
      */
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     static class OSMavenPropertiesBuilder {
+        private static final @NotNull Pattern versionRegex = Pattern.compile("((\\d+)\\.(\\d+)).*");
+
         private final @NotNull Map<String, String> delegate = new HashMap<>();
         private final @NotNull Properties systemProperties;
 
@@ -51,10 +55,24 @@ final class OSMavenProperties extends BaseProperties {
          * @return the os maven properties
          */
         public @NotNull OSMavenProperties build() {
-            this.delegate.put("os.detected.name", convertOsName(this.systemProperties.get("os.name")));
-            String arch = convertOsArchitecture(this.systemProperties.get("os.arch"));
-            this.delegate.put("os.detected.arch", arch);
-            this.delegate.put("os.detected.bitness", String.valueOf(determineBitness(arch)));
+            String osName = convertOsName(this.systemProperties.get("os.name"));
+            this.delegate.put("os.detected.name", osName);
+
+            String osArch = convertOsArchitecture(this.systemProperties.get("os.arch"));
+            this.delegate.put("os.detected.arch", osArch);
+
+            this.delegate.put("os.detected.bitness", String.valueOf(determineBitness(osArch)));
+
+            String osVersion = this.systemProperties.get("os.version");
+            if (osVersion != null) {
+                Matcher matcher = versionRegex.matcher(osVersion);
+                if (matcher.matches()) {
+                    final String versionName = "os.detected.version";
+                    this.delegate.put(versionName, matcher.group(1));
+                    this.delegate.put(versionName + ".major", matcher.group(2));
+                    this.delegate.put(versionName + ".minor", matcher.group(3));
+                }
+            }
 
             return new OSMavenProperties(Map.copyOf(this.delegate));
         }
