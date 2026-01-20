@@ -22,7 +22,7 @@ public final class LinuxUtils {
     private static final String versionIdPrefix = "VERSION_ID=";
 
     /**
-     * Parses a file in the format of <code>etc/os-release</code> and
+     * Parses a file in the format of <code>/etc/os-release</code> and
      * returns the corresponding {@link Release}, with data fetched
      * from <code>ID</code>, <code>ID_LIKE</code> and <code>VERSION_ID</code>
      * entries.
@@ -43,6 +43,7 @@ public final class LinuxUtils {
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith(idPrefix)) {
                     line = line.substring(idPrefix.length());
+                    line = removeQuotes(line);
                     id = line;
                     likeSet.add(id);
                     continue;
@@ -50,12 +51,14 @@ public final class LinuxUtils {
 
                 if (line.startsWith(versionIdPrefix)) {
                     line = line.substring(versionIdPrefix.length());
+                    line = removeQuotes(line);
                     version = line;
                     continue;
                 }
 
                 if (line.startsWith(idLikePrefix)) {
                     line = line.substring(idLikePrefix.length());
+                    line = removeQuotes(line);
                     likeSet.addAll(List.of(line.split("\\s+")));
                 }
             }
