@@ -28,7 +28,9 @@ final class OSMavenProperties extends BaseProperties {
         this.internal = new HashMap<>();
 
         this.internal.put("os.detected.name", normalizeOs(systemProperties.get("os.name")));
-        this.internal.put("os.detected.arch", normalizeArch(systemProperties.get("os.arch")));
+        String arch = normalizeArch(systemProperties.get("os.arch"));
+        this.internal.put("os.detected.arch", arch);
+        this.internal.put("os.detected.bitness", String.valueOf(determineBitness(systemProperties, arch)));
     }
 
     @Override
@@ -85,6 +87,19 @@ final class OSMavenProperties extends BaseProperties {
     private static @NotNull String normalize(final @Nullable String value) {
         if (value == null) return "";
         return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
+    }
+
+    private int determineBitness(final @NotNull SystemProperties systemProperties,
+                                 final @NotNull String architecture) {
+        String bitness = systemProperties.get("sun.arch.data.model");
+        if (bitness != null && bitness.matches("[0-9]+"))
+            return Integer.parseInt(bitness, 10);
+
+        bitness = systemProperties.get("com.ibm.vm.bitmode");
+        if (bitness != null && bitness.matches("[0-9]+"))
+            return Integer.parseInt(bitness, 10);
+
+        return architecture.contains("64") ? 64 : 32;
     }
 
 }

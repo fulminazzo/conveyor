@@ -94,12 +94,67 @@ class OSMavenPropertiesTest extends Specification {
         null             || 'unknown'
     }
 
-    private SystemProperties mockSystemProperties(final String key, final String value) {
-        def properties = Mock(SystemProperties)
-        properties.get(_) >> { a ->
-            return a[0] == key ? value : null
+    def 'test that os-detected-bitness property with #value returns #expected'() {
+        given:
+        def mavenProperties = new OSMavenProperties(mockSystemProperties(
+                'os.arch', value,
+                'sun.arch.data.model', sunArch,
+                'com.ibm.vm.bitmode', ibmBitMode
+        ))
+
+        when:
+        def result = mavenProperties.get('os.detected.bitness')
+
+        then:
+        result == expected
+
+        where:
+        sunArch | ibmBitMode | value   || expected
+        '0'     | null       | null    || '0'
+        '1'     | null       | null    || '1'
+        '2'     | null       | null    || '2'
+        '3'     | null       | null    || '3'
+        '4'     | null       | null    || '4'
+        '5'     | null       | null    || '5'
+        '6'     | null       | null    || '6'
+        '7'     | null       | null    || '7'
+        '8'     | null       | null    || '8'
+        '9'     | null       | null    || '9'
+        '10'    | null       | null    || '10'
+        '16'    | null       | null    || '16'
+        '32'    | null       | null    || '32'
+        '64'    | null       | null    || '64'
+        null    | '0'        | null    || '0'
+        null    | '1'        | null    || '1'
+        null    | '2'        | null    || '2'
+        null    | '3'        | null    || '3'
+        null    | '4'        | null    || '4'
+        null    | '5'        | null    || '5'
+        null    | '6'        | null    || '6'
+        null    | '7'        | null    || '7'
+        null    | '8'        | null    || '8'
+        null    | '9'        | null    || '9'
+        null    | '10'       | null    || '10'
+        null    | '16'       | null    || '16'
+        null    | '32'       | null    || '32'
+        null    | '64'       | null    || '64'
+        null    | null       | 'x8664' || '64'
+        null    | null       | 'x8632' || '32'
+        null    | null       | null    || '32'
+        'a'     | null       | null    || '32'
+        null    | 'a'        | null    || '32'
+    }
+
+    private SystemProperties mockSystemProperties(final String... properties) {
+        def systemProperties = Mock(SystemProperties)
+        systemProperties.get(_) >> { a ->
+            String key = a[0]
+            for (def i = 0; i < properties.length; i += 2) {
+                if (properties[i] == key) return properties[i + 1]
+            }
+            return null
         }
-        return properties
+        return systemProperties
     }
 
 }
