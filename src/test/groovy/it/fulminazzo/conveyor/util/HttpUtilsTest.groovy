@@ -4,39 +4,6 @@ import spock.lang.Specification
 
 class HttpUtilsTest extends Specification {
 
-    def 'test that openHttpConnection redirects on too many redirects'() {
-        given:
-        final url = 'https://fulminazzo.it'
-        final redirect = "https://$TestUtils.MAVEN_CENTRAL_URL"
-        final path = "/$TestUtils.LOMBOK_PATH"
-
-        and:
-        def info = new HttpUtils.RedirectInfo(redirect)
-        for (i in 1..HttpUtils.MAX_REDIRECTS) info.addRedirect()
-        HttpUtils.redirects.put(url, info)
-
-        when:
-        HttpUtils.openHttpConnection(url, path)
-
-        then:
-        thrown(FileNotFoundException)
-
-        when:
-        info.addRedirect()
-
-        and:
-        def data = HttpUtils.openHttpConnection(url, path)
-
-        then:
-        noExceptionThrown()
-
-        and:
-        data.available() > 0
-
-        cleanup:
-        HttpUtils.redirects.clear()
-    }
-
     def 'test that openHttpConnection redirects correctly on status code #statusCode'() {
         given:
         SpyStatic(HttpUtils)
@@ -133,26 +100,6 @@ class HttpUtilsTest extends Specification {
         // ABSOLUTE NOT FOUND SUFFIX
         'https://fulminazzo.it'                | 'https://apache.org/maven/project'                | '/it/fulminazzo/conveyor'    || 'https://apache.org'        | '/maven/project'
         'https://fulminazzo.it/'               | 'https://apache.org/maven/project'                | 'it/fulminazzo/conveyor'     || 'https://apache.org'        | '/maven/project'
-    }
-
-    def 'test that handleRedirect replaces redirect if URL do not match'() {
-        given:
-        SpyStatic(HttpUtils)
-
-        and:
-        HttpUtils.openHttpConnection(_, _) >> {}
-
-        and:
-        HttpUtils.redirects.put('fulminazzo.it', new HttpUtils.RedirectInfo('oracle.org'))
-
-        when:
-        HttpUtils.handleRedirect('fulminazzo.it', 'apache.org/conveyor', '/conveyor')
-
-        and:
-        def info = HttpUtils.redirects['fulminazzo.it']
-
-        then:
-        info.url == 'https://apache.org'
     }
 
     def 'test that extractUrl of #url returns #expected'() {

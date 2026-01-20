@@ -2,15 +2,14 @@ package it.fulminazzo.conveyor.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A collection of utilities to work with the HTTP protocol
@@ -31,15 +30,8 @@ public final class HttpUtils {
             307,
             308
     );
-    /**
-     * If in the last {@link RedirectInfo#REDIRECT_LIFE_TIME} milliseconds,
-     * there have been more than the specified redirects for the current URL,
-     * it will be automatically redirected to the redirect URL.
-     */
-    static final int MAX_REDIRECTS = 5;
 
     private static final String protocolRegex = "^([a-zA-Z][a-zA-Z0-9+.-]*)://(.*)$";
-    private static final @NotNull Map<String, RedirectInfo> redirects = new ConcurrentHashMap<>();
 
     /**
      * Opens a new connection to the website for the requested resource and returns the data.
@@ -53,18 +45,6 @@ public final class HttpUtils {
                                                           @NotNull String resource) throws IOException {
         website = formatUrl(website);
         if (!resource.startsWith("/")) resource = "/" + resource;
-
-        RedirectInfo info = redirects.get(website);
-        if (info != null && info.getRedirects() > MAX_REDIRECTS) {
-            String redirectUrl = info.getUrl();
-            try {
-                log.debug("[CACHE] {} -> {}", website, redirectUrl);
-                return openHttpConnection(redirectUrl, resource);
-            } catch (IOException e) {
-                log.debug("[CACHE] Failed connection to {}", redirectUrl, e);
-            }
-        }
-
         final String url = website + resource;
         HttpURLConnection connection = openHttpConnection(url);
         int status = connection.getResponseCode();
@@ -122,16 +102,7 @@ public final class HttpUtils {
             }
         } else {
             if (index > -1 && index < redirect.length()) {
-                String redirectUrl = formatUrl(redirect.substring(0, index));
-
-                RedirectInfo info = redirects.get(url);
-                if (info == null || !info.getUrl().equals(redirectUrl)) {
-                    info = new RedirectInfo(redirectUrl);
-                    redirects.put(url, info);
-                }
-                info.addRedirect();
-
-                url = redirectUrl;
+                url = formatUrl(redirect.substring(0, index));
                 resourcePath = redirect.substring(index);
             } else {
                 url = extractUrl(redirect);
@@ -178,45 +149,6 @@ public final class HttpUtils {
             throw new MalformedURLException(String.format("Invalid URL '%s'", url));
         }
         return modifiedUrl;
-    }
-
-    /**
-     * Stores all the information about a redirect.
-     */
-    @Value
-    static class RedirectInfo {
-        /**
-         * How many milliseconds a redirect should be considered valid.
-         */
-        static final long REDIRECT_LIFE_TIME = 60 * 60 * 1000;
-
-        @NotNull String url;
-        @NotNull List<Long> timestamps = new ArrayList<>();
-
-        /**
-         * Gets all the redirects of the last {@link #REDIRECT_LIFE_TIME} milliseconds.
-         *
-         * @return the number of redirects
-         */
-        public int getRedirects() {
-            purgeRedirects();
-            return this.timestamps.size();
-        }
-
-        /**
-         * Adds a new redirect timestamp.
-         *
-         * @return this redirect info
-         */
-        public @NotNull RedirectInfo addRedirect() {
-            this.timestamps.add(System.currentTimeMillis());
-            return this;
-        }
-
-        private void purgeRedirects() {
-            this.timestamps.removeIf(l -> l + REDIRECT_LIFE_TIME <= System.currentTimeMillis());
-        }
-
     }
 
 }
