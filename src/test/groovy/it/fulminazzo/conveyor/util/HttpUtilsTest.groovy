@@ -66,6 +66,26 @@ class HttpUtilsTest extends Specification {
         thrown(IOException)
     }
 
+    def 'test that handleRedirect of #url, #redirect and #resourcePath calls openHttpConnection with #expectedUrl, #expectedPath'() {
+        given:
+        SpyStatic(HttpUtils)
+
+        when:
+        HttpUtils.handleRedirect(url, redirect, resourcePath)
+
+        then:
+        1 * HttpUtils.openHttpConnection(_ as String, _ as String) >> { String actualUrl, String actualPath ->
+            assert actualUrl == expectedUrl
+            assert actualPath == expectedPath
+            return null
+        }
+
+        where:
+        url                     | redirect       | resourcePath                 || expectedUrl                 | expectedPath
+        'https://fulminazzo.it' | '/it/conveyor' | '/it/fulminazzo/conveyor'    || 'https://fulminazzo.it/it'  | '/conveyor'
+        'https://fulminazzo.it' | '/it/conveyor' | '/it/fulminazzo/theconveyor' || 'https://fulminazzo.it/it/' | 'conveyor'
+    }
+
     def 'test that formatUrl correctly formats #url to #expected'() {
         when:
         def actual = HttpUtils.formatUrl(url)
