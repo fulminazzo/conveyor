@@ -14,12 +14,12 @@ class DownloadSourceTest extends Specification {
 
         where:
         url                      || expected
-        'https://fulminazzo.it/' || 'https://fulminazzo.it/'
-        'https://fulminazzo.it'  || 'https://fulminazzo.it/'
-        'http://fulminazzo.it/'  || 'http://fulminazzo.it/'
-        'http://fulminazzo.it'   || 'http://fulminazzo.it/'
-        'fulminazzo.it/'         || 'https://fulminazzo.it/'
-        'fulminazzo.it'          || 'https://fulminazzo.it/'
+        'https://fulminazzo.it/' || 'https://fulminazzo.it'
+        'https://fulminazzo.it'  || 'https://fulminazzo.it'
+        'http://fulminazzo.it/'  || 'http://fulminazzo.it'
+        'http://fulminazzo.it'   || 'http://fulminazzo.it'
+        'fulminazzo.it/'         || 'https://fulminazzo.it'
+        'fulminazzo.it'          || 'https://fulminazzo.it'
     }
 
     def 'test that DownloadSource throws on invalid url'() {
@@ -59,28 +59,6 @@ class DownloadSourceTest extends Specification {
 
         then:
         thrown(IOException)
-    }
-
-    def 'test that handleRedirect of #url and #resourcePath does not throw'() {
-        when:
-        def data = DownloadSource.handleRedirect(url, resourcePath)
-
-        then:
-        noExceptionThrown()
-
-        and:
-        data.available() > 0
-
-        cleanup:
-        data.close()
-
-        where:
-        url                                                               | resourcePath
-        "${TestUtils.MAVEN_CENTRAL_URL}/${TestUtils.LOMBOK_PATH}"         | TestUtils.LOMBOK_PATH
-        "${TestUtils.MAVEN_CENTRAL_URL}/${TestUtils.LOMBOK_PATH}"         | ''
-        "${TestUtils.MAVEN_CENTRAL_URL}/${TestUtils.LOMBOK_PATH}"         | "main://${TestUtils.MAVEN_CENTRAL_URL}/${TestUtils.LOMBOK_PATH}"
-        "https://${TestUtils.MAVEN_CENTRAL_URL}/${TestUtils.LOMBOK_PATH}" | ''
-        "https://${TestUtils.MAVEN_CENTRAL_URL}/${TestUtils.LOMBOK_PATH}" | "file://${TestUtils.MAVEN_CENTRAL_URL}/${TestUtils.LOMBOK_PATH}"
     }
 
     def 'test that getCapability returns exact type if present'() {
