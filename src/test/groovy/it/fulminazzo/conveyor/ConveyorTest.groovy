@@ -44,6 +44,7 @@ class ConveyorTest extends Specification {
 
         where:
         artifact << [
+                new Artifact('io.netty', 'netty-handler', '4.1.112.Final'),
                 new Artifact('org.springframework', 'spring-core', '7.0.3'),
                 new Artifact('it.fulminazzo', 'FulmiCollection', '1.8.2'),
                 new Artifact('it.fulminazzo', 'Configurations', '1.6.4'),
@@ -69,6 +70,7 @@ class ConveyorTest extends Specification {
 
         where:
         artifact << [
+                new Artifact('io.netty', 'netty-handler', '4.1.112.Final'),
                 new Artifact('org.springframework', 'spring-core', '7.0.3'),
                 new Artifact('it.fulminazzo', 'FulmiCollection', '1.8.2'),
                 new Artifact('it.fulminazzo', 'Configurations', '1.6.4'),
