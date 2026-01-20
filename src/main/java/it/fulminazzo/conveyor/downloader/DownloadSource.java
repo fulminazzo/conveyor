@@ -1,21 +1,17 @@
 package it.fulminazzo.conveyor.downloader;
 
-import it.fulminazzo.conveyor.util.StringUtils;
+import it.fulminazzo.conveyor.util.HttpUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Represents a source to download resources from.
@@ -23,22 +19,11 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode
 @ToString
 public final class DownloadSource {
-    /**
-     * The timeout for connection and reading operations.
-     */
-    static final int CONNECT_READ_TIMEOUT = 10000;
-
-    private static final String protocolRegex = "^([a-zA-Z][a-zA-Z0-9+.-]*)://(.*)$";
-
     @Getter
     private final @NotNull String url;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private final @NotNull Map<Class<?>, Object> capabilities = new HashMap<>();
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private final @NotNull Logger logger;
 
     /**
      * Checks if the given URL is valid, then instantiates a new DownloadSource.
@@ -52,16 +37,7 @@ public final class DownloadSource {
      * @throws MalformedURLException if the URL is invalid
      */
     public DownloadSource(final @NotNull String url) throws MalformedURLException {
-        String modifiedUrl = url;
-        if (!modifiedUrl.matches(protocolRegex)) modifiedUrl = "https://" + modifiedUrl;
-        if (!modifiedUrl.endsWith("/")) modifiedUrl += "/";
-        try {
-            new URI(modifiedUrl);
-        } catch (URISyntaxException e) {
-            throw new MalformedURLException(String.format("Invalid URL '%s'", url));
-        }
-        this.url = modifiedUrl;
-        this.logger = LoggerFactory.getLogger(String.format("%s(%s)", getClass().getSimpleName(), modifiedUrl));
+        this.url = HttpUtils.formatUrl(url);
     }
 
     /**
@@ -71,53 +47,8 @@ public final class DownloadSource {
      * @return the data
      * @throws IOException in case of any errors (usually connection or not found)
      */
-    public @NotNull InputStream resolveResource(@NotNull String resourcePath) throws IOException {
-        try {
-            if (resourcePath.startsWith("/")) resourcePath = resourcePath.substring(1);
-            HttpURLConnection connection = (HttpURLConnection) new URL(this.url + resourcePath).openConnection();
-            connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
-            connection.setReadTimeout(CONNECT_READ_TIMEOUT);
-            int status = connection.getResponseCode();
-            this.logger.debug("{} /{} HTTP/1.1 - {}", connection.getRequestMethod(), resourcePath, status);
-            if (status == HttpURLConnection.HTTP_MOVED_PERM ||
-                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
-                    status == 307 || status == 308) {
-                String newUrl = connection.getHeaderField("Location");
-                connection.disconnect();
-                this.logger.debug("Redirected to {}", newUrl);
-                return handleRedirect(newUrl, resourcePath);
-            }
-            return connection.getInputStream();
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException("Unreachable code");
-        }
-    }
-
-    /**
-     * Given the URL and the requested resource path,
-     * extracts the resource path from the URL and creates a new {@link DownloadSource} from it.
-     * Then, it tries to resolve the requested resource.
-     *
-     * @param url          the url
-     * @param resourcePath the resource path
-     * @return the data
-     * @throws IOException in case of any errors (usually connection or not found)
-     */
-    static @NotNull InputStream handleRedirect(@NotNull String url,
-                                               @NotNull String resourcePath) throws IOException {
-        String protocol = null;
-        Matcher matcher = Pattern.compile(protocolRegex).matcher(url);
-        if (matcher.matches()) {
-            protocol = matcher.group(1);
-            url = matcher.group(2);
-        }
-        int idx = StringUtils.findCommonSuffix(url, resourcePath);
-        String finalUrl;
-        if (idx <= -1 || idx >= url.length()) idx = url.indexOf("/");
-        finalUrl = url.substring(0, idx);
-        resourcePath = url.substring(idx);
-        if (protocol != null) finalUrl = protocol + "://" + finalUrl;
-        return new DownloadSource(finalUrl).resolveResource(resourcePath);
+    public @NotNull InputStream resolveResource(final @NotNull String resourcePath) throws IOException {
+        return HttpUtils.openHttpConnection(this.url, resourcePath);
     }
 
     /**
