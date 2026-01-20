@@ -86,6 +86,37 @@ class HttpUtilsTest extends Specification {
         'https://fulminazzo.it' | '/it/conveyor' | '/it/fulminazzo/theconveyor' || 'https://fulminazzo.it/it/' | 'conveyor'
     }
 
+    def 'test that extractUrl of #url returns #expected'() {
+        when:
+        def actual = HttpUtils.extractUrl(url)
+
+        then:
+        actual == expected
+
+        where:
+        url                                        || expected
+        'https://fulminazzo.it'                    || 'https://fulminazzo.it'
+        'https://fulminazzo.it/'                   || 'https://fulminazzo.it'
+        'https://fulminazzo.it/first'              || 'https://fulminazzo.it'
+        'https://fulminazzo.it/first/'             || 'https://fulminazzo.it'
+        'https://fulminazzo.it/first/second'       || 'https://fulminazzo.it'
+        'https://fulminazzo.it/first/second/'      || 'https://fulminazzo.it'
+        'https://fulminazzo.it:8080'               || 'https://fulminazzo.it:8080'
+        'https://fulminazzo.it:8080/'              || 'https://fulminazzo.it:8080'
+        'https://fulminazzo.it:8080/first'         || 'https://fulminazzo.it:8080'
+        'https://fulminazzo.it:8080/first/'        || 'https://fulminazzo.it:8080'
+        'https://fulminazzo.it:8080/first/second'  || 'https://fulminazzo.it:8080'
+        'https://fulminazzo.it:8080/first/second/' || 'https://fulminazzo.it:8080'
+    }
+
+    def 'test that extractUrl throws on invalid url'() {
+        when:
+        HttpUtils.extractUrl('ftp://test^')
+
+        then:
+        thrown(MalformedURLException)
+    }
+
     def 'test that formatUrl correctly formats #url to #expected'() {
         when:
         def actual = HttpUtils.formatUrl(url)
