@@ -6,7 +6,9 @@ class OSMavenPropertiesTest extends Specification {
 
     def 'test that os-detected-name property with #value returns #expected'() {
         given:
-        def mavenProperties = new OSMavenProperties(mockSystemProperties('os.name', value))
+        def mavenProperties = OSMavenProperties
+                .builder(mockSystemProperties('os.name', value))
+                .build()
 
         when:
         def result = mavenProperties.get('os.detected.name')
@@ -37,7 +39,9 @@ class OSMavenPropertiesTest extends Specification {
 
     def 'test that os-detected-arch property with #value returns #expected'() {
         given:
-        def mavenProperties = new OSMavenProperties(mockSystemProperties('os.arch', value))
+        def mavenProperties = OSMavenProperties
+                .builder(mockSystemProperties('os.arch', value))
+                .build()
 
         when:
         def result = mavenProperties.get('os.detected.arch')
@@ -96,11 +100,11 @@ class OSMavenPropertiesTest extends Specification {
 
     def 'test that os-detected-bitness property with #value returns #expected'() {
         given:
-        def mavenProperties = new OSMavenProperties(mockSystemProperties(
+        def mavenProperties = OSMavenProperties.builder(mockSystemProperties(
                 'os.arch', value,
                 'sun.arch.data.model', sunArch,
                 'com.ibm.vm.bitmode', ibmBitMode
-        ))
+        )).build()
 
         when:
         def result = mavenProperties.get('os.detected.bitness')
