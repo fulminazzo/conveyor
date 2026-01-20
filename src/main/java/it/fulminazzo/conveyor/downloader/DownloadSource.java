@@ -14,6 +14,8 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents a source to download resources from.
@@ -26,7 +28,7 @@ public final class DownloadSource {
      */
     static final int CONNECT_READ_TIMEOUT = 10000;
 
-    private static final String protocolRegex = "^[a-zA-Z][a-zA-Z0-9+.-]*://.*$";
+    private static final String protocolRegex = "^([a-zA-Z][a-zA-Z0-9+.-]*)://(.*)$";
 
     @Getter
     private final @NotNull String url;
@@ -101,17 +103,20 @@ public final class DownloadSource {
      * @return the data
      * @throws IOException in case of any errors (usually connection or not found)
      */
-    static @NotNull InputStream handleRedirect(final @NotNull String url,
+    static @NotNull InputStream handleRedirect(@NotNull String url,
                                                @NotNull String resourcePath) throws IOException {
-        int idx = StringUtils.findCommonSuffix(url, resourcePath);
-        final String finalUrl;
-        if (idx <= -1 || idx >= url.length()) {
-            if (url.matches(protocolRegex))
-                idx = url.indexOf("/", url.indexOf(":") + 3);
-            else idx = url.indexOf("/");
+        String protocol = null;
+        Matcher matcher = Pattern.compile(protocolRegex).matcher(url);
+        if (matcher.matches()) {
+            protocol = matcher.group(1);
+            url = matcher.group(2);
         }
+        int idx = StringUtils.findCommonSuffix(url, resourcePath);
+        String finalUrl;
+        if (idx <= -1 || idx >= url.length()) idx = url.indexOf("/");
         finalUrl = url.substring(0, idx);
         resourcePath = url.substring(idx);
+        if (protocol != null) finalUrl = protocol + "://" + finalUrl;
         return new DownloadSource(finalUrl).resolveResource(resourcePath);
     }
 
