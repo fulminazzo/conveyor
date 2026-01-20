@@ -47,17 +47,17 @@ public final class HttpUtils {
      * @return the data
      * @throws IOException in case of any errors (usually connection or not found)
      */
-    public static @NotNull InputStream openHttpConnection(@NotNull String website,
+    public static @NotNull InputStream openHttpConnection(final @NotNull String website,
                                                           @NotNull String resource) throws IOException {
-        if (!website.endsWith("/")) website += "/";
+        final String url = formatUrl(website);
         if (resource.startsWith("/")) resource = resource.substring(1);
 
-        RedirectInfo info = redirects.get(website);
+        RedirectInfo info = redirects.get(url);
         if (info != null && info.getRedirects() > MAX_REDIRECTS) {
             return openHttpConnection(info.getUrl(), resource);
         }
 
-        HttpURLConnection connection = openHttpConnection(website + resource);
+        HttpURLConnection connection = openHttpConnection(url + resource);
         int status = connection.getResponseCode();
         if (REDIRECTS_STATUSES.contains(status)) {
             String newUrl = connection.getHeaderField("Location");
