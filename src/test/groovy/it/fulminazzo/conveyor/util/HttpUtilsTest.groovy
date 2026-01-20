@@ -98,6 +98,26 @@ class HttpUtilsTest extends Specification {
         'https://fulminazzo.it/'               | 'https://apache.org/maven/project'                | 'it/fulminazzo/conveyor'     || 'https://apache.org'        | '/maven/project'
     }
 
+    def 'test that handleRedirect replaces redirect if URL do not match'() {
+        given:
+        SpyStatic(HttpUtils)
+
+        and:
+        HttpUtils.openHttpConnection(_, _) >> {}
+
+        and:
+        HttpUtils.redirects.put('fulminazzo.it', new HttpUtils.RedirectInfo('oracle.org'))
+
+        when:
+        HttpUtils.handleRedirect('fulminazzo.it', 'apache.org/conveyor', '/conveyor')
+
+        and:
+        def info = HttpUtils.redirects['fulminazzo.it']
+
+        then:
+        info.url == 'https://apache.org'
+    }
+
     def 'test that extractUrl of #url returns #expected'() {
         when:
         def actual = HttpUtils.extractUrl(url)
