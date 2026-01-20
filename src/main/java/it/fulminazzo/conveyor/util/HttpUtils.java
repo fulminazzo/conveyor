@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A collection of utilities to work with the HTTP protocol
@@ -36,7 +37,7 @@ public final class HttpUtils {
     static final int MAX_REDIRECTS = 5;
 
     private static final String protocolRegex = "^([a-zA-Z][a-zA-Z0-9+.-]*)://(.*)$";
-    private static final @NotNull Map<String, RedirectInfo> redirects = new HashMap<>();
+    private static final @NotNull Map<String, RedirectInfo> redirects = new ConcurrentHashMap<>();
 
     /**
      * Opens a new connection to the website for the requested resource and returns the data.
