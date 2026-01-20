@@ -67,14 +67,21 @@ public final class HttpUtils {
         return connection.getInputStream();
     }
 
-    static @NotNull InputStream handleRedirect(final @NotNull String url,
+    static @NotNull InputStream handleRedirect(@NotNull String url,
                                                final @NotNull String redirect,
-                                               final @NotNull String resourcePath) throws IOException {
+                                               @NotNull String resourcePath) throws IOException {
         if (redirect.startsWith("/")) {
-            throw new UnsupportedOperationException("Handle relative redirect");
+            int index = StringUtils.findCommonSuffix(redirect, resourcePath);
+            if (index > -1 && index < resourcePath.length()) {
+                url += redirect.substring(0, index);
+                resourcePath = redirect.substring(index);
+            } else {
+                throw new UnsupportedOperationException("Handle relative redirect 2nd branch");
+            }
         } else {
             throw new UnsupportedOperationException("Handle absolute redirect");
         }
+        return openHttpConnection(url, resourcePath);
     }
 
     /**
