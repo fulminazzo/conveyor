@@ -104,8 +104,15 @@ public final class HttpUtils {
             }
         } else {
             if (index > -1 && index < redirect.length()) {
-                String redirectUrl = redirect.substring(0, index);
-                redirects.computeIfAbsent(url, u -> new RedirectInfo(redirectUrl)).addRedirect();
+                String redirectUrl = formatUrl(redirect.substring(0, index));
+
+                RedirectInfo info = redirects.get(url);
+                if (info == null || !info.getUrl().equals(redirectUrl)) {
+                    info = new RedirectInfo(redirectUrl);
+                    redirects.put(url, info);
+                }
+                info.addRedirect();
+
                 url = redirectUrl;
                 resourcePath = redirect.substring(index);
             } else {
