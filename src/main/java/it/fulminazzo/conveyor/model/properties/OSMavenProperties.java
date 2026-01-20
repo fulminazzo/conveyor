@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.properties;
 
+import it.fulminazzo.conveyor.model.properties.util.LinuxUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -72,6 +73,19 @@ final class OSMavenProperties extends BaseProperties {
                     this.delegate.put(versionName + ".minor", matcher.group(3));
                 }
             }
+
+            if (osName.equals("linux"))
+                LinuxUtils.getCurrentRelease().ifPresent(r -> {
+                    final String propertyName = "os.detected.release";
+                    this.delegate.put(propertyName, r.id());
+
+                    String version = r.version();
+                    if (version != null) this.delegate.put(propertyName + ".version", version);
+
+                    r.like().forEach(l ->
+                            this.delegate.put(propertyName + ".like." + l, Boolean.TRUE.toString())
+                    );
+                });
 
             return new OSMavenProperties(Map.copyOf(this.delegate));
         }

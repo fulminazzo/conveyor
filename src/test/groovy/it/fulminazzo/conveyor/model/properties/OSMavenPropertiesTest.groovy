@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.properties
 
+import it.fulminazzo.conveyor.model.properties.util.LinuxUtils
 import spock.lang.Specification
 
 class OSMavenPropertiesTest extends Specification {
@@ -170,6 +171,46 @@ class OSMavenPropertiesTest extends Specification {
         'SNAPSHOT'      || null     | null          | null
         '1.10'          || '1.10'   | '1'           | '10'
         '1.10-SNAPSHOT' || '1.10'   | '1'           | '10'
+    }
+
+    def 'test that os-detected-release property with #value returns #expected'() {
+        given:
+        SpyStatic(LinuxUtils)
+
+        and:
+        LinuxUtils.currentRelease >> Optional.ofNullable(id == null ? null : new LinuxUtils.Release(id, version, like.toSet()))
+
+        and:
+        def mavenProperties = OSMavenProperties
+                .builder(mockSystemProperties('os.name', value))
+                .build()
+
+        expect:
+        mavenProperties.get('os.detected.release') == expected
+
+        and:
+        mavenProperties.get('os.detected.release.version') == expectedVersion
+
+        and:
+        for (l in expectedLike) {
+            def name = "os.detected.release.like.$l"
+            assert mavenProperties.get(name) == 'true'
+        }
+
+        where:
+        value   | id        | version | like                || expected  | expectedVersion | expectedLike
+        'osx'   | 'manjaro' | null    | []                  || null      | null            | []
+        'osx'   | 'manjaro' | null    | ['manjaro']         || null      | null            | []
+        'osx'   | 'manjaro' | null    | ['arch', 'manjaro'] || null      | null            | []
+        'osx'   | 'manjaro' | '6.12'  | []                  || null      | null            | []
+        'osx'   | 'manjaro' | '6.12'  | ['manjaro']         || null      | null            | []
+        'osx'   | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || null      | null            | []
+        'linux' | 'manjaro' | null    | []                  || 'manjaro' | null            | []
+        'linux' | 'manjaro' | null    | ['manjaro']         || 'manjaro' | null            | ['manjaro']
+        'linux' | 'manjaro' | null    | ['arch', 'manjaro'] || 'manjaro' | null            | ['arch', 'manjaro']
+        'linux' | 'manjaro' | '6.12'  | []                  || 'manjaro' | '6.12'          | []
+        'linux' | 'manjaro' | '6.12'  | ['manjaro']         || 'manjaro' | '6.12'          | ['manjaro']
+        'linux' | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || 'manjaro' | '6.12'          | ['arch', 'manjaro']
     }
 
     private Properties mockSystemProperties(final String... properties) {
