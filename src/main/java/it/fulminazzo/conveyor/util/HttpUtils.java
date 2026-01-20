@@ -47,8 +47,9 @@ public final class HttpUtils {
      * @return the data
      * @throws IOException in case of any errors (usually connection or not found)
      */
-    public static @NotNull InputStream openConnection(final @NotNull String website,
+    public static @NotNull InputStream openConnection(@NotNull String website,
                                                       @NotNull String resource) throws IOException {
+        if (!website.endsWith("/")) website += "/";
         if (resource.startsWith("/")) resource = resource.substring(1);
 
         RedirectInfo info = redirects.get(website);
