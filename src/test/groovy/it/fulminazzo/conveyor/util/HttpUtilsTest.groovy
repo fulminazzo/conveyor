@@ -37,6 +37,43 @@ class HttpUtilsTest extends Specification {
         HttpUtils.redirects.clear()
     }
 
+    def 'test that openHttpConnection redirects correctly on status code #statusCode'() {
+        given:
+        SpyStatic(HttpUtils)
+
+        and:
+        final website = 'https://fulminazzo.it'
+        final resourcePath = "/$TestUtils.LOMBOK_PATH"
+        def redirect = "https://$TestUtils.MAVEN_CENTRAL_URL$resourcePath"
+        def request = website + resourcePath
+
+        and:
+        HttpUtils.openHttpConnection(_ as String) >> { a ->
+            String req = a[0]
+            if (req == request) {
+                def connection = Mock(HttpURLConnection)
+                connection.responseCode >> statusCode
+                connection.getHeaderField(_) >> redirect
+                return connection
+            } else return new URL(req).openConnection()
+        }
+
+        when:
+        def data = HttpUtils.openHttpConnection(website, resourcePath)
+
+        then:
+        noExceptionThrown()
+
+        and:
+        data.available() > 0
+
+        cleanup:
+        data.close()
+
+        where:
+        statusCode << HttpUtils.REDIRECTS_STATUSES
+    }
+
     def 'test that openHttpConnection of #resourcePath does not throw'() {
         when:
         def data = HttpUtils.openHttpConnection(website, resourcePath)
