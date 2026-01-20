@@ -24,7 +24,7 @@ final class OSMavenProperties extends BaseProperties {
      *
      * @param systemProperties the system properties to lookup OS information
      */
-    public OSMavenProperties(final @NotNull SystemProperties systemProperties) {
+    public OSMavenProperties(final @NotNull Properties systemProperties) {
         this.internal = new HashMap<>();
 
         this.internal.put("os.detected.name", normalizeOs(systemProperties.get("os.name")));
@@ -89,7 +89,7 @@ final class OSMavenProperties extends BaseProperties {
         return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
     }
 
-    private int determineBitness(final @NotNull SystemProperties systemProperties,
+    private int determineBitness(final @NotNull Properties systemProperties,
                                  final @NotNull String architecture) {
         String bitness = systemProperties.get("sun.arch.data.model");
         if (bitness != null && bitness.matches("[0-9]+"))

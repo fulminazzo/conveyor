@@ -145,16 +145,16 @@ class OSMavenPropertiesTest extends Specification {
         null    | 'a'        | null    || '32'
     }
 
-    private SystemProperties mockSystemProperties(final String... properties) {
-        def systemProperties = Mock(SystemProperties)
-        systemProperties.get(_) >> { a ->
+    private Properties mockSystemProperties(final String... properties) {
+        def propertiesObject = Mock(Properties)
+        propertiesObject.get(_) >> { a ->
             String key = a[0]
             for (def i = 0; i < properties.length; i += 2) {
                 if (properties[i] == key) return properties[i + 1]
             }
             return null
         }
-        return systemProperties
+        return propertiesObject
     }
 
 }
