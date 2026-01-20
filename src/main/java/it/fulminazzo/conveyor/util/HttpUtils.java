@@ -103,7 +103,13 @@ public final class HttpUtils {
                 resourcePath = redirect;
             }
         } else {
-            throw new UnsupportedOperationException("Handle absolute redirect");
+            int index = StringUtils.findCommonSuffix(redirect, resourcePath);
+            if (index > -1 && index < redirect.length()) {
+                throw new UnsupportedOperationException("Handle absolute redirect");
+            } else {
+                url = extractUrl(redirect);
+                resourcePath = redirect.substring(url.length());
+            }
         }
         return openHttpConnection(url, resourcePath);
     }
