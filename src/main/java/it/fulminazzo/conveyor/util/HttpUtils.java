@@ -67,6 +67,16 @@ public final class HttpUtils {
         return connection.getInputStream();
     }
 
+    static @NotNull InputStream handleRedirect(final @NotNull String url,
+                                               final @NotNull String redirect,
+                                               final @NotNull String resourcePath) throws IOException {
+        if (redirect.startsWith("/")) {
+            throw new UnsupportedOperationException("Handle relative redirect");
+        } else {
+            throw new UnsupportedOperationException("Handle absolute redirect");
+        }
+    }
+
     /**
      * Opens an HTTP connection to the given url.
      *
