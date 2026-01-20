@@ -95,7 +95,7 @@ public final class HttpUtils {
                                                @NotNull String resourcePath) throws IOException {
         if (redirect.startsWith("/")) {
             int index = StringUtils.findCommonSuffix(redirect, resourcePath);
-            if (index > -1 && index < resourcePath.length()) {
+            if (index > -1 && index < redirect.length()) {
                 url += redirect.substring(0, index);
                 resourcePath = redirect.substring(index);
             } else {
