@@ -68,6 +68,20 @@ public final class HttpUtils {
     }
 
     /**
+     * Opens an HTTP connection to the given url.
+     *
+     * @param url the url
+     * @return the connection
+     * @throws IOException in case of any errors (usually connection or not found)
+     */
+    static @NotNull HttpURLConnection openHttpConnection(final @NotNull String url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
+        connection.setReadTimeout(CONNECT_READ_TIMEOUT);
+        return connection;
+    }
+
+    /**
      * Handle redirect input stream.
      *
      * @param url          the url
@@ -85,26 +99,13 @@ public final class HttpUtils {
                 url += redirect.substring(0, index);
                 resourcePath = redirect.substring(index);
             } else {
-                throw new UnsupportedOperationException("Handle relative redirect 2nd branch");
+                url = extractUrl(url);
+                resourcePath = redirect;
             }
         } else {
             throw new UnsupportedOperationException("Handle absolute redirect");
         }
         return openHttpConnection(url, resourcePath);
-    }
-
-    /**
-     * Opens an HTTP connection to the given url.
-     *
-     * @param url the url
-     * @return the connection
-     * @throws IOException in case of any errors (usually connection or not found)
-     */
-    static @NotNull HttpURLConnection openHttpConnection(final @NotNull String url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
-        connection.setReadTimeout(CONNECT_READ_TIMEOUT);
-        return connection;
     }
 
     /**
