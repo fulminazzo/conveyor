@@ -96,4 +96,25 @@ class BaseDownloaderTest extends Specification {
         e.message.contains('No download source')
     }
 
+    /*
+     * INTEGRATION TESTS
+     */
+
+    def 'test download junixsocket-common-2.0.4 pom'() {
+        given:
+        def downloader = new BaseDownloader(workingDir, log)
+
+        and:
+        def path = 'com/kohlschutter/junixsocket/junixsocket-common/2.0.4/junixsocket-common-2.0.4.pom'
+
+        when:
+        def file = downloader.resolveToFile(path, [new DownloadSource('https://repo.maven.apache.org/maven2/')])
+
+        then:
+        file.exists()
+
+        and:
+        file.size() > 0
+    }
+
 }
