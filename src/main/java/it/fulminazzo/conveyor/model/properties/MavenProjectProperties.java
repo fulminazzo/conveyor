@@ -13,6 +13,10 @@ import java.util.Map;
  */
 public final class MavenProjectProperties implements MutableProperties {
     private final @NotNull AggregateMutableProperties delegate;
+    /**
+     * The properties related to the <a href="https://github.com/trustin/os-maven-plugin/">OS Maven Plugin</a>.
+     */
+    private @Nullable Properties osMavenProperties;
 
     /**
      * Instantiates a new Maven project properties.
@@ -35,6 +39,17 @@ public final class MavenProjectProperties implements MutableProperties {
      */
     public @NotNull Properties toImmutable() {
         return this.delegate.delegate;
+    }
+
+    /**
+     * Updates the internal OS Maven properties.
+     *
+     * @return this object (for method chaining)
+     */
+    public @NotNull MavenProjectProperties updateOSMavenProperties() {
+        this.osMavenProperties = null;
+        this.osMavenProperties = OSMavenProperties.builder(this).build();
+        return this;
     }
 
     @Override
@@ -76,6 +91,10 @@ public final class MavenProjectProperties implements MutableProperties {
 
     @Override
     public @Nullable String get(final @NotNull String key) {
+        if (this.osMavenProperties != null) {
+            String value = this.osMavenProperties.get(key);
+            if (value != null) return value;
+        }
         return this.delegate.get(key);
     }
 

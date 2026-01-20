@@ -24,4 +24,21 @@ class MavenProjectPropertiesTest extends Specification {
         immutable['first'] == null
     }
 
+    def 'test that get returns OSMavenProperties after update'() {
+        given:
+        def properties = new MavenProjectProperties(
+                Pom.builder().project(new Artifact('it.fulminazzo', 'conveyor', '1.0')).build(),
+                TestUtils.BASE_DIR
+        )
+
+        expect:
+        properties['os.detected.name'] == null
+
+        when:
+        properties.updateOSMavenProperties()
+
+        then:
+        properties['os.detected.name'] != null
+    }
+
 }
