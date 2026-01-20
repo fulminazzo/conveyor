@@ -722,6 +722,32 @@ class EffectivePomBuilderTest extends Specification {
         getProperties(builder).toMap() == ['parent': '1', 'parent-profile': '2', 'pom': '3', 'profile': '4']
     }
 
+    def 'test that populateProperties allows resolving of recursive OS Maven Plugin properties'() {
+        given:
+        def artifact = newArtifact('conveyor')
+        def pom = newPom(artifact, [
+                'tcnative.classifier': '${os.detected.classifier}'
+        ], [:])
+
+        and:
+        def builder = new EffectivePomBuilder(pom, Mock(RepositoryPomResolver), TestUtils.BASE_DIR)
+
+        when:
+        builder.populateProperties()
+
+        and:
+        def properties = getProperties(builder)
+
+        and:
+        def property = properties['tcnative.classifier']
+
+        then:
+        property != null
+
+        and:
+        property != '${os.detected.classifier}'
+    }
+
     def 'test that resolveParentEffectivePom stores correct parent builder'() {
         given:
         def parent = newArtifact('parent')
