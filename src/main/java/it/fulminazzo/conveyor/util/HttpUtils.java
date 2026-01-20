@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A collection of utilities to work with the HTTP protocol
@@ -48,6 +51,45 @@ public final class HttpUtils {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Stores all the information about a redirect.
+     */
+    @Value
+    static class RedirectInfo {
+        /**
+         * How many milliseconds a redirect should be considered valid.
+         */
+        static final long REDIRECT_LIFE_TIME = 60 * 60 * 1000;
+
+        @NotNull String url;
+        @NotNull List<Long> timestamps = new ArrayList<>();
+
+        /**
+         * Gets all the redirects of the last {@link #REDIRECT_LIFE_TIME} milliseconds.
+         *
+         * @return the number of redirects
+         */
+        public int getRedirects() {
+            purgeRedirects();
+            return this.timestamps.size();
+        }
+
+        /**
+         * Adds a new redirect timestamp.
+         *
+         * @return this redirect info
+         */
+        public @NotNull RedirectInfo addRedirect() {
+            this.timestamps.add(System.currentTimeMillis());
+            return this;
+        }
+
+        private void purgeRedirects() {
+            this.timestamps.removeIf(l -> l + REDIRECT_LIFE_TIME <= System.currentTimeMillis());
+        }
+
     }
 
 }
