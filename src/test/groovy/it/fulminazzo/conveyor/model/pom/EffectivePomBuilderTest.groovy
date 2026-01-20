@@ -739,7 +739,7 @@ class EffectivePomBuilderTest extends Specification {
         def properties = getProperties(builder)
 
         and:
-        def property = properties['tcnative.classifier']
+        def property = properties.apply('${tcnative.classifier}')
 
         then:
         property != null
