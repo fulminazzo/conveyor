@@ -16,12 +16,29 @@ import java.util.regex.Pattern;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LinuxUtils {
+    private static final @NotNull Collection<String> releaseFiles = Arrays.asList("/etc/os-release", "/usr/lib/os-release");
+    private static final @NotNull String redhatReleaseFile = "/etc/redhat-release";
+
     private static final @NotNull String idPrefix = "ID=";
     private static final @NotNull String idLikePrefix = "ID_LIKE=";
     private static final @NotNull String versionIdPrefix = "VERSION_ID=";
 
     private static final @NotNull Pattern redhatMajorVersionRegex = Pattern.compile("(\\d+)");
     private static final @NotNull Collection<String> defaultRedhatVariants = Arrays.asList("rhel", "fedora");
+
+    /**
+     * Attempts to return the release of the current version
+     * of Linux of the running operating system.
+     *
+     * @return the current release (if on Linux)
+     */
+    public static @NotNull Optional<Release> getCurrentRelease() {
+        for (String file : releaseFiles) {
+            Release release = parseReleaseFile(file);
+            if (release != null) return Optional.of(release);
+        }
+        return Optional.ofNullable(parseRedhatReleaseFile(redhatReleaseFile));
+    }
 
     /**
      * Parses a file in the format of <code>/etc/os-release</code> and
