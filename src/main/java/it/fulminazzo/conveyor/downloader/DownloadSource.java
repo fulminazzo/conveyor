@@ -72,11 +72,15 @@ public final class DownloadSource {
             HttpURLConnection connection = (HttpURLConnection) new URL(this.url + resourcePath).openConnection();
             connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
             connection.setReadTimeout(CONNECT_READ_TIMEOUT);
-            this.logger.debug("{} /{} HTTP/1.1 - {}",
-                    connection.getRequestMethod(),
-                    resourcePath,
-                    connection.getResponseCode()
-            );
+            int status = connection.getResponseCode();
+            this.logger.debug("{} /{} HTTP/1.1 - {}", connection.getRequestMethod(), resourcePath, status);
+            if (status == HttpURLConnection.HTTP_MOVED_PERM ||
+                    status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                    status == 307 || status == 308) {
+                String newUrl = connection.getHeaderField("Location");
+                this.logger.debug("Redirected to {}", newUrl);
+                //TODO: handle redirect
+            }
             return connection.getInputStream();
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Unreachable code");
