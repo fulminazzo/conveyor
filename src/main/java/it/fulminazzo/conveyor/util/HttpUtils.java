@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A collection of utilities to work with the HTTP protocol
  */
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HttpUtils {
     /**
@@ -47,22 +49,26 @@ public final class HttpUtils {
      * @return the data
      * @throws IOException in case of any errors (usually connection or not found)
      */
-    public static @NotNull InputStream openHttpConnection(final @NotNull String website,
+    public static @NotNull InputStream openHttpConnection(@NotNull String website,
                                                           @NotNull String resource) throws IOException {
-        final String url = formatUrl(website);
+        website = formatUrl(website);
         if (!resource.startsWith("/")) resource = "/" + resource;
 
-        RedirectInfo info = redirects.get(url);
+        RedirectInfo info = redirects.get(website);
         if (info != null && info.getRedirects() > MAX_REDIRECTS) {
+            log.debug("[CACHE] {} -> {}", website, info.getUrl());
             return openHttpConnection(info.getUrl(), resource);
         }
 
-        HttpURLConnection connection = openHttpConnection(url + resource);
+        final String url = website + resource;
+        HttpURLConnection connection = openHttpConnection(url);
         int status = connection.getResponseCode();
+        log.debug("{} HTTP/1.1 -> {} -- {}", connection.getRequestMethod(), status, url);
         if (REDIRECTS_STATUSES.contains(status)) {
             String newUrl = connection.getHeaderField("Location");
+            log.debug("{} -> {}", url, newUrl);
             connection.disconnect();
-            return handleRedirect(url, newUrl, resource);
+            return handleRedirect(website, newUrl, resource);
         }
         return connection.getInputStream();
     }
