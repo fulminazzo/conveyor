@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -161,7 +160,8 @@ final class OSMavenProperties extends BaseProperties {
         }
 
         /**
-         * Turns the string to lower case.
+         * Turns the string to lower case and removes all non-alphabetical
+         * and non-digit characters.
          * If it is <code>null</code>, then an empty string is returned.
          *
          * @param string the string
@@ -169,7 +169,7 @@ final class OSMavenProperties extends BaseProperties {
          */
         static @NotNull String normalize(final @Nullable String string) {
             if (string == null) return "";
-            return string.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
+            return string.toLowerCase().replaceAll("[^a-z0-9]+", "");
         }
 
     }
