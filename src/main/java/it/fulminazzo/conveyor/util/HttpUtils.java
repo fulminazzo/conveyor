@@ -93,8 +93,8 @@ public final class HttpUtils {
     static @NotNull InputStream handleRedirect(@NotNull String url,
                                                final @NotNull String redirect,
                                                @NotNull String resourcePath) throws IOException {
+        int index = StringUtils.findCommonSuffix(redirect, resourcePath);
         if (redirect.startsWith("/")) {
-            int index = StringUtils.findCommonSuffix(redirect, resourcePath);
             if (index > -1 && index < redirect.length()) {
                 url += redirect.substring(0, index);
                 resourcePath = redirect.substring(index);
@@ -103,9 +103,11 @@ public final class HttpUtils {
                 resourcePath = redirect;
             }
         } else {
-            int index = StringUtils.findCommonSuffix(redirect, resourcePath);
             if (index > -1 && index < redirect.length()) {
-                throw new UnsupportedOperationException("Handle absolute redirect");
+                String redirectUrl = redirect.substring(0, index);
+                redirects.computeIfAbsent(url, u -> new RedirectInfo(redirectUrl)).addRedirect();
+                url = redirectUrl;
+                resourcePath = redirect.substring(index);
             } else {
                 url = extractUrl(redirect);
                 resourcePath = redirect.substring(url.length());
