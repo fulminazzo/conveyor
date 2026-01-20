@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +31,10 @@ public final class DownloadSource {
     @ToString.Exclude
     private final @NotNull Map<Class<?>, Object> capabilities = new HashMap<>();
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private final @NotNull Logger logger;
+
     /**
      * Checks if the given URL is valid, then instantiates a new DownloadSource.
      * <br>
@@ -50,6 +56,7 @@ public final class DownloadSource {
             throw new MalformedURLException(String.format("Invalid URL '%s'", url));
         }
         this.url = modifiedUrl;
+        this.logger = LoggerFactory.getLogger(String.format("%s(%s)", getClass().getSimpleName(), modifiedUrl));
     }
 
     /**
@@ -62,9 +69,14 @@ public final class DownloadSource {
     public @NotNull InputStream resolveResource(@NotNull String resourcePath) throws IOException {
         try {
             if (resourcePath.startsWith("/")) resourcePath = resourcePath.substring(1);
-            URLConnection connection = new URL(this.url + resourcePath).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(this.url + resourcePath).openConnection();
             connection.setConnectTimeout(CONNECT_READ_TIMEOUT);
             connection.setReadTimeout(CONNECT_READ_TIMEOUT);
+            this.logger.debug("{} /{} HTTP/1.1 - {}",
+                    connection.getRequestMethod(),
+                    resourcePath,
+                    connection.getResponseCode()
+            );
             return connection.getInputStream();
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Unreachable code");
