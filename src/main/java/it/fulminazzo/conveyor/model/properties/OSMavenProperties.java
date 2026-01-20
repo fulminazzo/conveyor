@@ -28,6 +28,7 @@ final class OSMavenProperties extends BaseProperties {
         this.internal = new HashMap<>();
 
         this.internal.put("os.detected.name", normalizeOs(systemProperties.get("os.name")));
+        this.internal.put("os.detected.arch", normalizeArch(systemProperties.get("os.arch")));
     }
 
     @Override
@@ -50,6 +51,35 @@ final class OSMavenProperties extends BaseProperties {
         else if (value.startsWith("windows")) return "windows";
         else if (value.startsWith("zos")) return "zos";
         return "unknown";
+    }
+
+    private static String normalizeArch(@Nullable String value) {
+        value = normalize(value);
+        if (value.matches("^(x8664|amd64|ia32e|em64t|x64)$")) return "x86_64";
+        if (value.matches("^(x8632|x86|i[3-6]86|ia32|x32)$")) return "x86_32";
+        if (value.matches("^(ia64w?|itanium64)$")) return "itanium_64";
+        if (value.matches("^(sparc|sparc32)$")) return "sparc_32";
+        if (value.matches("^(sparcv9|sparc64)$")) return "sparc_64";
+        if (value.matches("^(arm|arm32)$")) return "arm_32";
+        if (value.matches("^(mips|mips32)$")) return "mips_32";
+        if (value.matches("^(mipsel|mips32el)$")) return "mipsel_32";
+        if (value.matches("^(ppc|ppc32)$")) return "ppc_32";
+        if (value.matches("^(ppcle|ppc32le)$")) return "ppcle_32";
+        if (value.matches("^(riscv|riscv32)$")) return "riscv";
+        return switch (value) {
+            case "ia64n" -> "itanium_32";
+            case "aarch64" -> "aarch_64";
+            case "mips64" -> "mips_64";
+            case "mips64el" -> "mipsel_64";
+            case "ppc64" -> "ppc_64";
+            case "ppc64le" -> "ppcle_64";
+            case "s390" -> "s390_32";
+            case "s390x" -> "s390_64";
+            case "riscv64" -> "riscv64";
+            case "e2k" -> "e2k";
+            case "loongarch64" -> "loongarch_64";
+            default -> "unknown";
+        };
     }
 
     private static @NotNull String normalize(final @Nullable String value) {
