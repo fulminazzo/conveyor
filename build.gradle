@@ -39,6 +39,6 @@ testCodeCoverageReport {
 }
 
 buildConfig {
-    buildConfigField('String', 'NAME', "$project.name")
-    buildConfigField('String', 'VERSION', "$project.version")
+    buildConfigField('String', 'NAME', "\"$project.name\"")
+    buildConfigField('String', 'VERSION', "\"$project.version\"")
 }
