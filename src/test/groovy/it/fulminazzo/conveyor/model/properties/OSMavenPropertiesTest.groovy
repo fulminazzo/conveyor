@@ -213,6 +213,62 @@ class OSMavenPropertiesTest extends Specification {
         'linux' | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || 'manjaro' | '6.12'          | ['arch', 'manjaro']
     }
 
+    def 'test that os-detected-classifier property with #osName and #osArch returns #expected'() {
+        given:
+        SpyStatic(LinuxUtils)
+
+        and:
+        LinuxUtils.currentRelease >> Optional.ofNullable(id == null ? null : new LinuxUtils.Release(id, version, like.toSet()))
+
+        and:
+        def mavenProperties = OSMavenProperties
+                .builder(mockSystemProperties(
+                        'os.name', osName,
+                        'os.arch', osArch,
+                        'os.detection.classifierWithLikes', classifierWithLikes
+                ))
+                .build()
+
+        when:
+        def result = mavenProperties.get('os.detected.classifier')
+
+        then:
+        result == expected
+
+        where:
+        osName  | osArch  | classifierWithLikes | id        | version | like                || expected
+        'osx'   | 'x8664' | null                | 'manjaro' | null    | []                  || 'osx-x86_64'
+        'osx'   | 'x8664' | null                | 'manjaro' | null    | ['manjaro']         || 'osx-x86_64'
+        'osx'   | 'x8664' | null                | 'manjaro' | null    | ['arch', 'manjaro'] || 'osx-x86_64'
+        'osx'   | 'x8664' | null                | 'manjaro' | '6.12'  | []                  || 'osx-x86_64'
+        'osx'   | 'x8664' | null                | 'manjaro' | '6.12'  | ['manjaro']         || 'osx-x86_64'
+        'osx'   | 'x8664' | null                | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || 'osx-x86_64'
+        'linux' | 'x8664' | null                | 'manjaro' | null    | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | null                | 'manjaro' | null    | ['manjaro']         || 'linux-x86_64'
+        'linux' | 'x8664' | null                | 'manjaro' | null    | ['arch', 'manjaro'] || 'linux-x86_64'
+        'linux' | 'x8664' | null                | 'manjaro' | '6.12'  | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | null                | 'manjaro' | '6.12'  | ['manjaro']         || 'linux-x86_64'
+        'linux' | 'x8664' | null                | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || 'linux-x86_64'
+        'linux' | 'x8664' | 'arch'              | 'manjaro' | null    | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | 'arch'              | 'manjaro' | null    | ['manjaro']         || 'linux-x86_64'
+        'linux' | 'x8664' | 'arch'              | 'manjaro' | null    | ['arch', 'manjaro'] || 'linux-x86_64-arch'
+        'linux' | 'x8664' | 'arch'              | 'manjaro' | '6.12'  | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | 'arch'              | 'manjaro' | '6.12'  | ['manjaro']         || 'linux-x86_64'
+        'linux' | 'x8664' | 'arch'              | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || 'linux-x86_64-arch'
+        'linux' | 'x8664' | 'manjaro,arch'      | 'manjaro' | null    | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | 'manjaro,arch'      | 'manjaro' | null    | ['manjaro']         || 'linux-x86_64-manjaro'
+        'linux' | 'x8664' | 'manjaro,arch'      | 'manjaro' | null    | ['arch', 'manjaro'] || 'linux-x86_64-manjaro'
+        'linux' | 'x8664' | 'manjaro,arch'      | 'manjaro' | '6.12'  | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | 'manjaro,arch'      | 'manjaro' | '6.12'  | ['manjaro']         || 'linux-x86_64-manjaro'
+        'linux' | 'x8664' | 'manjaro,arch'      | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || 'linux-x86_64-manjaro'
+        'linux' | 'x8664' | 'debian,arch'       | 'manjaro' | null    | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | 'debian,arch'       | 'manjaro' | null    | ['manjaro']         || 'linux-x86_64'
+        'linux' | 'x8664' | 'debian,arch'       | 'manjaro' | null    | ['arch', 'manjaro'] || 'linux-x86_64-arch'
+        'linux' | 'x8664' | 'debian,arch'       | 'manjaro' | '6.12'  | []                  || 'linux-x86_64'
+        'linux' | 'x8664' | 'debian,arch'       | 'manjaro' | '6.12'  | ['manjaro']         || 'linux-x86_64'
+        'linux' | 'x8664' | 'debian,arch'       | 'manjaro' | '6.12'  | ['arch', 'manjaro'] || 'linux-x86_64-arch'
+    }
+
     private Properties mockSystemProperties(final String... properties) {
         def propertiesObject = Mock(Properties)
         propertiesObject.get(_) >> { a ->

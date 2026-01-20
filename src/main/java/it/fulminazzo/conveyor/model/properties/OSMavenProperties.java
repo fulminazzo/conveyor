@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -47,7 +48,7 @@ final class OSMavenProperties extends BaseProperties {
         private static final @NotNull Pattern versionRegex = Pattern.compile("((\\d+)\\.(\\d+)).*");
 
         private final @NotNull Map<String, String> delegate = new HashMap<>();
-        private final @NotNull Properties systemProperties;
+        private final @NotNull Properties properties;
 
         /**
          * Build os maven properties.
@@ -55,15 +56,15 @@ final class OSMavenProperties extends BaseProperties {
          * @return the os maven properties
          */
         public @NotNull OSMavenProperties build() {
-            String osName = convertOsName(this.systemProperties.get("os.name"));
+            String osName = convertOsName(this.properties.get("os.name"));
             this.delegate.put("os.detected.name", osName);
 
-            String osArch = convertOsArchitecture(this.systemProperties.get("os.arch"));
+            String osArch = convertOsArchitecture(this.properties.get("os.arch"));
             this.delegate.put("os.detected.arch", osArch);
 
             this.delegate.put("os.detected.bitness", String.valueOf(determineBitness(osArch)));
 
-            String osVersion = this.systemProperties.get("os.version");
+            String osVersion = this.properties.get("os.version");
             if (osVersion != null) {
                 Matcher matcher = versionRegex.matcher(osVersion);
                 if (matcher.matches()) {
@@ -74,6 +75,11 @@ final class OSMavenProperties extends BaseProperties {
                 }
             }
 
+            final StringBuilder osClassifier = new StringBuilder()
+                    .append(osName)
+                    .append("-")
+                    .append(osArch);
+
             if (osName.equals("linux"))
                 LinuxUtils.getCurrentRelease().ifPresent(r -> {
                     final String propertyName = "os.detected.release";
@@ -82,10 +88,23 @@ final class OSMavenProperties extends BaseProperties {
                     String version = r.version();
                     if (version != null) this.delegate.put(propertyName + ".version", version);
 
-                    r.like().forEach(l ->
+                    Collection<String> like = r.like();
+                    like.forEach(l ->
                             this.delegate.put(propertyName + ".like." + l, Boolean.TRUE.toString())
                     );
+
+                    String classifierWithLikes = this.properties.get("os.detection.classifierWithLikes");
+                    if (classifierWithLikes != null) {
+                        String[] likes = classifierWithLikes.split(",");
+                        for (String l : likes)
+                            if (like.contains(l)) {
+                                osClassifier.append("-").append(l);
+                                break;
+                            }
+                    }
                 });
+
+            this.delegate.put("os.detected.classifier", osClassifier.toString());
 
             return new OSMavenProperties(Map.copyOf(this.delegate));
         }
@@ -104,11 +123,11 @@ final class OSMavenProperties extends BaseProperties {
          * @return the bitness
          */
         int determineBitness(final @NotNull String architecture) {
-            String bitness = this.systemProperties.get("sun.arch.data.model");
+            String bitness = this.properties.get("sun.arch.data.model");
             if (bitness != null && bitness.matches("[0-9]+"))
                 return Integer.parseInt(bitness, 10);
 
-            bitness = this.systemProperties.get("com.ibm.vm.bitmode");
+            bitness = this.properties.get("com.ibm.vm.bitmode");
             if (bitness != null && bitness.matches("[0-9]+"))
                 return Integer.parseInt(bitness, 10);
 
