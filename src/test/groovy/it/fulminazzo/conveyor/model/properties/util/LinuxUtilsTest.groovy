@@ -33,19 +33,25 @@ LOGO=linux
         actual == expected
 
         where:
-        id        | like           | version || expected
-        null      | null           | null    || null
-        null      | null           | '6.12'  || null
-        null      | 'arch'         | null    || null
-        null      | 'arch'         | '6.12'  || null
-        null      | 'arch manjaro' | null    || null
-        null      | 'arch manjaro' | '6.12'  || null
-        'manjaro' | null           | null    || new LinuxUtils.Release('manjaro', null, ['manjaro'].toSet())
-        'manjaro' | null           | '6.12'  || new LinuxUtils.Release('manjaro', '6.12', ['manjaro'].toSet())
-        'manjaro' | 'arch'         | null    || new LinuxUtils.Release('manjaro', null, ['arch', 'manjaro'].toSet())
-        'manjaro' | 'arch'         | '6.12'  || new LinuxUtils.Release('manjaro', '6.12', ['arch', 'manjaro'].toSet())
-        'manjaro' | 'arch manjaro' | null    || new LinuxUtils.Release('manjaro', null, ['arch', 'manjaro'].toSet())
-        'manjaro' | 'arch manjaro' | '6.12'  || new LinuxUtils.Release('manjaro', '6.12', ['arch', 'manjaro'].toSet())
+        id          | like             | version  || expected
+        null        | null             | null     || null
+        null        | null             | '6.12'   || null
+        null        | 'arch'           | null     || null
+        null        | 'arch'           | '6.12'   || null
+        null        | 'arch manjaro'   | null     || null
+        null        | 'arch manjaro'   | '6.12'   || null
+        'manjaro'   | null             | null     || new LinuxUtils.Release('manjaro', null, ['manjaro'].toSet())
+        'manjaro'   | null             | '6.12'   || new LinuxUtils.Release('manjaro', '6.12', ['manjaro'].toSet())
+        'manjaro'   | 'arch'           | null     || new LinuxUtils.Release('manjaro', null, ['arch', 'manjaro'].toSet())
+        'manjaro'   | 'arch'           | '6.12'   || new LinuxUtils.Release('manjaro', '6.12', ['arch', 'manjaro'].toSet())
+        'manjaro'   | 'arch manjaro'   | null     || new LinuxUtils.Release('manjaro', null, ['arch', 'manjaro'].toSet())
+        'manjaro'   | 'arch manjaro'   | '6.12'   || new LinuxUtils.Release('manjaro', '6.12', ['arch', 'manjaro'].toSet())
+        '"manjaro"' | null             | null     || new LinuxUtils.Release('manjaro', null, ['manjaro'].toSet())
+        '"manjaro"' | null             | '"6.12"' || new LinuxUtils.Release('manjaro', '6.12', ['manjaro'].toSet())
+        '"manjaro"' | '"arch"'         | null     || new LinuxUtils.Release('manjaro', null, ['arch', 'manjaro'].toSet())
+        '"manjaro"' | '"arch"'         | '"6.12"' || new LinuxUtils.Release('manjaro', '6.12', ['arch', 'manjaro'].toSet())
+        '"manjaro"' | '"arch manjaro"' | null     || new LinuxUtils.Release('manjaro', null, ['arch', 'manjaro'].toSet())
+        '"manjaro"' | '"arch manjaro"' | '"6.12"' || new LinuxUtils.Release('manjaro', '6.12', ['arch', 'manjaro'].toSet())
     }
 
 }
