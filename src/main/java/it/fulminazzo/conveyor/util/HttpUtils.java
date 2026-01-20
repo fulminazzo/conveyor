@@ -39,8 +39,7 @@ public final class HttpUtils {
     private static final @NotNull Map<String, RedirectInfo> redirects = new HashMap<>();
 
     /**
-     * Opens a new connection to the website for the requested resource,
-     * and returns the data.
+     * Opens a new connection to the website for the requested resource and returns the data.
      *
      * @param website  the website
      * @param resource the resource
@@ -62,7 +61,7 @@ public final class HttpUtils {
         if (REDIRECTS_STATUSES.contains(status)) {
             String newUrl = connection.getHeaderField("Location");
             connection.disconnect();
-            throw new IOException("Redirected to: " + newUrl);
+            return handleRedirect(url, newUrl, resource);
         }
         return connection.getInputStream();
     }
