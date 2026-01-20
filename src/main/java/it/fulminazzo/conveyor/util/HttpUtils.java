@@ -56,8 +56,13 @@ public final class HttpUtils {
 
         RedirectInfo info = redirects.get(website);
         if (info != null && info.getRedirects() > MAX_REDIRECTS) {
-            log.debug("[CACHE] {} -> {}", website, info.getUrl());
-            return openHttpConnection(info.getUrl(), resource);
+            String redirectUrl = info.getUrl();
+            try {
+                log.debug("[CACHE] {} -> {}", website, redirectUrl);
+                return openHttpConnection(redirectUrl, resource);
+            } catch (IOException e) {
+                log.debug("[CACHE] Failed connection to {}", redirectUrl, e);
+            }
         }
 
         final String url = website + resource;
