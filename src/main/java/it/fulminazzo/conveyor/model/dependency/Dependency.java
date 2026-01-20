@@ -36,4 +36,13 @@ public final class Dependency extends Artifact implements DependencyLike {
         return DependencyLike.super.getCoordinates();
     }
 
+    /**
+     * Converts the current dependency to an artifact.
+     *
+     * @return the artifact
+     */
+    public @NotNull Artifact toArtifact() {
+        return new Artifact(getGroupId(), getArtifactId(), getVersion());
+    }
+
 }
