@@ -6,9 +6,9 @@ class HttpUtilsTest extends Specification {
 
     def 'test that openHttpConnection redirects on too many redirects'() {
         given:
-        final url = 'https://fulminazzo.it/'
-        final redirect = "https://$TestUtils.MAVEN_CENTRAL_URL/"
-        final path = TestUtils.LOMBOK_PATH
+        final url = 'https://fulminazzo.it'
+        final redirect = "https://$TestUtils.MAVEN_CENTRAL_URL"
+        final path = "/$TestUtils.LOMBOK_PATH"
 
         and:
         def info = new HttpUtils.RedirectInfo(redirect)
@@ -32,6 +32,9 @@ class HttpUtilsTest extends Specification {
 
         and:
         data.available() > 0
+
+        cleanup:
+        HttpUtils.redirects.clear()
     }
 
     def 'test that openHttpConnection of #resourcePath does not throw'() {
@@ -72,12 +75,12 @@ class HttpUtilsTest extends Specification {
 
         where:
         url                      || expected
-        'https://fulminazzo.it/' || 'https://fulminazzo.it/'
-        'https://fulminazzo.it'  || 'https://fulminazzo.it/'
-        'http://fulminazzo.it/'  || 'http://fulminazzo.it/'
-        'http://fulminazzo.it'   || 'http://fulminazzo.it/'
-        'fulminazzo.it/'         || 'https://fulminazzo.it/'
-        'fulminazzo.it'          || 'https://fulminazzo.it/'
+        'https://fulminazzo.it/' || 'https://fulminazzo.it'
+        'https://fulminazzo.it'  || 'https://fulminazzo.it'
+        'http://fulminazzo.it/'  || 'http://fulminazzo.it'
+        'http://fulminazzo.it'   || 'http://fulminazzo.it'
+        'fulminazzo.it/'         || 'https://fulminazzo.it'
+        'fulminazzo.it'          || 'https://fulminazzo.it'
     }
 
     def 'test that formatUrl throws on invalid url'() {
