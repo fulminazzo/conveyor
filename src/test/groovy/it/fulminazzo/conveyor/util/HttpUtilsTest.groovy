@@ -1,9 +1,38 @@
 package it.fulminazzo.conveyor.util
 
-import it.fulminazzo.conveyor.downloader.DownloadSource
 import spock.lang.Specification
 
 class HttpUtilsTest extends Specification {
+
+    def 'test that openHttpConnection redirects on too many redirects'() {
+        given:
+        final url = 'https://fulminazzo.it/'
+        final redirect = "https://$TestUtils.MAVEN_CENTRAL_URL/"
+        final path = TestUtils.LOMBOK_PATH
+
+        and:
+        def info = new HttpUtils.RedirectInfo(redirect)
+        for (i in 1..HttpUtils.MAX_REDIRECTS) info.addRedirect()
+        HttpUtils.redirects.put(url, info)
+
+        when:
+        HttpUtils.openHttpConnection(url, path)
+
+        then:
+        thrown(FileNotFoundException)
+
+        when:
+        info.addRedirect()
+
+        and:
+        def data = HttpUtils.openHttpConnection(url, path)
+
+        then:
+        noExceptionThrown()
+
+        and:
+        data.available() > 0
+    }
 
     def 'test that openHttpConnection of #resourcePath does not throw'() {
         when:
