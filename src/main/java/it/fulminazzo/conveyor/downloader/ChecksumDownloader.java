@@ -134,10 +134,11 @@ final class ChecksumDownloader implements Downloader {
         final File resourceFile = getResourceFile(resourcePath);
 
         final MessageDigest messageDigest;
+        final String algorithmName = algorithm.name();
         try {
-            messageDigest = MessageDigest.getInstance(algorithm.name());
+            messageDigest = MessageDigest.getInstance(algorithmName);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Unreachable code");
+            throw new IllegalArgumentException(String.format("Could not find algorithm '%s'", algorithmName));
         }
 
         try (InputStream inputStream = new FileInputStream(resourceFile)) {
