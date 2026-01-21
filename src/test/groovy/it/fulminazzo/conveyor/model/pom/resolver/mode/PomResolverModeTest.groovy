@@ -1,6 +1,8 @@
 package it.fulminazzo.conveyor.model.pom.resolver.mode
 
 import groovy.util.logging.Slf4j
+import it.fulminazzo.conveyor.downloader.DownloadException
+import it.fulminazzo.conveyor.downloader.Downloader
 import it.fulminazzo.conveyor.manager.RepositoryManager
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.repository.Repository
@@ -103,6 +105,35 @@ class PomResolverModeTest extends Specification {
 
         where:
         mode << PomResolverMode.values()
+    }
+
+    def 'test that PomResolverMode, in the event of a rare FileNotFoundException, throws DownloadException'() {
+        given:
+        def resolver = mode.create(Mock(RepositoryManager), baseDir, log)
+
+        and:
+        def file = new File('not_existing')
+        def downloader = Mock(Downloader)
+        downloader.getResourceFile(_) >> file
+        downloader.resolveToFile(_, _) >> file
+
+        and:
+        def field = resolver.class.getDeclaredField('downloader')
+        field.accessible = true
+        field.set(resolver, downloader)
+
+        when:
+        resolver.resolve(file.path, [])
+
+        then:
+        def e = thrown(DownloadException)
+
+        and:
+        def cause = e.cause
+        (cause instanceof FileNotFoundException)
+
+        where:
+        mode << [PomResolverMode.DISK, PomResolverMode.CHECKSUM]
     }
 
 }

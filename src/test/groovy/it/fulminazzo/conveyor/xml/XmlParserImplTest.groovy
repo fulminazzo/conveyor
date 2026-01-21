@@ -2,7 +2,30 @@ package it.fulminazzo.conveyor.xml
 
 import spock.lang.Specification
 
+import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.XMLStreamConstants
+import javax.xml.stream.XMLStreamException
+import javax.xml.stream.XMLStreamReader
+
 class XmlParserImplTest extends Specification {
+
+    def 'test that initialize XmlParserImpl with XMLStreamException throws XmlParserException'() {
+        given:
+        SpyStatic(XMLInputFactory)
+
+        and:
+        def factory = Mock(XMLInputFactory)
+        factory.createXMLStreamReader(_ as InputStream) >> {
+            throw new XMLStreamException('test')
+        }
+        XMLInputFactory.newInstance() >> factory
+
+        when:
+        new XmlParserImpl(new ByteArrayInputStream(''.bytes))
+
+        then:
+        thrown(XmlParserException)
+    }
 
     def 'test that children does not return grand children'() {
         given:
@@ -291,7 +314,7 @@ class XmlParserImplTest extends Specification {
 
     def 'test getCurrentContent throws on non-text content'() {
         given:
-        def parser = newParser('<second><first>Hello, world!</first></second>')
+        def parser = newParser(data)
 
         when:
         parser.next()
@@ -304,11 +327,17 @@ class XmlParserImplTest extends Specification {
 
         cleanup:
         parser.close()
+
+        where:
+        data << [
+                '<second><first>Hello, world!</first></second>',
+                '<second>\n\t</second>'
+        ]
     }
 
     def 'test getCurrentContent throws on not present'() {
         given:
-        def parser = newParser('')
+        def parser = newParser(data)
 
         when:
         parser.currentContent
@@ -318,6 +347,92 @@ class XmlParserImplTest extends Specification {
 
         cleanup:
         parser.close()
+
+        where:
+        data << ['', '<project></project>']
+    }
+
+    def 'test getCurrentContent throws on already fully read'() {
+        given:
+        def parser = newParser('<project></project>')
+        parser.reader.next()
+        parser.reader.next()
+        parser.reader.next()
+
+        when:
+        parser.currentContent
+
+        then:
+        thrown(XmlParserException)
+
+        cleanup:
+        parser.close()
+    }
+
+    def 'test that close with XMLStreamException does not throw'() {
+        given:
+        def parser = newParser('')
+
+        and:
+        def reader = Mock(XMLStreamReader)
+        reader.close() >> {
+            throw new XMLStreamException()
+        }
+
+        and:
+        def field = XmlParserImpl.getDeclaredField('reader')
+        field.accessible = true
+        field.set(parser, reader)
+
+        when:
+        parser.close()
+
+        then:
+        noExceptionThrown()
+
+        and:
+        parser.reader == null
+    }
+
+    def 'test that close with IOException does not throw'() {
+        given:
+        def parser = newParser('')
+
+        and:
+        def inputStream = Mock(InputStream)
+        inputStream.close() >> {
+            throw new IOException()
+        }
+
+        and:
+        def field = XmlParserImpl.getDeclaredField('inputStream')
+        field.accessible = true
+        field.set(parser, inputStream)
+
+        when:
+        parser.close()
+
+        then:
+        noExceptionThrown()
+
+        and:
+        parser.reader == null
+    }
+
+    def 'test that handleEvent throws if reader is null'() {
+        given:
+        def parser = newParser('')
+
+        and:
+        def field = XmlParserImpl.getDeclaredField('reader')
+        field.accessible = true
+        field.set(parser, null)
+
+        when:
+        parser.handleEvent(XMLStreamConstants.START_DOCUMENT)
+
+        then:
+        thrown(IllegalStateException)
     }
 
     private static XmlParserImpl newParser(final String rawData) {

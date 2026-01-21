@@ -2,6 +2,7 @@ package it.fulminazzo.conveyor.downloader
 
 import groovy.util.logging.Slf4j
 import it.fulminazzo.conveyor.util.TestUtils
+import org.slf4j.Logger
 import spock.lang.Specification
 
 @Slf4j
@@ -93,6 +94,35 @@ class BaseDownloaderTest extends Specification {
         then:
         def e = thrown(DownloadException)
         e.message.contains('No download source')
+    }
+
+    def 'test that resolve does not throw on non-FileNotFoundException'() {
+        given:
+        def exception = new IOException('General exception')
+        def path = 'path'
+
+        and:
+        def source = Mock(DownloadSource)
+        source.url >> 'url'
+        source.resolveResource(_) >> {
+            throw exception
+        }
+
+        and:
+        def logger = Mock(Logger)
+
+        and:
+        def downloader = new BaseDownloader(workingDir, logger)
+
+        when:
+        downloader.resolve(path, [source])
+
+        then:
+        def e = thrown(DownloadException)
+        e.message == "Could not find resource '$path'"
+
+        and:
+        1 * logger.warn('Could not resolve resource \'{}\' from source \'{}\'', 'path', source.url, exception)
     }
 
     /*

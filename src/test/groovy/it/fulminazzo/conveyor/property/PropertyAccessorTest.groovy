@@ -119,13 +119,14 @@ class PropertyAccessorTest extends Specification {
         value == expected
 
         where:
-        name     || expected
-        'field1' || 'Hello, world!'
-        'field2' || 10
-        'field3' || true
-        'field4' || null
-        'field5' || null
-        'field6' || 3.14
+        name            || expected
+        'field1'        || 'Hello, world!'
+        'field2'        || 10
+        'field3'        || true
+        'field4'        || null
+        'field5'        || null
+        'field5.field1' || null
+        'field6'        || 3.14
     }
 
     def 'test that getField of delegate returns value'() {
