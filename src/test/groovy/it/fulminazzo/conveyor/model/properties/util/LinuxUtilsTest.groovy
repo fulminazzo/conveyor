@@ -5,6 +5,58 @@ import spock.lang.Specification
 
 class LinuxUtilsTest extends Specification {
 
+    def 'test getCurrentRelease of general Linux os'() {
+        given:
+        SpyStatic(LinuxUtils)
+
+        and:
+        def release = new LinuxUtils.Release('linux', '1.0', [])
+
+        and:
+        LinuxUtils.parseReleaseFile(_) >> release
+
+        when:
+        def result = LinuxUtils.currentRelease
+
+        then:
+        !result.empty
+
+        and:
+        result.get() == release
+    }
+
+    def 'test getCurrentRelease of Redhat Linux os'() {
+        given:
+        SpyStatic(LinuxUtils)
+
+        and:
+        def release = new LinuxUtils.Release('linux', '1.0', [])
+
+        and:
+        LinuxUtils.parseReleaseFile(_) >> null
+        LinuxUtils.parseRedhatReleaseFile(_) >> release
+
+        when:
+        def result = LinuxUtils.currentRelease
+
+        then:
+        !result.empty
+
+        and:
+        result.get() == release
+    }
+
+    def 'test getCurrentRelease of no Linux Os'() {
+        given:
+        SpyStatic(LinuxUtils)
+
+        and:
+        LinuxUtils.parseReleaseFile(_) >> null
+
+        expect:
+        LinuxUtils.currentRelease.empty
+    }
+
     def 'test that parseReleaseFile with #id, #version and #like returns #expected'() {
         given:
         def file = new File(TestUtils.BASE_DIR, 'linux_utils/parse_release_file')
