@@ -68,7 +68,7 @@ final class XmlParserImpl implements XmlParser {
                 try {
                     while (XmlParserImpl.this.hasNext()) {
                         int scopes = XmlParserImpl.this.scopes.size();
-                        int currentDepth = scopes + (XmlParserImpl.this.nextTag == null ? 0 : 1);
+                        int currentDepth = scopes + 1;
                         if (scopes < childrenDepth - 1) return false;
                         if (currentDepth == childrenDepth) return true;
                         XmlParserImpl.this.next();
