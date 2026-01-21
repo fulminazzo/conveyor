@@ -24,12 +24,11 @@ record PropertyActivation(@NotNull String name, @Nullable String value) implemen
         @Nullable String actualValue = this.value;
         final boolean negatedValue;
         if (actualValue != null) {
-            negatedValue = actualName.startsWith(NEGATION);
+            negatedValue = actualValue.startsWith(NEGATION);
             if (negatedValue) actualValue = actualValue.substring(1);
         } else negatedValue = false;
 
         String propertyValue = actualName.equals(packaging) ? context.getPackaging() : context.getProperty(actualName);
-        if (propertyValue != null && propertyValue.isEmpty()) propertyValue = "true";
         if (negatedName) return propertyValue == null;
         if (actualValue == null) return true;
 
