@@ -39,6 +39,16 @@ public interface Properties {
     }
 
     /**
+     * Instantiates a new Properties with support for
+     * <a href="https://github.com/trustin/os-maven-plugin/">OS Maven Plugin</a> properties.
+     *
+     * @return the properties
+     */
+    static @NotNull Properties newOSMavenProperties() {
+        return OSMavenProperties.builder(new SystemProperties()).build();
+    }
+
+    /**
      * Instantiates a new Properties with support for Maven models properties.
      *
      * @param pom        the pom of the project to get data from
