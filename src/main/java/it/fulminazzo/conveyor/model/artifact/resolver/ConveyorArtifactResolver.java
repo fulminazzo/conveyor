@@ -3,6 +3,7 @@ package it.fulminazzo.conveyor.model.artifact.resolver;
 import it.fulminazzo.conveyor.manager.RepositoryManager;
 import it.fulminazzo.conveyor.model.artifact.Artifact;
 import it.fulminazzo.conveyor.model.artifact.resolver.mode.ArtifactResolverMode;
+import it.fulminazzo.conveyor.model.properties.Properties;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,8 @@ import java.io.File;
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConveyorArtifactResolver implements ArtifactResolver {
+    private final @NotNull Properties osMavenProperties = Properties.newOSMavenProperties();
+
     private final @NotNull RepositoryManager repositoryManager;
     private final @NotNull File workingDir;
     private final @NotNull Logger logger;
@@ -25,7 +28,29 @@ public final class ConveyorArtifactResolver implements ArtifactResolver {
     @Override
     public @NotNull File resolve(final @NotNull Artifact artifact,
                                  final @NotNull String packaging) throws ArtifactResolverException {
-        return getDelegate().resolve(artifact, packaging);
+        @NotNull ArtifactResolver delegate = getDelegate();
+        try {
+            return delegate.resolve(artifact, packaging);
+        } catch (ArtifactResolverException e) {
+            String classifier = artifact.getClassifier();
+            if (classifier != null) {
+                // check if the classifier is too specific, fallback to a broader one.
+                String osClassifier = this.osMavenProperties.get("os.detected.classifier");
+                if (osClassifier != null && classifier.contains(osClassifier))
+                    try {
+                        String newClassifier = classifier.substring(0, classifier.indexOf(osClassifier)) + osClassifier;
+                        Artifact newArtifact = Artifact.builder()
+                                .groupId(artifact.getGroupId())
+                                .artifactId(artifact.getArtifactId())
+                                .version(artifact.getVersion())
+                                .classifier(newClassifier)
+                                .build();
+                        return delegate.resolve(newArtifact, packaging);
+                    } catch (ArtifactResolverException ignored) {
+                    }
+            }
+            throw e;
+        }
     }
 
     /**
