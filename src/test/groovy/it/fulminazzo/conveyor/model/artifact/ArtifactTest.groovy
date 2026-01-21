@@ -27,4 +27,17 @@ class ArtifactTest extends Specification {
         'jar'     | 'sources'  || 'it/fulminazzo/conveyor/1.0/conveyor-1.0-sources.jar'
     }
 
+    def 'test that getClassifier returns null when empty'() {
+        given:
+        def artifact = Artifact.builder()
+                .groupId('it.fulminazzo')
+                .artifactId('conveyor')
+                .version('1.0')
+                .classifier('')
+                .build()
+
+        expect:
+        artifact.classifier == null
+    }
+
 }
