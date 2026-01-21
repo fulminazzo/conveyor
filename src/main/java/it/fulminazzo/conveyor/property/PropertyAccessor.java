@@ -132,16 +132,16 @@ final class PropertyAccessor {
             field.setAccessible(true);
             return field.get(object);
         } catch (NoSuchFieldException | IllegalAccessException e) {
+            // try to lookup field from delegates
             List<Field> fields = getDeclaredFields(object.getClass()).stream()
                     .filter(f -> !Modifier.isStatic(f.getModifiers()))
-                    .filter(f -> !f.getName().equals(name)) // ignore previously looked up field
                     .filter(f -> f.isAnnotationPresent(DelegateProperties.class))
                     .toList();
             for (Field field : fields) {
                 try {
                     Object raw = getSubProperty(object, field.getName(), name);
                     if (raw != null) return raw;
-                } catch (NullPointerException ignored) {
+                } catch (PropertyAccessorException ignored) {
                 }
             }
             return null;
