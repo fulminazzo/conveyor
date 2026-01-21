@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  *     <li><code>os.detected.name</code>;</li>
  * </ul>
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 final class OSMavenProperties extends BaseProperties {
     private final @NotNull Map<String, String> delegate;
 
