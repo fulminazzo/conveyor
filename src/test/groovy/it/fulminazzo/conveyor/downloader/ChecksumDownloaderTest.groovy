@@ -90,6 +90,38 @@ class ChecksumDownloaderTest extends Specification {
         1 * delegate.resolveToFile(path, [source])
     }
 
+    def 'test resolveToFile downloads again on empty file'() {
+        given:
+        def workingDir = new File(this.delegate.workingDir, 'integration_tests/fail')
+        if (workingDir.exists()) workingDir.deleteDir()
+
+        and:
+        def path = TestUtils.LOMBOK_PATH
+        def source = new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)
+
+        and:
+        def file = new File(workingDir, path)
+        if (file.exists()) file.delete()
+        file.parentFile.mkdirs()
+        file.createNewFile()
+
+        and:
+        def delegate = Spy(BaseDownloader, constructorArgs: [workingDir, log])
+
+        and:
+        def downloader = (ChecksumDownloader) Spy(ChecksumDownloader, constructorArgs: [delegate, log])
+        downloader.resolveChecksum(_, _, _) >> {
+            throw new DownloadException()
+        }
+
+        when:
+        downloader.resolveToFile(path, [source])
+
+        then:
+        0 * downloader.verifyChecksum(path, [source])
+        1 * delegate.resolveToFile(path, [source])
+    }
+
     def 'test that verifyChecksum with failure and WARN checksum policy returns true'() {
         given:
         def log = Mock(Logger)
