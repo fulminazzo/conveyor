@@ -297,6 +297,20 @@ class ChecksumDownloaderTest extends Specification {
         algorithm << ChecksumAlgorithm.values()
     }
 
+    // should not be possible
+    def 'test that computeChecksum throws IllegalArgumentException on no algorithm found'() {
+        given:
+        def algorithm = Mock(ChecksumAlgorithm)
+        algorithm.name() >> 'not-existing'
+
+        when:
+        this.downloader.computeChecksum('path', algorithm)
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "Could not find algorithm '${algorithm.name()}'"
+    }
+
     private DownloadSource mockSource(final String url, final ChecksumAlgorithm algorithm) {
         def source = Mock(DownloadSource)
         source.url >> url
