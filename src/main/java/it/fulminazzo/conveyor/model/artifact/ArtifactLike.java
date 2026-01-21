@@ -21,5 +21,15 @@ public abstract class ArtifactLike {
 
     @Builder.Default
     protected final @Nullable String classifier = null;
-
+    
+    /**
+     * Gets classifier.
+     *
+     * @return the classifier
+     */
+    public @Nullable String getClassifier() {
+        if (this.classifier != null && this.classifier.isEmpty()) return null;
+        return this.classifier;
+    }
+    
 }
