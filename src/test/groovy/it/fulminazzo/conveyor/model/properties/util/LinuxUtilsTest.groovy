@@ -105,6 +105,17 @@ LOGO=linux
         '"manjaro"' | '"arch manjaro"' | '"6.12"' || new LinuxUtils.Release('manjaro', '6.12', ['arch', 'manjaro'].toSet())
     }
 
+    def 'test that parseReleaseFile of not existing does not throw'() {
+        when:
+        def result = LinuxUtils.parseReleaseFile('should_not_exist')
+
+        then:
+        noExceptionThrown()
+
+        and:
+        result == null
+    }
+
     def 'test that parseRedhatReleaseFile with #id and #version returns #expected'() {
         given:
         def file = new File(TestUtils.BASE_DIR, 'linux_utils/parse_redhat_release_file')
@@ -131,6 +142,17 @@ LOGO=linux
         'Fedora'                           | '16'       || new LinuxUtils.Release('fedora', '16', LinuxUtils.defaultRedhatVariants.toSet())
         'Red Hat Enterprise Linux release' | null       || new LinuxUtils.Release('rhel', null, LinuxUtils.defaultRedhatVariants.toSet())
         'Red Hat Enterprise Linux release' | '8.9'      || new LinuxUtils.Release('rhel', '8', LinuxUtils.defaultRedhatVariants.toSet())
+    }
+
+    def 'test that parseRedhatReleaseFile of not existing does not throw'() {
+        when:
+        def result = LinuxUtils.parseRedhatReleaseFile('should_not_exist')
+
+        then:
+        noExceptionThrown()
+
+        and:
+        result == null
     }
 
 }
