@@ -1,5 +1,6 @@
 package it.fulminazzo.conveyor.model.pom
 
+import it.fulminazzo.conveyor.model.BuilderException
 import it.fulminazzo.conveyor.model.XmlObjectBuilderUtils
 import it.fulminazzo.conveyor.model.artifact.Artifact
 import it.fulminazzo.conveyor.model.dependency.RawDependency
@@ -366,6 +367,17 @@ class XmlPomBuilderTest extends Specification {
         project.groupId == 'it.fulminazzo'
         project.artifactId == 'conveyor'
         project.version == '1.0'
+    }
+
+    def 'test that parseDocument throws BuilderException on XmlParserException'() {
+        given:
+        def builder = newBuilder('')
+
+        when:
+        builder.build()
+
+        then:
+        thrown(BuilderException)
     }
 
     def 'test that parseParent returns correct parent'() {
