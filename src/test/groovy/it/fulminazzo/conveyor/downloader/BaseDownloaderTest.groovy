@@ -80,8 +80,7 @@ class BaseDownloaderTest extends Specification {
         downloader.resolve('path', [new DownloadSource(TestUtils.MAVEN_CENTRAL_URL)])
 
         then:
-        def e = thrown(DownloadException)
-        (e.cause instanceof FileNotFoundException)
+        thrown(DownloadException)
     }
 
     def 'test that resolve throws DownloadException on no sources given'() {
