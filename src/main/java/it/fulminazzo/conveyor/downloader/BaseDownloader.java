@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -26,15 +27,17 @@ final class BaseDownloader implements Downloader {
                                         final @NotNull Collection<DownloadSource> downloadSources) throws DownloadException {
         if (downloadSources.isEmpty())
             throw new DownloadException("No download source provided! Resolving will be interrupted");
-        Throwable latest = null;
         for (DownloadSource source : downloadSources)
             try {
                 return source.resolveResource(resourcePath);
             } catch (IOException e) {
-                this.logger.debug("Could not resolve resource '{}' from source '{}'", resourcePath, source.getUrl());
-                latest = e;
+                final String message = "Could not resolve resource '{}' from source '{}'";
+                if (e instanceof FileNotFoundException)
+                    this.logger.debug(message, resourcePath, source.getUrl());
+                else
+                    this.logger.warn(message, resourcePath, source.getUrl(), e);
             }
-        throw new DownloadException(String.format("Could not resolve resource '%s'", resourcePath), latest);
+        throw new DownloadException(String.format("Could not find resource '%s'", resourcePath));
     }
 
     @Override
