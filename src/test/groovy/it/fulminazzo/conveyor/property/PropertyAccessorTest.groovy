@@ -57,6 +57,11 @@ class PropertyAccessorTest extends Specification {
 
         then:
         thrown(PropertyAccessorException)
+
+        where:
+        first    | second
+        'a'      | 'b'
+        'field6' | 'b'
     }
 
     def 'test that getIndexed of #name with #index returns #expected'() {
@@ -92,6 +97,17 @@ class PropertyAccessorTest extends Specification {
         thrown(PropertyAccessorException)
     }
 
+    def 'test that getIndexed of null object throws'() {
+        given:
+        def object = new MockObject()
+
+        when:
+        PropertyAccessor.getIndexed(object, 'field7', 0)
+
+        then:
+        thrown(PropertyAccessorException)
+    }
+
     def 'test that getField of #name returns #expected'() {
         given:
         def object = new MockObject()
@@ -109,6 +125,7 @@ class PropertyAccessorTest extends Specification {
         'field3' || true
         'field4' || null
         'field5' || null
+        'field6' || 3.14
     }
 
     def 'test that getField of delegate returns value'() {

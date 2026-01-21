@@ -178,6 +178,7 @@ class ActivationTest extends Specification {
         null             | 'unknown' | null      | null                  || 'unknown'        | 'x86-64' | '1.0'     || false
         '!Linux'         | null      | null      | null                  || 'Linux'          | 'x86-64' | '1.0'     || false
         '!Mac'           | null      | null      | null                  || 'Linux'          | 'x86-64' | '1.0'     || true
+        null             | 'unix'    | null      | null                  || 'Windows'        | 'x86-64' | '10'      || false
     }
 
     def 'test that PropertyActivation isEnabled with #name and #value returns #expected'() {
@@ -199,20 +200,39 @@ class ActivationTest extends Specification {
         properties.each { System.clearProperty(it.key) }
 
         where:
-        name        | value   || expected
-        'first'     | null    || true
-        'first'     | 'true'  || true
-        '!first'    | null    || false
-        '!first'    | 'true'  || false
-        'first'     | '!true' || false
-        'second'    | null    || true
-        'second'    | 'true'  || true
-        '!second'   | null    || false
-        '!second'   | 'true'  || false
-        'second'    | '!true' || false
-        'packaging' | 'jar'   || true
-        'packaging' | '!jar'  || false
-        'packaging' | 'war'   || false
+        name         | value   || expected
+        '!first'     | null    || false
+        'first'      | null    || true
+        '!first'     | 'true'  || false
+        '!first'     | '!true' || false
+        '!first'     | ''      || false
+        'first'      | '!true' || false
+        'first'      | ''      || false
+        'first'      | 'true'  || true
+        '!second'    | null    || false
+        'second'     | null    || true
+        '!second'    | 'true'  || false
+        '!second'    | '!true' || false
+        '!second'    | ''      || false
+        'second'     | '!true' || false
+        'second'     | ''      || false
+        'second'     | 'true'  || true
+        '!third'     | null    || true
+        'third'      | null    || true
+        '!third'     | 'true'  || true
+        '!third'     | '!true' || true
+        '!third'     | ''      || true
+        'third'      | '!true' || true
+        'third'      | ''      || false
+        'third'      | 'true'  || false
+        '!packaging' | null    || false
+        '!packaging' | '!jar'  || false
+        '!packaging' | 'jar'   || false
+        '!packaging' | 'war'   || false
+        'packaging'  | null    || true
+        'packaging'  | '!jar'  || false
+        'packaging'  | 'jar'   || true
+        'packaging'  | 'war'   || false
     }
 
     def 'test that FileActivation isEnabled with #exists and #missing returns #expected'() {

@@ -108,7 +108,7 @@ class DependenciesTreeBuilderTest extends Specification {
         this.resolver.resolve(_) >> pom
 
         and:
-        def dependencyNode = new DependencyNode(artifact,
+        def dependencyNode = new DependencyNode(null,
                 Dependency.builder()
                         .groupId('it.fulminazzo')
                         .artifactId('main')
@@ -171,6 +171,14 @@ class DependenciesTreeBuilderTest extends Specification {
 
         and:
         this.builder.dependenciesTree.get(dependencyNode.dependency().coordinates).depth() == 1
+    }
+
+    def 'test that populateTree throws IllegalStateException on null project'() {
+        when:
+        new DependenciesTreeBuilder(this.resolver, TestUtils.BASE_DIR).build()
+
+        then:
+        thrown(IllegalStateException)
     }
 
     def 'test that addPomDependenciesToCheckList adds all dependencies'() {

@@ -17,10 +17,10 @@ class BasePropertiesTest extends Specification {
         ])
 
         when:
-        def actual = properties.apply('${simple}, ${third} ${unknown}')
+        def actual = properties.apply('${unknown} ${simple}, ${unknown} ${third} ${unknown}')
 
         then:
-        actual == 'Hello, world! ${unknown}'
+        actual == '${unknown} Hello, ${unknown} world! ${unknown}'
     }
 
 }

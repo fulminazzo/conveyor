@@ -29,6 +29,7 @@ class ExclusionsManagerTest extends Specification {
         'it.fulminazzo' | 'third'    | false    || false
         'it.wildcard'   | 'first'    | false    || true
         '*'             | 'wildcard' | false    || true
+        'it.fulminazzo' | 'wildcard' | false    || true
         'it.fulminazzo' | 'third'    | true     || true
     }
 
