@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="../../commit/"><img src="https://img.shields.io/github/commits-since/Fulminazzo/YAGL/1.0" alt="GitHub commits"/></a>
+  <a href="../../commit/"><img src="https://img.shields.io/github/commits-since/Fulminazzo/conveyor/" alt="GitHub commits"/></a>
 </p>
 
 <p align="center">
